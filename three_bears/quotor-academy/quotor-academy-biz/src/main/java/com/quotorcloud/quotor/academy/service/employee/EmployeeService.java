@@ -39,7 +39,7 @@ public interface EmployeeService extends IService<Employee> {
     /**
      * 查询汇总业绩按分店分组
      */
-    List<JSONObject> selectEmployeePerformanceGroupByShopId(EmployeeDTO employeeDTO);
+    JSONObject selectEmployeePerformanceGroupByShopId(EmployeeDTO employeeDTO);
 
     /**
      * 查询员工业绩

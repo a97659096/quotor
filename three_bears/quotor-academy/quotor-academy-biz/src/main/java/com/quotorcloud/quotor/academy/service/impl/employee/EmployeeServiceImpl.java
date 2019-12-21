@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.quotorcloud.quotor.academy.api.dto.employee.EmployeeDTO;
 import com.quotorcloud.quotor.academy.api.entity.employee.Employee;
 import com.quotorcloud.quotor.academy.api.entity.employee.OrderDetailServiceStaff;
+import com.quotorcloud.quotor.academy.api.entity.expend.Expend;
 import com.quotorcloud.quotor.academy.api.entity.order.OrderDetail;
 import com.quotorcloud.quotor.academy.api.vo.Pager;
 import com.quotorcloud.quotor.academy.api.vo.employee.EmployeePerformanceVO;
@@ -35,9 +36,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -117,29 +117,92 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      * @return
      */
     @Override
-    public List<JSONObject> selectEmployeePerformanceGroupByShopId(EmployeeDTO employeeDTO) {
+    public JSONObject selectEmployeePerformanceGroupByShopId(EmployeeDTO employeeDTO) {
+        switch (dateType){
+            case 1:
+                employeeDTO.setStart(DateTimeUtil.getWeekStartDate());
+                break;
+            case 2:
+                employeeDTO.setAppointDate(DateTimeUtil.localDateToString(LocalDate.now()).substring(0,7));
+                break;
+            case 3:
+                employeeDTO.setAppointDate(DateTimeUtil.localDateToString(LocalDate.now()).substring(0,4));
+                break;
+        }
         List<EmployeePerformanceVO> employeePerformanceVOS = employeeMapper.selectEmployeePerformance(employeeDTO);
         Map<String, List<EmployeePerformanceVO>> performanceByShopIdMap = employeePerformanceVOS.stream()
                 .collect(Collectors.groupingBy(EmployeePerformanceVO::getShopId));
 
+        List<String> x = new LinkedList<>();
+        List<BigDecimal> y = new LinkedList<>();
+        BigDecimal totalMoney = new BigDecimal(0);
+
+        JSONObject jsonObject = new JSONObject();
+        if(dateType.equals(1) || dateType.equals(2)){
+            //分组根据日期
+            Map<String, List<EmployeePerformanceVO>> map = new HashMap<>();
+            for (EmployeePerformanceVO employeePerformanceVO:employeePerformanceVOS){
+                String date = DateTimeUtil.localDatetimeToString(employeePerformanceVO.getGmtCreate());
+                if(map.keySet().contains(date)){
+                    map.get(date).add(employeePerformanceVO);
+                }else {
+                    List<EmployeePerformanceVO> expendList = Lists.newArrayList(employeePerformanceVO);
+                    map.put(date, expendList);
+                }
+            }
+            Set<String> dates = DateTimeUtil.getOrderByDate(map.keySet());
+            for (String date: dates){
+                BigDecimal money = map.get(date).stream().map(EmployeePerformanceVO::getPerformance)
+                        .reduce(BigDecimal::add).get();
+                x.add(date);
+                y.add(money);
+                totalMoney = totalMoney.add(money);
+            }
+        }else {
+            //分组根据月份
+            Map<String, List<EmployeePerformanceVO>> map = new HashMap<>();
+            for (EmployeePerformanceVO employeePerformanceVO:employeePerformanceVOS){
+                String date = DateTimeUtil.localDatetimeToMonth(employeePerformanceVO.getGmtCreate());
+                if(map.keySet().contains(date)){
+                    map.get(date).add(employeePerformanceVO);
+                }else {
+                    List<EmployeePerformanceVO> expendList = Lists.newArrayList(employeePerformanceVO);
+                    map.put(date, expendList);
+                }
+            }
+            Set<String> strings = new HashSet<>(map.keySet());
+            for (String date:strings){
+                BigDecimal money = map.get(date).stream().map(EmployeePerformanceVO::getPerformance)
+                        .reduce(BigDecimal::add).get();
+                x.add(date);
+                y.add(money);
+                totalMoney = totalMoney.add(money);
+            }
+        }
+        jsonObject.put("x", x);
+        jsonObject.put("y", y);
+        jsonObject.put("total", totalMoney);
         R r = remoteDeptService.listDeptAll();
         List<SysDept> sysDepts = JSON.parseArray(JSON.toJSONString(r.getData()), SysDept.class);
         Map<Integer, SysDept> deptById = Maps.uniqueIndex(sysDepts, SysDept::getDeptId);
 
         List<JSONObject> jsonObjects = new ArrayList<>();
         for (String shopId:performanceByShopIdMap.keySet()){
-            JSONObject jsonObject = new JSONObject();
+
+            JSONObject json = new JSONObject();
             List<EmployeePerformanceVO> employeePerformances = performanceByShopIdMap.get(shopId);
             BigDecimal performanceByShopId = employeePerformances.stream()
                     .map(EmployeePerformanceVO::getPerformance).reduce(BigDecimal::add).get();
 
-            jsonObject.put("shopId", shopId);
-            jsonObject.put("shopName", deptById.get(shopId).getName());
-            jsonObject.put("shopHeadImg", deptById.get(shopId).getHeadImg());
-            jsonObject.put("performance", performanceByShopId);
-            jsonObjects.add(jsonObject);
+            json.put("shopId", shopId);
+            json.put("shopName", deptById.get(shopId).getName());
+            json.put("shopHeadImg", deptById.get(shopId).getHeadImg());
+            json.put("performance", performanceByShopId);
+            jsonObjects.add(json);
+
         }
-        return jsonObjects;
+        jsonObject.put("list", jsonObjects);
+        return jsonObject;
     }
 
     /**

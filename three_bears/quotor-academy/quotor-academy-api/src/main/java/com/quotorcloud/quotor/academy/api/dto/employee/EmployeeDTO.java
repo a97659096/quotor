@@ -166,4 +166,6 @@ public class EmployeeDTO {
     private Integer commissionSort;
 
     private Integer contentType;
+
+    private String appointDate;
 }

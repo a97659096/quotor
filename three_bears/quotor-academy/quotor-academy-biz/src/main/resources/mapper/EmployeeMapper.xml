@@ -169,7 +169,7 @@
     </select>
 
     <!--查询员工业绩-->
-    <select id="selectEmployeePerformance"
+     <select id="selectEmployeePerformance"
             resultType="com.quotorcloud.quotor.academy.api.vo.employee.EmployeePerformanceVO"
             resultMap="EmployeePerformanceMap">
         select
@@ -191,6 +191,15 @@
             </if>
             <if test="emp.contentType != null">
                 and od.od_content_type = #{emp.contentType}
+            </if>
+            <if test="emp.start != null and emp.start != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{exp.start}
+            </if>
+            <if test="emp.end != null and emp.end != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{exp.end}
+            </if>
+            <if test="emp.appointDate != null and emp.appointDate != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') like concat('%', #{exp.appointDate}, '%')
             </if>
         </where>
     </select>

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * 员工业绩
@@ -116,6 +117,10 @@ public class EmployeePerformanceVO {
      * 产品数
      */
    private Integer productTimes;
+
+   private LocalDateTime gmtCreate;
+
+   private LocalDateTime gmtModified;
 
 
 }
