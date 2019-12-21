@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.course.CourseOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.course.CourseOrder">
+        <result column="id" property="id" />
+        <result column="open_id" property="openId" />
+        <result column="out_trade_no" property="outTradeNo" />
+        <result column="pay_state" property="payState" />
+        <result column="notify_time" property="notifyTime" />
+        <result column="total_fee" property="totalFee" />
+        <result column="nickname" property="nickname" />
+        <result column="head_img" property="headImg" />
+        <result column="course_id" property="courseId" />
+        <result column="user_id" property="userId" />
+        <result column="pay_type" property="payType" />
+        <result column="ip" property="ip" />
+        <result column="study_state" property="studyState" />
+        <result column="del_state" property="delState" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMapVO" type="com.quotorcloud.quotor.academy.api.vo.course.CourseOrderVO">
+        <result column="id" property="id" />
+        <result column="open_id" property="openId" />
+        <result column="out_trade_no" property="outTradeNo" />
+        <result column="pay_state" property="payState" />
+        <result column="notify_time" property="notifyTime" />
+        <result column="total_fee" property="totalFee" />
+        <result column="nickname" property="nickname" />
+        <result column="head_img" property="headImg" />
+        <result column="course_id" property="courseId" />
+        <result column="user_id" property="userId" />
+        <result column="pay_type" property="payType" />
+        <result column="ip" property="ip" />
+        <result column="study_state" property="studyState" />
+        <result column="del_state" property="delState" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="c_img" property="courseImg"/>
+        <result column="c_name" property="courseName"/>
+        <result column="c_teacher_name" property="teacherName"/>
+        <result column="c_start_date" property="startDate"/>
+        <result column="c_end_date" property="endDate"/>
+    </resultMap>
+
+    <resultMap id="AppointmentMap" type="com.quotorcloud.quotor.academy.api.vo.course.CourseAppointmentVO">
+        <result column="id" property="id" />
+        <result column="total_fee" property="totalFee" />
+        <result column="study_state" property="studyState" />
+        <result column="name" property="name" />
+        <result column="phone" property="phone" />
+        <result column="nickname" property="nickname"/>
+        <result column="head_img" property="headImg"/>
+        <result column="c_teacher_name" property="teacherName"/>
+        <result column="c_type" property="type" />
+        <result column="c_name" property="courseName" />
+        <result column="c_start_date" property="startDate" />
+        <result column="c_end_date" property="endDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, open_id, out_trade_no, pay_state, notify_time, total_fee, nickname, head_img, course_id, user_id, pay_type, ip, study_state, del_state, gmt_create, gmt_modified
+    </sql>
+
+    <select id="selectCourseAppointPage" resultType="com.quotorcloud.quotor.academy.api.vo.course.CourseAppointmentVO"
+            resultMap="AppointmentMap">
+        select
+        co.id,co.total_fee,co.study_state,co.name,co.phone,u.name as nickname,u.head_img,
+        c.c_type,c.c_name,c.c_start_date,c.c_end_date,c.c_teacher_name
+        from bear_course_order co
+        left join bear_course c on c.c_id = co.course_id
+        left join sys_user u on u.user_id = co.user_id
+        <where>
+            del_state = 0 and co.pay_state = 1
+            and c.c_id = #{co.courseId}
+            <if test="co.teacherId != null and co.teacherId != ''">
+                and c.c_teacher_id = #{co.teacherId}
+            </if>
+            <if test="co.courseType != null and co.courseType != ''">
+                and c.c_type = #{co.courseType}
+            </if>
+            <if test="co.start != null and co.start != ''">
+                and c.c_start_date <![CDATA[>=]]> #{co.start}
+            </if>
+            <if test="co.end != null and co.end != ''">
+                and c.c_start_date <![CDATA[<=]]> #{co.end}
+            </if>
+            <if test="co.studyState != null and co.studyState != ''">
+                and co.study_state = #{co.studyState}
+            </if>
+            <if test="co.status != null and co.status != ''">
+                and c.c_status = #{co.status}
+            </if>
+        </where>
+    </select>
+
+    <select id="listCourseOrderPage" resultType="com.quotorcloud.quotor.academy.api.entity.course.CourseOrder" resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List"></include>,
+        c_img,c_name,c_teacher_name,c_start_date,c_end_date from bear_course_order co left join bear_course c on co.course_id = c.c_id
+        <where>
+            del_state = 0
+            <if test="co.teacherId != null and co.teacherId != ''">
+                and c.c_teacher_id = #{co.teacherId}
+            </if>
+            <if test="co.courseType != null and co.courseType != ''">
+                and c.c_type = #{co.courseType}
+            </if>
+            <if test="co.start != null and co.start != ''">
+                and c.c_start_date <![CDATA[>=]]> #{co.start}
+            </if>
+            <if test="co.end != null and co.end != ''">
+                and c.c_start_date <![CDATA[<=]]> #{co.end}
+            </if>
+            <if test="co.studyState != null and co.studyState != ''">
+                and co.study_state = #{co.studyState}
+            </if>
+            <if test="co.status != null and co.status != ''">
+                and c.c_status = #{co.status}
+            </if>
+            <if test="co.courseName != null and co.courseName != ''">
+                and c_name like concat('%', #{co.courseName}, '%')
+            </if>
+            <if test="co.name != null and co.name != ''">
+                and name like ('%', #{co.name}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

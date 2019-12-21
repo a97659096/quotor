@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.member.MemberIntegralMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.member.MemberIntegral">
+        <id column="mi_id" property="id" />
+        <result column="mi_member_id" property="memberId" />
+        <result column="mi_member_name" property="memberName" />
+        <result column="mi_rule_id" property="ruleId" />
+        <result column="mi_rule_name" property="ruleName" />
+        <result column="mi_rule_type" property="ruleType" />
+        <result column="mi_integral" property="integral" />
+        <result column="mi_operator_id" property="operatorId" />
+        <result column="mi_operator_name" property="operatorName" />
+        <result column="mi_gmt_create" property="gmtCreate" />
+        <result column="mi_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        mi_id, mi_member_id, mi_member_name, mi_rule_id, mi_rule_name, mi_rule_type, mi_integral, mi_operator_id, mi_operator_name, mi_gmt_create, mi_gmt_modified
+    </sql>
+
+</mapper>

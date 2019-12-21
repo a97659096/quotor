@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.condition.ConditionProMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.condition.ConditionPro">
+        <result column="p_id" property="pId" />
+        <result column="p_name" property="pName" />
+        <result column="p_shop_id" property="pShopId" />
+        <result column="p_shop_name" property="pShopName" />
+        <result column="p_unified_price" property="pUnifiedPrice" />
+        <result column="p_time_length" property="pTimeLength" />
+        <result column="p_category_id" property="pCategoryId" />
+        <result column="p_category_name" property="pCategoryName" />
+        <result column="c_subscribe" property="cSubscribe" />
+        <result column="p_number" property="pNumber" />
+        <result column="p_experience_price" property="pExperiencePrice" />
+        <result column="p_describe" property="pDescribe" />
+        <result column="p_state" property="pState" />
+        <result column="p_img" property="pImg" />
+        <result column="p_del_state" property="pDelState" />
+        <result column="p_gmt_create" property="pGmtCreate" />
+        <result column="p_gmt_modified" property="pGmtModified" />
+        <result column="p_product_type" property="pProductType" />
+        <result column="p_product_unit" property="pProductUnit" />
+        <result column="p_product_brand" property="pProductBrand" />
+        <result column="p_product_form" property="pProductForm" />
+        <result column="p_product_capacity" property="pProductCapacity" />
+        <result column="p_product_expir_date" property="pProductExpirDate" />
+        <result column="p_type" property="pType" />
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="VOBaseResultMap" type="com.quotorcloud.quotor.academy.api.vo.condition.ConditionProVO">
+        <result column="p_id" property="pId" />
+        <result column="p_name" property="pName" />
+        <result column="p_shop_id" property="shopId" />
+        <result column="p_shop_name" property="shopName" />
+        <result column="p_unified_price" property="pUnifiedPrice" />
+        <result column="p_time_length" property="pTimeLength" />
+        <result column="p_category_id" property="pCategoryId" />
+        <result column="p_category_name" property="pCategoryName" />
+        <result column="c_subscribe" property="cSubscribe" />
+        <result column="p_number" property="pNumber" />
+        <result column="p_experience_price" property="pExperiencePrice" />
+        <result column="p_describe" property="pDescribe" />
+        <result column="p_state" property="pState" />
+        <result column="p_img" property="img" />
+        <result column="p_del_state" property="pDelState" />
+        <result column="p_product_type" property="pProductType" />
+        <result column="p_product_unit" property="pProductUnit" />
+        <result column="p_product_brand" property="pProductBrand" />
+        <result column="p_product_form" property="pProductForm" />
+        <result column="p_product_capacity" property="pProductCapacity" />
+        <result column="p_product_expir_date" property="pProductExpirDate" />
+        <result column="p_type" property="pType" />
+        <collection property="mealDetails" resultMap="BaseResultMapDetail">
+        </collection>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDetail" type="com.quotorcloud.quotor.academy.api.entity.condition.ConditionSetMealDetail">
+        <result column="smd_id" property="smdId" />
+        <result column="smd_pro_id" property="smdProId" />
+        <result column="smd_content_id" property="smdContentId" />
+        <result column="smd_name" property="smdName" />
+        <result column="smd_price" property="smdPrice" />
+        <result column="smd_number" property="smdNumber" />
+        <result column="smd_discount" property="smdDiscount" />
+        <result column="smd_gmt_create" property="smdGmtCreate" />
+        <result column="smd_gmt_modified" property="smdGmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        p_id, p_name, p_shop_id, p_shop_name, p_unified_price, p_time_length, p_category_id, p_category_name,
+        c_subscribe, p_number, p_experience_price, p_describe, p_state, p_img, p_del_state,p_product_type, p_product_unit,
+        p_product_brand, p_product_form, p_product_capacity, p_product_expir_date, p_gmt_create, p_gmt_modified
+    </sql>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List_Detail">
+        smd_id, smd_pro_id, smd_content_id, smd_name, smd_price, smd_number, smd_discount, smd_gmt_create, smd_gmt_modified
+    </sql>
+
+    <select id="selectProPage" resultType="com.quotorcloud.quotor.academy.api.vo.condition.ConditionProVO" resultMap="VOBaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>,
+        <include refid="Base_Column_List_Detail"></include>
+        from bear_condition_pro cp left join bear_condition_set_meal_detail smd
+        on cp.p_id = smd.smd_pro_id
+        <where>
+            p_del_state=0
+            and p_type = #{pro.pType}
+            and p_shop_id = #{pro.shopId}
+            <if test="pro.categoryIds != null and pro.categoryIds.size > 0">
+                and p_category_id in
+                <foreach collection="pro.categoryIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="pro.pName != null and pro.pName != ''">
+                and p_name like concat('%', #{pro.pName}, '%')
+            </if>
+            <if test="pro.pNumber != null and pro.pNumber != ''">
+                and p_number like concat('%', #{pro.pNumber}, '%')
+            </if>
+            <if test="pro.pUnifiedPrice != null and pro.pUnifiedPrice != ''">
+                and p_unified_price = #{pro.pUnifiedPrice}
+            </if>
+            <if test="pro.pState != null and pro.pState != ''">
+                and p_state = #{pro.pState}
+            </if>
+        </where>
+        order by p_gmt_create desc
+    </select>
+
+</mapper>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.member.MemberMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.member.Member">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="sex" property="sex" />
+        <result column="phone" property="phone" />
+        <result column="channel" property="channel" />
+        <result column="shop_id" property="shopId" />
+        <result column="shop_name" property="shopName" />
+        <result column="birthday" property="birthday" />
+        <result column="number" property="number" />
+        <result column="age_range" property="ageRange" />
+        <result column="trace_employee" property="traceEmployee" />
+        <result column="join_date" property="joinDate" />
+        <result column="head_img" property="headImg" />
+        <result column="shop_serial_number" property="shopSerialNumber" />
+        <result column="referrer_id" property="referrerId" />
+        <result column="referre_name" property="referreName" />
+        <result column="identity_card" property="identityCard" />
+        <result column="email" property="email" />
+        <result column="qq" property="qq" />
+        <result column="wechat" property="wechat" />
+        <result column="job" property="job" />
+        <result column="address" property="address" />
+        <result column="remark" property="remark" />
+        <result column="height" property="height" />
+        <result column="weight" property="weight" />
+        <result column="blood_type" property="bloodType" />
+        <result column="taboo" property="taboo" />
+        <result column="member" property="member" />
+        <result column="del_state" property="delState" />
+        <result column="user_id" property="userId" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMapVO" type="com.quotorcloud.quotor.academy.api.vo.member.MemberVO">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="sex" property="sex" />
+        <result column="phone" property="phone" />
+        <result column="channel" property="channel" />
+        <result column="d_shop_id" property="shopId" />
+        <result column="d_shop_name" property="shopName" />
+        <result column="d_shop_head_img" property="shopHeadImg" />
+        <result column="birthday" property="birthday" />
+        <result column="number" property="number" />
+        <result column="age_range" property="ageRange" />
+        <result column="trace_employee" property="traceEmployeeDataBase" />
+        <result column="join_date" property="joinDate" />
+        <result column="head_img" property="headImg" />
+        <result column="shop_serial_number" property="shopSerialNumber" />
+        <result column="referrer_id" property="referrerId" />
+        <result column="referre_name" property="referreName" />
+        <result column="identity_card" property="identityCard" />
+        <result column="email" property="email" />
+        <result column="qq" property="qq" />
+        <result column="wechat" property="wechat" />
+        <result column="job" property="job" />
+        <result column="address" property="address" />
+        <result column="remark" property="remark" />
+        <result column="height" property="height" />
+        <result column="weight" property="weight" />
+        <result column="blood_type" property="bloodType" />
+        <result column="taboo" property="taboo" />
+        <result column="member" property="member" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        m.id, m.name, m.sex, m.phone,
+        m.channel, m.shop_id, m.shop_name,
+        m.birthday, m.number, m.age_range,
+        m.trace_employee, m.join_date, m.head_img,
+        m.shop_serial_number, m.referrer_id, m.referre_name,
+        m.identity_card, m.email, m.qq, m.wechat, m.job,
+        m.address, m.remark, m.height, m.weight,
+        m.blood_type, m.taboo, m.member, m.del_state,
+        m.user_id, m.gmt_create, m.gmt_modified
+    </sql>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Order_Column_List">
+        o_id, o_expend_number, o_order_number, o_room_id, o_room_name, o_member_arrive,
+        o_not_member_arrive, o_remark, o_member_id, o_shop_id, o_shop_name, o_kd_time, o_collect_money_time,
+        o_replacement_order, o_status, o_type, o_gmt_create, o_gmt_modified
+    </sql>
+
+    <!--分页查询客户信息-->
+    <select id="selectMemberOrderPage" resultType="com.quotorcloud.quotor.academy.api.vo.member.MemberVO"
+            resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List"></include>,
+        d.dept_id as d_shop_id, d.name as d_shop_name, d.head_img as d_shop_head_img
+        from bear_member m left join sys_dept d on m.shop_id = d.dept_id
+        <where>
+            del_state=0
+            <if test="member.member != null and member.member != ''">
+                and m.member = #{member.member}
+            </if>
+            <if test="member.birthdayRemind != null and member.birthdayRemind != ''">
+                and DATEDIFF(m.birthday,SYSDATE()) <![CDATA[<=]]> #{member.birthdayRemind}
+            </if>
+            <if test="member.channel != null and member.channel != ''">
+                and m.channel = #{member.channel}
+            </if>
+            <if test="member.name != null and member.name != ''">
+                and m.name like concat('%', #{member.name}, '%')
+            </if>
+            <if test="member.shopId != null and member.shopId != ''">
+                and m.shop_id = #{member.shopId}
+            </if>
+            <if test="member.shopFrequencyMemberIds != null and member.shopFrequencyMemberIds.size > 0">
+                and m.id in
+                <foreach collection="member.shopFrequencyMemberIds" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="member.shopNotReachShopMemberIds != null and member.shopNotReachShopMemberIds.size > 0">
+                and m.id in
+                <foreach collection="member.shopNotReachShopMemberIds" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!--按id查询客户信息-->
+    <select id="selectMemberById" resultType="com.quotorcloud.quotor.academy.api.vo.member.MemberVO" resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List"></include>
+        from bear_member
+        where id = #{id}
+    </select>
+
+</mapper>

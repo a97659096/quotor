@@ -1,0 +1,23 @@
+security:
+  oauth2:
+    client:
+      client-id: ENC(3jdNgPg8kH2ES497Db6nog==)
+      client-secret: ENC(GDpMez8kX6NOZaZbDmezyA==)
+      scope: server
+
+# 数据源
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+    url: jdbc:mysql://quotor-mysql:3306/three_bears?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowMultiQueries=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+
+# 直接放行URL
+ignore:
+  urls:
+    - /actuator/**
+    - /log/**
+web:
+  upload-path: D:/threeBearsImg/

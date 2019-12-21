@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.ListBoxMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.ListBox">
+        <id column="lb_id" property="id" />
+        <result column="lb_name" property="name" />
+        <result column="lb_tag" property="tag" />
+        <result column="lb_module" property="module" />
+        <result column="lb_shop_id" property="shopId" />
+        <result column="lb_gmt_create" property="gmtCreate"/>
+        <result column="lb_gmt_modified" property="gmtModified"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        lb_id, lb_name, lb_tag, lb_module, lb_shop_id, lb_gmt_create, lb_gmt_modified
+    </sql>
+    <select id="selectListBox" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bear_list_box
+        <where>
+            lb_shop_id = #{shopId}
+            <if test="module != null and module != ''">
+                and lb_module = #{module}
+            </if>
+            <if test="tag != null and tag != ''">
+                and lb_tag = #{tag}
+            </if>
+        </where>
+    </select>
+
+</mapper>

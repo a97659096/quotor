@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.course.TeacherMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.teacher.Teacher">
+        <id column="t_id" property="id" />
+        <result column="t_head_img" property="headImg" />
+        <result column="t_name" property="name" />
+        <result column="t_sex" property="sex" />
+        <result column="t_nationality" property="nationality" />
+        <result column="t_age" property="age" />
+        <result column="t_id_card" property="idCard" />
+        <result column="t_work_time" property="workTime" />
+        <result column="t_skill" property="skill" />
+        <result column="t_title" property="title" />
+        <result column="t_intro" property="intro" />
+        <result column="t_address" property="address" />
+        <result column="t_prize" property="prize" />
+        <result column="t_phone" property="phone" />
+        <result column="t_experience" property="experience" />
+        <result column="t_environment" property="environment" />
+        <result column="t_passport" property="passport" />
+        <result column="t_job_state" property="jobState" />
+        <result column="t_del_state" property="delState" />
+        <result column="t_gmt_create" property="gmtCreate" />
+        <result column="t_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        t_id, t_head_img, t_name, t_sex, t_nationality, t_age, t_id_card, t_work_time, t_skill, t_title, t_intro, t_address, t_prize,
+        t_phone, t_experience, t_environment, t_passport, t_job_state, t_del_state, t_gmt_create, t_gmt_modified
+    </sql>
+    <select id="selectTeacherPage" resultType="com.quotorcloud.quotor.academy.api.entity.teacher.Teacher" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bear_teacher
+        <where>
+            t_del_state = 0
+            <if test="teacher.name != null and teacher.name != ''">
+                and t_name like concat('%',#{teacher.name},'%')
+            </if>
+            <if test="teacher.phone != null and teacher.phone != ''">
+                and t_phone like concat('%',#{teacher.phone},'%')
+            </if>
+            <if test="teacher.nationality != null and teacher.nationality != ''">
+                and t_nationality like concat('%',#{teacher.nationality},'%')
+            </if>
+            <if test="teacher.jobState != null and teacher.jobState != ''">
+                and t_job_state = #{teacher.jobState}
+            </if>
+        </where>
+        order by t_job_state asc,t_gmt_create desc
+    </select>
+    <select id="selectTeacherNation" resultType="com.quotorcloud.quotor.academy.api.entity.teacher.Teacher" resultMap="BaseResultMap">
+        select t_nationality from bear_teacher
+    </select>
+
+
+</mapper>

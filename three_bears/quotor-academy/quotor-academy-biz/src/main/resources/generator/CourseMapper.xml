@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.course.CourseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.course.Course">
+        <result column="c_id" property="cId" />
+        <result column="c_name" property="cName" />
+        <result column="c_content" property="cContent" />
+        <result column="c_intro" property="cIntro" />
+        <result column="c_period" property="cPeriod" />
+        <result column="c_img" property="cImg" />
+        <result column="c_teacher_id" property="cTeacherId" />
+        <result column="c_teacher_name" property="cTeacherName" />
+        <result column="c_total_poll" property="cTotalPoll" />
+        <result column="c_surplus_poll" property="cSurplusPoll" />
+        <result column="c_join_shop_price" property="cJoinShopPrice" />
+        <result column="c_student_price" property="cStudentPrice" />
+        <result column="c_start_date" property="cStartDate" />
+        <result column="c_end_date" property="cEndDate" />
+        <result column="c_start_time" property="cStartTime" />
+        <result column="c_end_time" property="cEndTime" />
+        <result column="c_type" property="cType" />
+        <result column="c_status" property="cStatus" />
+        <result column="c_issue_time" property="cIssueTime" />
+        <result column="c_gmt_create" property="cGmtCreate" />
+        <result column="c_gmt_modified" property="cGmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        c_id, c_name, c_content, c_intro, c_period, c_img, c_teacher_id, c_teacher_name, c_total_poll, c_surplus_poll, c_join_shop_price, c_student_price, c_start_date, c_end_date, c_start_time, c_end_time, c_type, c_status, c_issue_time, c_gmt_create, c_gmt_modified
+    </sql>
+    <select id="selectCoursePage" resultType="com.quotorcloud.quotor.academy.api.entity.course.Course" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bear_course
+        <where>
+            c_del_state = 0
+            <if test="course.cName != null and course.cName != ''">
+                and c_name like concat('%', #{course.cName}, '%')
+            </if>
+            <if test="course.cTeacherName != null and course.cTeacherName != ''">
+                and c_teacher_name like concat('%', #{course.cTeacherName}, '%')
+            </if>
+            <if test="course.cStatus != null and course.cStatus != ''">
+                and c_status = #{course.cStatus}
+            </if>
+            <if test="course.cType != null and course.cType != ''">
+                and c_type = #{course.cType}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.inventory.InventoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.inventory.Inventory">
+        <result column="i_id" property="id" />
+        <result column="i_type" property="type" />
+        <result column="i_shop_id" property="shopId" />
+        <result column="i_shop_name" property="shopName" />
+        <result column="i_product_id" property="productId" />
+        <result column="p_name" property="productName" />
+        <result column="p_number" property="productNumber" />
+        <result column="i_product_amount" property="productAmount" />
+        <result column="p_product_brand" property="brandName" />
+        <result column="p_product_capacity" property="standard" />
+        <result column="p_unified_price" property="unifiedPrice" />
+        <result column="p_category_name" property="categoryName" />
+        <result column="p_inventory_warn" property="inventoryWarn" />
+        <result column="i_price" property="price" />
+        <result column="i_operator" property="operator" />
+        <result column="i_use" property="used" />
+        <result column="i_remark" property="remark" />
+        <result column="i_date" property="date" />
+        <result column="i_state" property="state" />
+        <result column="i_gmt_create" property="gmtCreate" />
+        <result column="i_gmt_modified" property="gmtModified" />
+        <result column="surplus" property="surplus"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        i_id, i_type, i_shop_id, i_shop_name, i_product_id, i_product_name, i_product_number, i_product_amount, i_brand_name, i_standard, i_price, i_operator, i_use, i_remark, i_date, i_state, i_gmt_create, i_gmt_modified
+    </sql>
+    <select id="selectByProductId" resultType="com.quotorcloud.quotor.academy.api.entity.inventory.Inventory"
+            resultMap="BaseResultMap">
+        select i_type, i_product_amount from bear_inventory
+        where i_product_id = #{productId} and i_state = 0
+    </select>
+
+    <select id="selectSumInventoryPage" resultType="com.quotorcloud.quotor.academy.api.entity.inventory.Inventory"
+            resultMap="BaseResultMap">
+        select bi.i_product_id,
+        cp.p_name,bi.i_shop_name,
+        cp.p_number, cp.p_product_brand,
+        cp.p_product_capacity, cp.p_unified_price,
+        cp.p_category_name, cp.p_inventory_warn,
+        coalesce(sum(case when bi.i_type=1 then bi.i_product_amount
+        else -bi.i_product_amount end),0) as i_product_amount from bear_inventory bi
+        left join bear_condition_pro cp on bi.i_product_id = cp.p_id
+        <where>
+            i_state = 0
+            and i_shop_id = #{inven.shopId}
+            <if test="inven.productId != null and inven.productId != ''">
+                and i_product_id like concat('%', #{inven.productId}, '%')
+            </if>
+            <if test="inven.productName != null and inven.productName != ''">
+                and i_product_name like concat('%', #{inven.productName}, '%')
+            </if>
+            <if test="inven.productNumber != null and inven.productNumber != ''">
+                and i_product_number like concat('%', #{inven.productNumber}, '%')
+            </if>
+            <if test="inven.brandName != null and inven.brandName != ''">
+                and i_brand_name = #{inven.brandName}
+            </if>
+            <if test="inven.shopName != null and inven.shopName != ''">
+                and i_shop_name like concat('%',#{inven.shopName},'%')
+            </if>
+            <if test="inven.categoryIds != null and inven.categoryIds.size > 0">
+                and cp.p_category_id in
+                <foreach collection="inven.categoryIds" index="index" item="item" open="(" close=")" separator=",">
+                    #{inven.categoryIds[${index}]}
+                </foreach>
+            </if>
+        </where>
+        GROUP BY bi.i_product_id
+        order by i_product_amount desc
+    </select>
+
+<!--    分页查询-->
+    <select id="selectInventoryPage" parameterType="com.quotorcloud.quotor.academy.api.entity.inventory.Inventory" resultType="com.quotorcloud.quotor.academy.api.entity.inventory.Inventory"
+            resultMap="BaseResultMap">
+        select i_id, i_type, i_shop_id, i_shop_name, i_product_id, cp.p_name,
+        cp.p_number, i_product_amount, cp.p_product_brand,
+        cp.p_product_capacity, cp.p_unified_price, i_operator, i_use, i_remark,
+        cp.p_category_name, cp.p_inventory_warn, i_gmt_create from bear_inventory bi
+        left join bear_condition_pro cp on bi.i_product_id = cp.p_id
+        <where>
+            i_state = 0 and
+            i_type = #{inven.type}
+            and i_shop_id = #{inven.shopId}
+            <if test="inven.productName != null and inven.productName != ''">
+                and cp.p_name like concat('%', #{inven.productName}, '%')
+            </if>
+            <if test="inven.productNumber != null and inven.productNumber != ''">
+                and cp.p_number like concat('%', #{inven.productNumber}, '%')
+            </if>
+            <if test="inven.brandName != null and inven.brandName != ''">
+                and cp.p_product_brand = #{inven.brandName}
+            </if>
+            <if test="inven.used != null and inven.used != ''">
+                and i_use = #{inven.used}
+            </if>
+            <if test="inven.start != null and inven.start != ''">
+                and DATE_FORMAT(i_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{inven.start}
+            </if>
+            <if test="inven.end != null and inven.end != ''">
+                and DATE_FORMAT(i_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{inven.end}
+            </if>
+            <if test="inven.shopName != null and inven.shopName != ''">
+                and i_shop_name like concat('%',#{inven.shopName},'%')
+            </if>
+            <if test="inven.categoryIds != null and inven.categoryIds.size > 0">
+                and cp.p_category_id in
+                <foreach collection="inven.categoryIds" index="index" item="item" open="(" close=")" separator=",">
+                    #{inven.categoryIds[${index}]}
+                </foreach>
+            </if>
+        </where>
+        order by i_gmt_create desc
+    </select>
+
+<!--    查询 type分组求总和-->
+    <select id="selectSumInventoryGroupByType" resultType="java.lang.Integer">
+        select sum(bi.i_product_amount) from bear_inventory bi
+        left join bear_condition_pro cp on bi.i_product_id = cp.p_id
+        <where>
+            i_state = 0 and
+            i_type = #{inven.type}
+            and i_shop_id = #{inven.shopId}
+            <if test="inven.productName != null and inven.productName != ''">
+                and cp.p_name like concat('%', #{inven.productName}, '%')
+            </if>
+            <if test="inven.productNumber != null and inven.productNumber != ''">
+                and cp.p_number like concat('%', #{inven.productNumber}, '%')
+            </if>
+            <if test="inven.brandName != null and inven.brandName != ''">
+                and cp.p_product_brand = #{inven.brandName}
+            </if>
+            <if test="inven.used != null and inven.used != ''">
+                and i_use = #{inven.used}
+            </if>
+            <if test="inven.start != null and inven.start != ''">
+                and i_gmt_create <![CDATA[>=]]> #{inven.start}
+            </if>
+            <if test="inven.end != null and inven.end != ''">
+                and i_gmt_create <![CDATA[<=]]> #{inven.end}
+            </if>
+            <if test="inven.shopName != null and inven.shopName != ''">
+                and i_shop_name like concat('%',#{inven.shopName},'%')
+            </if>
+            <if test="inven.categoryIds != null and inven.categoryIds.size > 0">
+                and cp.p_category_id in
+                <foreach collection="inven.categoryIds" index="index" item="item" open="(" close=")" separator=",">
+                    #{inven.categoryIds[${index}]}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+<!--    库存总和-->
+    <select id="selectSumInventory" resultType="java.lang.Integer">
+        select coalesce(sum(case when bi.i_type=1 then bi.i_product_amount
+        else -bi.i_product_amount end),0) as i_product_amount from bear_inventory bi
+        left join bear_condition_pro cp on bi.i_product_id = cp.p_id
+        <where>
+            i_state = 0
+            and i_shop_id = #{inven.shopId}
+            <if test="inven.productName != null and inven.productName != ''">
+                and cp.p_name like concat('%', #{inven.productName}, '%')
+            </if>
+            <if test="inven.productNumber != null and inven.productNumber != ''">
+                and cp.p_number like concat('%', #{inven.productNumber}, '%')
+            </if>
+            <if test="inven.brandName != null and inven.brandName != ''">
+                and cp.p_product_brand = #{inven.brandName}
+            </if>
+            <if test="inven.used != null and inven.used != ''">
+                and i_use = #{inven.used}
+            </if>
+            <if test="inven.shopName != null and inven.shopName != ''">
+                and i_shop_name like concat('%',#{inven.shopName},'%')
+            </if>
+            <if test="inven.categoryIds != null and inven.categoryIds.size > 0">
+                and cp.p_category_id in
+                <foreach collection="inven.categoryIds" index="index" item="item" open="(" close=")" separator=",">
+                    #{inven.categoryIds[${index}]}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+</mapper>

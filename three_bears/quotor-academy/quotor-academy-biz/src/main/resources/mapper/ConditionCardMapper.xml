@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.condition.ConditionCardMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.vo.condition.ConditionCardVO">
+        <id column="c_id" property="id" />
+        <result column="c_template_type_id" property="templateTypeId" />
+        <result column="c_template_type_name" property="templateTypeName" />
+        <result column="c_card_type" property="cardType" />
+        <result column="c_name" property="name" />
+        <result column="c_shop_id" property="shopId" />
+        <result column="c_shop_name" property="shopName" />
+        <result column="c_price" property="price" />
+        <result column="c_denomination" property="denomination" />
+        <result column="c_start_date_type" property="startDateType" />
+        <result column="c_start_date" property="startDate" />
+        <result column="c_end_date_type" property="endDateType" />
+        <result column="c_end_date_duration" property="endDateDuration" />
+        <result column="c_end_date_duration_unit" property="endDateDurationUnit" />
+        <result column="c_end_date" property="endDate" />
+        <result column="c_category_id" property="categoryId" />
+        <result column="c_category_name" property="categoryName" />
+        <result column="c_sell_notice" property="sellNotice" />
+        <result column="c_state" property="state" />
+        <result column="c_use_way" property="useWay" />
+        <result column="c_property" property="property" />
+        <result column="c_limit_buy" property="limitBuy" />
+        <result column="c_limit_buy_count" property="limitBuyCount" />
+        <collection property="conditionCardDetails" resultMap="BaseResultMapChildren">
+        </collection>
+    </resultMap>
+    <resultMap id="BaseResultMapChildren" type="com.quotorcloud.quotor.academy.api.entity.condition.ConditionCardDetail">
+        <result column="cd_id" property="id" />
+        <result column="cd_card_id" property="cardId" />
+        <result column="cd_detail_type" property="detailType" />
+        <result column="cd_content_id" property="contentId" />
+        <result column="cd_content_name" property="contentName" />
+        <result column="cd_content_price" property="contentPrice" />
+        <result column="cd_content" property="content" />
+        <!--        <result column="cd_count" property="count" />-->
+        <!--        <result column="cd_discount" property="discount" />-->
+        <!--        <result column="cd_give_money" property="giveMoney" />-->
+        <result column="cd_content_type" property="contentType" />
+        <!--        <result column="cd_reach_money" property="reachMoney" />-->
+        <result column="cd_gmt_create" property="gmtCreate" />
+        <result column="cd_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        c_id, c_template_type_id, c_template_type_name, c_card_type, c_name, c_shop_id, c_shop_name, c_price, c_denomination, c_start_date_type, c_start_date,
+        c_end_date_type, c_end_date_duration, c_end_date_duration_unit, c_end_date, c_category_id, c_category_name, c_sell_notice, c_state,
+        c_use_way, c_property, c_limit_buy, c_limit_buy_count, c_del_state, c_gmt_create, c_gmt_modified
+    </sql>
+    <sql id="Base_Column_List_CHILDREN">
+        cd_id, cd_card_id, cd_detail_type, cd_content_id, cd_content_name, cd_content_price,
+        cd_content, cd_count, cd_discount, cd_give_money, cd_content_type, cd_reach_money,
+        cd_gmt_create, cd_gmt_modified
+    </sql>
+
+    <select id="selectCardPage" resultType="com.quotorcloud.quotor.academy.api.vo.condition.ConditionCardVO" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>,
+        <include refid="Base_Column_List_CHILDREN"></include>
+        from bear_condition_card cc left join bear_condition_card_detail ccd
+        on cc.c_id = ccd.cd_card_id
+        <where>
+            c_del_state = 0
+            <if test="card.shopId != null and card.shopId != ''">
+                and c_shop_id = #{card.shopId}
+            </if>
+            <if test="card.state != null and card.state != ''">
+                and c_state = #{card.state}
+            </if>
+            <if test="card.name != null and card.name != ''">
+                and c_name like concat('%',#{card.name},'%')
+            </if>
+            <if test="card.categoryIds != null">
+                and c_category_id in
+                <foreach collection="card.categoryIds" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="selectCardById" resultType="com.quotorcloud.quotor.academy.api.vo.condition.ConditionCardVO" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>,
+        <include refid="Base_Column_List_CHILDREN"></include>
+        from bear_condition_card cc left join bear_condition_card_detail ccd
+        on cc.c_id = ccd.cd_card_id where cc.c_id = #{id}
+    </select>
+
+</mapper>

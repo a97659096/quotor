@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.condition.ConditionLadderCommissionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.condition.ConditionLadderCommission">
+        <id column="clc_id" property="id" />
+        <result column="clc_name" property="name" />
+        <result column="clc_commission_type" property="commissionType" />
+        <result column="clc_condition" property="condition" />
+        <result column="clc_calculate_way" property="calculateWay" />
+        <result column="clc_account_period" property="accountPeriod" />
+        <result column="clc_position_ids" property="positionIds" />
+        <result column="clc_position_names" property="positionNames" />
+        <result column="clc_shop_id" property="shopId" />
+        <result column="clc_shop_name" property="shopName" />
+        <result column="clc_rule_set" property="ruleSet" />
+        <result column="clc_gmt_create" property="gmtCreate" />
+        <result column="clc_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        clc_id, clc_name, clc_commission_type, clc_condition, clc_calculate_way, clc_account_period, clc_position_ids, clc_position_names, clc_shop_id, clc_shop_name, clc_rule_set, clc_gmt_create, clc_gmt_modified
+    </sql>
+
+</mapper>

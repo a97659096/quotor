@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.order.OrderPayWayMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.order.OrderPayWay">
+        <id column="opw_id" property="id" />
+        <result column="opw_name" property="name" />
+        <result column="opw_pay_id" property="payId" />
+        <result column="opw_type" property="type" />
+        <result column="opw_source" property="source" />
+        <result column="opw_state" property="state" />
+        <result column="opw_gmt_create" property="gmtCreate" />
+        <result column="opw_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        opw_id, opw_name, opw_pay_id, opw_type, opw_source, opw_state, opw_gmt_create, opw_gmt_modified
+    </sql>
+
+</mapper>

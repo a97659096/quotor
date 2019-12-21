@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.inn.InnTeacherOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.inn.InnTeacherOrder">
+        <id column="id" property="id" />
+        <result column="open_id" property="openId"/>
+        <result column="user_id" property="userId"/>
+        <result column="shop_id" property="shopId" />
+        <result column="shop_name" property="shopName" />
+        <result column="start_date" property="startDate" />
+        <result column="end_date" property="endDate" />
+        <result column="remark" property="remark" />
+        <result column="out_trade_no" property="outTradeNo" />
+        <result column="total_fee" property="totalFee" />
+        <result column="pay_state" property="payState" />
+        <result column="pay_time" property="payTime" />
+        <result column="notify_time" property="notifyTime" />
+        <result column="order_state" property="orderState" />
+        <result column="pay_type" property="payType" />
+        <result column="inn_teacher_id" property="innTeacherId" />
+        <result column="inn_teacher_name" property="innTeacherName" />
+        <result column="ip" property="ip" />
+        <result column="del_state" property="delState" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapAppointVO" type="com.quotorcloud.quotor.academy.api.vo.inn.InnTeacherAppointVO">
+        <id column="id" property="id" />
+        <result column="open_id" property="openId"/>
+        <result column="shop_id" property="shopId" />
+        <result column="shop_name" property="shopName"/>
+        <result column="head_img" property="shopHeadImg"/>
+        <result column="start_date" property="startDate" />
+        <result column="end_date" property="endDate" />
+        <result column="remark" property="remark" />
+        <result column="out_trade_no" property="outTradeNo" />
+        <result column="total_fee" property="totalFee" />
+        <result column="notify_time" property="notifyTime"/>
+        <result column="pay_state" property="payState"/>
+        <result column="pay_type" property="payType"/>
+        <result column="inn_teacher_id" property="innTeacherId" />
+        <result column="inn_teacher_salary" property="innTeacherSalary" />
+        <result column="inn_teacher_name" property="innTeacherName"/>
+        <result column="ip" property="ip" />
+        <result column="pay_time" property="payTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, open_id, user_id, shop_id, shop_name, start_date, end_date, remark, out_trade_no, total_fee, pay_state, pay_time, notify_time, order_state, pay_type, inn_teacher_id, inn_teacher_name, ip, del_state, gmt_create, gmt_modified
+    </sql>
+    <sql id="Base_Column_List_Appoint_vo">
+        ito.id, ito.open_id, ito.shop_id, ito.user_id, dept.name, dept.head_img, ito.start_date,
+        ito.end_date, ito.remark,
+        ito.out_trade_no, ito.total_fee, ito.notify_time, ito.pay_state, ito.pay_type,
+        ito.inn_teacher_id,ito.inn_teacher_salary, ito.inn_teacher_name, ito.ip, ito.pay_time
+    </sql>
+    <select id="listAppointTeacherPage" resultType="com.quotorcloud.quotor.academy.api.vo.inn.InnTeacherAppointVO"
+            resultMap="BaseResultMapAppointVO">
+        select
+        <include refid="Base_Column_List_Appoint_vo"></include>
+        from bear_inn_teacher_order ito left join sys_dept dept on ito.shop_id = dept.dept_id
+        <where>
+            ito.del_state = 0
+            <if test="inn.shopId != null and inn.shopId != ''">
+                and ito.shop_id = #{inn.shopId}
+            </if>
+            <if test="inn.innTeacherId != null and inn.innTeacherId != ''">
+                and ito.inn_teacher_id = #{inn.innTeacherId}
+            </if>
+            <if test="inn.start != null and inn.start != ''">
+                and ito.start_date <![CDATA[>=]]> #{inn.start}
+            </if>
+            <if test="inn.end != null and inn.end != ''">
+                and ito.start_date <![CDATA[<=]]> #{inn.end}
+            </if>
+            <if test="inn.userId != null and inn.userId != ''">
+                and ito.user_id = #{inn.userId}
+            </if>
+            <if test="inn.payState != null and inn.payState != ''">
+                and ito.pay_state = #{inn.payState}
+            </if>
+            <if test="inn.innTeacherName != null and inn.innTeacherName != ''">
+                and ito.inn_teacher_name like concat('%',#{inn.innTeacherName},'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

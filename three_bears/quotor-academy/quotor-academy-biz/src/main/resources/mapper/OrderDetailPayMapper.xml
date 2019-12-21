@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.order.OrderDetailPayMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.order.OrderDetailPay">
+        <id column="odp_id" property="id" />
+        <result column="odp_order_detail_id" property="orderDetailId" />
+        <result column="odp_pay_way_id" property="payWayId" />
+        <result column="odp_pay_way_name" property="payWayName" />
+        <result column="odp_member_card_id" property="memberCardId" />
+        <result column="odp_member_card_type_id" property="memberCardTypeId" />
+        <result column="odp_member_card_type_name" property="memberCardTypeName" />
+        <result column="odp_card_id" property="cardId" />
+        <result column="odp_pay_money" property="payMoney" />
+        <result column="odp_pay_type" property="payType" />
+        <result column="odp_pay_money_type" property="payMoneyType" />
+        <result column="odp_pay_before" property="payBefore" />
+        <result column="odp_pay_later" property="payLater" />
+        <result column="odp_shop_id" property="shopId"/>
+        <result column="odp_gmt_create" property="gmtCreate" />
+        <result column="odp_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+<!--    收入查询map-->
+    <resultMap id="OrderIncomeMap" type="com.quotorcloud.quotor.academy.api.vo.order.OrderIncomeVO">
+        <result column="opw_pay_id" property="payWayId"/>
+        <result column="opw_name" property="payWayName"/>
+        <result column="money" property="money"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        odp_id, odp_order_detail_id, odp_pay_way_id, odp_pay_way_name, odp_member_card_id,
+         odp_member_card_type_id, odp_member_card_type_name, odp_card_id, odp_pay_money, odp_pay_type,
+         odp_pay_money_type, odp_pay_before, odp_pay_later, odp_shop_id, odp_gmt_create, odp_gmt_modified
+    </sql>
+
+    <select id="listOrderDetailPay"
+            resultType="com.quotorcloud.quotor.academy.api.entity.order.OrderDetailPay"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from bear_order_detail_pay
+        <where>
+            <if test="pay.shopId != null and pay.shopId != ''">
+                and odp_shop_id = #{pay.shopId}
+            </if>
+            <if test="pay.payMoneyType != null">
+                and odp_pay_money_type = #{pay.payMoneyType}
+            </if>
+            <if test="pay.payType != null">
+                and odp_pay_type = #{pay.payType}
+            </if>
+            <if test="pay.start != null and pay.start != ''">
+                and DATE_FORMAT(odp.odp_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{pay.start}
+            </if>
+            <if test="pay.end != null and pay.end != ''">
+                and DATE_FORMAT(odp.odp_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{pay.end}
+            </if>
+        </where>
+    </select>
+
+<!--    查询收入信息，只查看业绩-->
+    <select id="listOrderIncomeVO" resultType="com.quotorcloud.quotor.academy.api.vo.order.OrderIncomeVO" resultMap="OrderIncomeMap">
+
+        select opw_pay_id, opw_name, COALESCE(sum(odp_pay_money),0) as money from bear_order_pay_way opw
+        left join
+        (select * from bear_order_detail_pay
+        <where>
+            <if test="orderpay.shopId != null and shopId != ''">
+                and odp.odp_shop_id = #{shopId}
+            </if>
+            <if test="orderpay.start != null and orderpay.start != ''">
+                and DATE_FORMAT(odp_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{orderpay.start}
+            </if>
+            <if test="orderpay.end != null and orderpay.end != ''">
+                and DATE_FORMAT(odp_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{orderpay.end}
+            </if>
+        </where>) odp
+        on opw.opw_pay_id = odp.odp_pay_way_id
+        WHERE opw.opw_type = 2  group by opw_pay_id
+    </select>
+
+</mapper>

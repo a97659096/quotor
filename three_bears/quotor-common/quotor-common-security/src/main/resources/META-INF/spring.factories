@@ -1,0 +1,7 @@
+<<<<<<< HEAD
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.quotorcloud.quotor.common.security.service.QuotorUserDetailsServiceImpl
+=======
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.quotorcloud.quotor.common.security.service.QuotorUserDetailsServiceImpl
+>>>>>>> f071e21517ccad8511bbc9a1897d878cba71684a
