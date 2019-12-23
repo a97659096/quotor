@@ -7,9 +7,11 @@ import com.quotorcloud.quotor.academy.api.dto.member.MemberDTO;
 import com.quotorcloud.quotor.academy.api.entity.member.MemberCard;
 import com.quotorcloud.quotor.academy.api.entity.order.OrderDetailPay;
 import com.quotorcloud.quotor.academy.service.expend.ExpendService;
+import com.quotorcloud.quotor.academy.service.homepage.HomePageService;
 import com.quotorcloud.quotor.academy.service.member.MemberCardService;
 import com.quotorcloud.quotor.academy.service.member.MemberService;
 import com.quotorcloud.quotor.academy.service.order.OrderDetailPayService;
+import com.quotorcloud.quotor.academy.service.order.OrderService;
 import com.quotorcloud.quotor.common.core.util.DateTimeUtil;
 import com.quotorcloud.quotor.common.core.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,9 @@ public class HomePageController {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private HomePageService homePageService;
 
     /**
      * 小程序首页
@@ -70,6 +75,8 @@ public class HomePageController {
         detailPay.setStart(DateTimeUtil.localDateToString(LocalDate.now()));
         JSONObject totalIncome = orderDetailPayService.countDailyTotalIncome(detailPay);
 
+        JSONObject guest = homePageService.onceGuest(shopId);
+
         JSONObject jsonObject = new JSONObject();
 
         for (String key:totalCardMargin.keySet()){
@@ -92,7 +99,21 @@ public class HomePageController {
             jsonObject.put(key, totalIncome.get(key));
         }
 
+        for (String key:guest.keySet()){
+            jsonObject.put(key, guest.get(key));
+        }
+
         return R.ok(jsonObject);
+    }
+
+    /**
+     * 查询加盟商首页上方到店客人、新增会员、预约人数
+     * @param shopId
+     * @return
+     */
+    @GetMapping("applet/guest")
+    public R listOnceTheGuest(String shopId){
+        return R.ok(homePageService.onceGuest(shopId));
     }
 
     /**

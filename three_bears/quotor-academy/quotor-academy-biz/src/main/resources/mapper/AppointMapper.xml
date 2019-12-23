@@ -104,4 +104,15 @@
         </where>
     </select>
 
+
+    <select id="selectAppointCounts" resultType="java.lang.Integer">
+        select count(*) from bear_appoint
+        <where>
+            appoint_date = date_format(now(),'%Y-%m-%d')
+            <if test="shopId != null and shopId != ''">
+                and shop_id = #{shopId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

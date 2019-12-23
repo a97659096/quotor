@@ -42,6 +42,12 @@ public class MemberIntegral implements Serializable {
     private String memberName;
 
     /**
+     * 客户电话
+     */
+    @TableField(value = "mi_member_phone")
+    private String memberPhone;
+
+    /**
      * 积分规则标识
      */
     @TableField(value = "mi_rule_id")
@@ -66,10 +72,22 @@ public class MemberIntegral implements Serializable {
     private String content;
 
     /**
+     * 变更前
+     */
+    @TableField(value = "mi_integral_before")
+    private Integer integralBefore;
+
+    /**
      * 产生积分
      */
     @TableField(value = "mi_integral")
     private Integer integral;
+
+    /**
+     * 变更后
+     */
+    @TableField(value = "mi_integral_later")
+    private Integer integralLater;
 
     /**
      * 操作人标识
@@ -82,6 +100,10 @@ public class MemberIntegral implements Serializable {
      */
     @TableField(value = "mi_operator_name")
     private String operatorName;
+
+    private String shopId;
+
+    private String shopName;
 
     /**
      * 创建时间

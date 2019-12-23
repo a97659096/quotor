@@ -25,6 +25,8 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMapVO" type="com.quotorcloud.quotor.academy.api.vo.course.CourseOrderVO">
         <result column="id" property="id" />
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
         <result column="open_id" property="openId" />
         <result column="out_trade_no" property="outTradeNo" />
         <result column="pay_state" property="payState" />
@@ -64,7 +66,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, open_id, out_trade_no, pay_state, notify_time, total_fee, nickname, head_img, course_id, user_id, pay_type, ip, study_state, del_state, gmt_create, gmt_modified
+        id, name, phone, open_id, out_trade_no, pay_state, notify_time, total_fee, nickname, head_img, course_id, user_id, pay_type, ip, study_state, del_state, gmt_create, gmt_modified
     </sql>
 
     <select id="selectCourseAppointPage" resultType="com.quotorcloud.quotor.academy.api.vo.course.CourseAppointmentVO"

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.order.OrderLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.order.OrderLog">
+        <id column="ol_id" property="id" />
+        <result column="ol_order_no" property="orderNo" />
+        <result column="ol_type" property="type" />
+        <result column="ol_operational_event" property="operationalEvent" />
+        <result column="ol_operation_user_id" property="operationUserId" />
+        <result column="ol_shop_id" property="shopId" />
+        <result column="ol_shop_name" property="shopName" />
+        <result column="ol_gmt_create" property="gmtCreate" />
+        <result column="ol_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ol_id, ol_order_no, ol_type, ol_operational_event, ol_operation_user_id, ol_shop_id, ol_shop_name, ol_gmt_create, ol_gmt_modified
+    </sql>
+
+</mapper>

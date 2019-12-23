@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.quotorcloud.quotor.academy.api.dto.expend.ExpendDTO;
 import com.quotorcloud.quotor.academy.api.entity.expend.Expend;
 import com.quotorcloud.quotor.academy.api.entity.expend.ExpendType;
+import com.quotorcloud.quotor.academy.api.vo.expend.ExpendSumVO;
 import com.quotorcloud.quotor.academy.api.vo.expend.ExpendVO;
 import com.quotorcloud.quotor.academy.mapper.expend.ExpendMapper;
 import com.quotorcloud.quotor.academy.service.expend.ExpendService;
@@ -212,8 +213,9 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
      * @param date
      * @return
      */
-    public JSONObject selectWXStatement(Integer dateType) {
-        ExpendDTO expendDTO = new ExpendDTO();
+    @Override
+    public JSONObject selectWXStatement(ExpendDTO expendDTO) {
+        Integer dateType = expendDTO.getDateType();
         switch (dateType){
             case 1:
                 expendDTO.setStart(DateTimeUtil.getWeekStartDate());
@@ -226,6 +228,7 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
                 break;
         }
         List<Expend> expends = expendMapper.selectExpendPage(expendDTO);
+        List<ExpendSumVO> expendsGroupByPayWay = expendMapper.selectExpendGroupByPayWay(expendDTO);
         JSONObject jsonObject = new JSONObject();
         List<String> x = new LinkedList<>();
         List<BigDecimal> y = new LinkedList<>();
@@ -252,6 +255,7 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
         }else {
             //分组根据月份
             Map<String, List<Expend>> map = new HashMap<>();
+
             for (Expend expend:expends){
                 String date = DateTimeUtil.localDatetimeToMonth(expend.getGmtCreate());
                 if(map.keySet().contains(date)){
@@ -261,6 +265,7 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
                     map.put(date, expendList);
                 }
             }
+
             Set<String> strings = new HashSet<>(map.keySet());
             for (String date:strings){
                 BigDecimal money = map.get(date).stream().map(Expend::getEMoney).reduce(BigDecimal::add).get();
@@ -269,9 +274,18 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
                 totalMoney = totalMoney.add(money);
             }
         }
+
+        for (ExpendSumVO expendSumVO : expendsGroupByPayWay){
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("color", expendSumVO.getColor());
+            expendSumVO.setItemStyle(jsonObject1);
+        }
         jsonObject.put("x",x);
         jsonObject.put("y",y);
         jsonObject.put("total", totalMoney);
+        jsonObject.put("annular", expendsGroupByPayWay);
+        jsonObject.put("annularList", expendsGroupByPayWay.stream().map(ExpendSumVO::getName)
+                .collect(Collectors.toList()));
         return jsonObject;
     }
 

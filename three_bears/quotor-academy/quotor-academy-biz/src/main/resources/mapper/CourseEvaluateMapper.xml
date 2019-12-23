@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.CourseEvaluateMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.vo.expend.ExpendSumVO">
+        <result column="ce_id" property="id" />
+        <result column="ce_course_id" property="courseId" />
+        <result column="ce_score" property="score" />
+        <result column="ce_content" property="content" />
+        <result column="ce_user_id" property="userId" />
+        <result column="ce_type" property="type" />
+        <result column="ce_gmt_create" property="gmtCreate" />
+        <result column="ce_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ce_id, ce_course_id, ce_score, ce_content, ce_user_id, ce_type, ce_gmt_create, ce_gmt_modified
+    </sql>
+
+</mapper>

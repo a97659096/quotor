@@ -20,6 +20,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.message.submail.sdk.config.AppConfig;
+import com.message.submail.sdk.lib.MessageSend;
+import com.message.submail.sdk.utils.ConfigLoader;
 import com.quotorcloud.quotor.admin.api.dto.UserDTO;
 import com.quotorcloud.quotor.admin.api.entity.SysUser;
 import com.quotorcloud.quotor.admin.api.vo.UserVO;
@@ -27,10 +30,12 @@ import com.quotorcloud.quotor.admin.service.SysUserService;
 import com.quotorcloud.quotor.common.core.constant.FileConstants;
 import com.quotorcloud.quotor.common.core.util.ComUtil;
 import com.quotorcloud.quotor.common.core.util.R;
+import com.quotorcloud.quotor.common.core.util.RedisUtil;
 import com.quotorcloud.quotor.common.log.annotation.SysLog;
 import com.quotorcloud.quotor.common.security.annotation.Inner;
 import com.quotorcloud.quotor.common.security.util.SecurityUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +52,9 @@ import java.util.List;
 public class UserController {
 
 	private final SysUserService userService;
+
+//	@Autowired
+//	private RedisUtil redisUtil;
 
 	/**
 	 * 获取当前用户全部信息
@@ -143,6 +151,18 @@ public class UserController {
 	@PreAuthorize("@pms.hasPermission('sys_user_edit')")
 	public R updateUser(UserDTO userDto) {
 		return R.ok(userService.updateUser(userDto));
+	}
+
+	/**
+	 * 获取验证码
+	 * @return
+	 */
+	@GetMapping("auth-code")
+	public void getAuthCode(String phone, String userId){
+		AppConfig config = ConfigLoader.load(ConfigLoader.ConfigType.Message);
+		MessageSend submail = new MessageSend(config);
+		submail.addTo(phone);
+		submail.addContent("");
 	}
 
 	/**

@@ -103,4 +103,9 @@ public class ExpendDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime eGmtCreate;
 
+    /**
+     * 1周，2月，3年
+     */
+    private Integer dateType;
+
 }

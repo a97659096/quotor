@@ -22,4 +22,11 @@ public interface AppointMapper extends BaseMapper<Appoint> {
     IPage<AppointVO> selectAppointPage(Page<AppointVO> page,
                                        @Param("appoint") AppointVO appointVO);
     List<AppointVO> selectAppoint(@Param("appoint") AppointVO appointVO);
+
+    /**
+     * 查询今日预约数
+     * @param shopId
+     * @return
+     */
+    Integer selectAppointCounts(String shopId);
 }

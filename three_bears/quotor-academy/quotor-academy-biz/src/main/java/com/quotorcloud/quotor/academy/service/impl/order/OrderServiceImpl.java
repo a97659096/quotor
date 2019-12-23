@@ -8,12 +8,10 @@ import com.google.common.collect.Maps;
 import com.quotorcloud.quotor.academy.api.dto.order.OrderDTO;
 import com.quotorcloud.quotor.academy.api.entity.condition.ConditionCardDetail;
 import com.quotorcloud.quotor.academy.api.entity.condition.ConditionContentCommission;
+import com.quotorcloud.quotor.academy.api.entity.condition.ConditionPro;
 import com.quotorcloud.quotor.academy.api.entity.employee.OrderDetailServiceStaff;
 import com.quotorcloud.quotor.academy.api.entity.member.*;
-import com.quotorcloud.quotor.academy.api.entity.order.Order;
-import com.quotorcloud.quotor.academy.api.entity.order.OrderDetail;
-import com.quotorcloud.quotor.academy.api.entity.order.OrderDetailPay;
-import com.quotorcloud.quotor.academy.api.entity.order.OrderPayWay;
+import com.quotorcloud.quotor.academy.api.entity.order.*;
 import com.quotorcloud.quotor.academy.api.vo.condition.ConditionCardVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.quotorcloud.quotor.academy.api.vo.member.MemberCardVO;
@@ -23,18 +21,17 @@ import com.quotorcloud.quotor.academy.api.vo.order.OrderWebVO;
 import com.quotorcloud.quotor.academy.mapper.appoint.AppointRoomMapper;
 import com.quotorcloud.quotor.academy.mapper.condition.ConditionCardMapper;
 import com.quotorcloud.quotor.academy.mapper.condition.ConditionContentCommissionMapper;
+import com.quotorcloud.quotor.academy.mapper.condition.ConditionProMapper;
 import com.quotorcloud.quotor.academy.mapper.member.*;
 import com.quotorcloud.quotor.academy.mapper.order.OrderMapper;
 import com.quotorcloud.quotor.academy.service.employee.OrderDetailServiceStaffService;
 import com.quotorcloud.quotor.academy.service.member.MemberCardDetailService;
-import com.quotorcloud.quotor.academy.service.order.OrderDetailPayService;
-import com.quotorcloud.quotor.academy.service.order.OrderDetailService;
-import com.quotorcloud.quotor.academy.service.order.OrderPayWayService;
-import com.quotorcloud.quotor.academy.service.order.OrderService;
+import com.quotorcloud.quotor.academy.service.order.*;
 import com.quotorcloud.quotor.academy.util.OrderUtil;
 import com.quotorcloud.quotor.academy.util.ShopSetterUtil;
 import com.quotorcloud.quotor.common.core.constant.CommonConstants;
 import com.quotorcloud.quotor.common.core.util.ComUtil;
+import com.quotorcloud.quotor.common.core.util.DateTimeUtil;
 import com.quotorcloud.quotor.common.security.service.QuotorUser;
 import com.quotorcloud.quotor.common.security.util.SecurityUtils;
 import org.springframework.beans.BeanUtils;
@@ -90,6 +87,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private ConditionCardMapper conditionCardMapper;
 
     @Autowired
+    private ConditionProMapper conditionProMapper;
+
+    @Autowired
     private OrderPayWayService orderPayWayService;
 
     @Autowired
@@ -106,6 +106,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderLogService orderLogService;
 
     /**
      * 按会员id查询消费记录
@@ -199,31 +202,65 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     @Transactional
     public Boolean saveOrderPro(Order order) {
+
         //设置订单基础信息
         setOrderBasicsInfo(order);
         //订单类型设置为产品项目
         order.setType(1);
         //保存订单信息表
         this.save(order);
+
+        QuotorUser user = SecurityUtils.getUser();
+
+        OrderLog orderLog = new OrderLog();
+        orderLog.setType("订单收银");
+        orderLog.setOperationUserId(String.valueOf(user.getId()));
+        orderLog.setOrderNo(order.getOrderNumber());
+        orderLog.setShopId(String.valueOf(user.getDeptId()));
+        orderLog.setShopName(user.getDeptName());
+
+
+        //判断是否为补单
+        if(order.getReplacementOrder().equals(1)){
+            orderLog.setType("补单");
+            orderLog.setOperationalEvent("补了一笔" + DateTimeUtil.localDatetimeToString(order.getReplacementOrderTime()) + "的单子");
+        }
+
         BigDecimal money = new BigDecimal(0); //订单支付的总金额
         //订单中的内容名称
         List<String> content = new ArrayList<>();
         //获取订单详情
         if(!ComUtil.isEmpty(order.getOrderDetails())){
             List<OrderDetail> orderDetails = order.getOrderDetails();
+            //日志记录stringBuilder拼接
+            StringBuilder stringBuilder = new StringBuilder();
             for (OrderDetail orderDetail : orderDetails){
                 //设置订单标识
                 orderDetail.setOrderId(order.getId());
+
+                if(!ComUtil.isEmpty(orderDetail.getContentId())){
+                    ConditionPro conditionPro = conditionProMapper.selectById(orderDetail.getContentId());
+                    if(!orderDetail.getSubtotal().equals(conditionPro.getPExperiencePrice())){
+                        stringBuilder.append("修改了:【").append(conditionPro.getPName()).append("】小计")
+                                .append(conditionPro.getPUnifiedPrice()).append("->").append(orderDetail.getSubtotal());
+                    }
+                    //                    orderLog.setType();
+                }
+
                 orderDetailService.save(orderDetail);
                 //设置支付和员工业绩
                 setPaywayAndStaff(orderDetail, money);
                 content.add(orderDetail.getContentName());
             }
-
+            //记录日志
+            if(!ComUtil.isEmpty(stringBuilder)){
+                orderLog.setOperationalEvent(stringBuilder.toString());
+            }
             //设置积分
             setIntegral(order, money, content);
-
         }
+        //插入日志信息
+        orderLogService.save(orderLog);
         return Boolean.TRUE;
     }
 
@@ -299,18 +336,25 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             Integer giveIntegral = memberIntegralRule.getGiveIntegral();
             //算出积分
             Integer integral = multiple*giveIntegral;
+            Integer oldIntegral = memberIntegralMapper.selectMemberIntegral(memberVO.getId());
             //插入操作
+            //记录订单日志
             MemberIntegral memberIntegral = new MemberIntegral();
             memberIntegral.setContent("购买:" + Joiner.on(CommonConstants.SEPARATOR).join(content));
             memberIntegral.setMemberId(memberVO.getId());
             memberIntegral.setMemberName(memberVO.getName());
+            memberIntegral.setMemberPhone(memberVO.getPhone());
             memberIntegral.setRuleId(memberIntegralRule.getId());
             memberIntegral.setRuleName(memberIntegralRule.getName());
             //现金消费
             memberIntegral.setRuleType(1);
+            memberIntegral.setIntegralBefore(oldIntegral);
             memberIntegral.setIntegral(integral);
+            memberIntegral.setIntegralLater(oldIntegral+integral);
             memberIntegral.setOperatorId(String.valueOf(user.getId()));
             memberIntegral.setOperatorName(user.getName());
+            memberIntegral.setShopId(String.valueOf(user.getDeptId()));
+            memberIntegral.setShopName(user.getDeptName());
             //全部客户
             if(applyMember.equals(1)){
                 memberIntegralMapper.insert(memberIntegral);

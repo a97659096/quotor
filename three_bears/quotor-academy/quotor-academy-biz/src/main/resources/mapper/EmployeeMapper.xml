@@ -49,7 +49,8 @@
         <result column="e_name" property="employeeName"/>
         <result column="e_head_img" property="employeeHeadImg"/>
         <result column="e_position_name" property="employeePosition"/>
-        <result column="ss_performance" property="performance"/>
+        <result column="e_shop_id" property="shopId"/>
+<!--        <result column="ss_performance" property="performance"/>-->
         <result column="card_consume_money" property="cardConsumeMoney"/>
         <result column="card_consume_times" property="cardConsumeTimes"/>
         <result column="ss_commission" property="allotCommission"/>
@@ -57,6 +58,8 @@
         <result column="od_content_name" property="contentName"/>
         <result column="od_content_quantity" property="contentTimes"/>
         <result column="od_content_type" property="contentType"/>
+        <result column="odp_pay_money" property="performance"/>
+        <result column="ss_gmt_create" property="gmtCreate"/>
     </resultMap>
 
     <resultMap id="EmployeePerformanceMapAll" type="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeVO">
@@ -100,6 +103,20 @@
         <result column="od_gmt_modified" property="gmtModified" />
     </resultMap>
 
+    <resultMap id="UserVOMap" type="com.quotorcloud.quotor.academy.api.vo.user.UserVO">
+        <result column="user_id" property="userId"/>
+        <result column="avater" property="headImg"/>
+        <result column="e_position_name" property="positionName"/>
+        <result column="phone" property="phone"/>
+        <result column="name" property="name"/>
+        <result column="e_job_number" property="jobNumber"/>
+        <result column="e_position_id" property="positionId"/>
+        <result column="e_id" property="employeeId"/>
+        <result column="dept_id" property="shopId"/>
+        <result column="dept_name" property="shopName"/>
+        <result column="username" property="username"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         e_id, e_name, e_sex, e_phone, e_email, e_join_date,
@@ -112,8 +129,8 @@
 
     <!--    查询员工绩效sql-->
     <sql id="Employee_Performance_List">
-        e_id,e_name,e_head_img,e_position_name, ss_performance,od_content_id,od_content_name,
-        od_content_quantity,od_content_type
+        e_id,e_name,e_head_img,e_position_name,e_shop_id, odp_pay_money ,od_content_id,od_content_name,
+        od_content_quantity,od_content_type,ss_gmt_create
     </sql>
 
     <select id="selectEmployeePositionAndHeadTitle" resultType="com.quotorcloud.quotor.academy.api.entity.employee.Employee" resultMap="BaseResultMap">
@@ -150,7 +167,7 @@
         e_id,e_name,e_head_img,e_job_number, e_sex, e_shop_id, e_position_name,
         <include refid="Order_Service_Staff_List"></include>,
         <include refid="Order_Detail"></include>
-        from bear_employee e left join bear_order_detail_service_staff ss on e.id = ss.ss_employee_id
+        from bear_employee e right join bear_order_detail_service_staff ss on e.e_id = ss.ss_employee_id
         left join bear_order_detail od on ss.ss_order_detail_id = od.od_id
         <where>
             <if test="emp.shopId != null and emp.shopId != ''">
@@ -173,35 +190,47 @@
             resultType="com.quotorcloud.quotor.academy.api.vo.employee.EmployeePerformanceVO"
             resultMap="EmployeePerformanceMap">
         select
-        <include refid="Employee_Performance_List"></include>,
-        (case ss_card_expend_unit when 1 then ss_card_expend else 0) as card_consume_money,
-        (case ss_card_expend_unit when 2 then ss_card_expend else 0) as card_consume_times,
-        ss_commission
-        from bear_employee e left join bear_order_detail_service_staff ss on e.id = ss.ss_employee_id
-        left join bear_order_detail od on ss.ss_order_detail_id = od.od_id
+        <include refid="Employee_Performance_List">
+        </include>
+        from bear_employee e
+        right join bear_order_detail_service_staff ss
+        on e.e_id = ss.ss_employee_id
+        left join bear_order_detail od
+        on ss.ss_order_detail_id = od.od_id
+        left join bear_order_detail_pay odp
+        on od.od_id = odp.odp_order_detail_id
         <where>
+            odp.odp_pay_type=2
             <if test="emp.shopId != null and emp.shopId != ''">
-                e.e_shop_id = #{emp.shopId}
+                and e.e_shop_id = #{emp.shopId}
+            </if>
+            <if test="emp.shopName != null and emp.shopName != ''">
+                and e.e_shop_name like concat('%',#{emp.shopId},'%')
             </if>
             <if test="emp.id != null and emp.id != ''">
                 and e.e_id = #{emp.id}
-            </if>
-            <if test="emp.date != null and emp.date != ''">
-                and
             </if>
             <if test="emp.contentType != null">
                 and od.od_content_type = #{emp.contentType}
             </if>
             <if test="emp.start != null and emp.start != ''">
-                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{exp.start}
+                and DATE_FORMAT(ss_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{emp.start}
             </if>
             <if test="emp.end != null and emp.end != ''">
-                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{exp.end}
+                and DATE_FORMAT(ss_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{emp.end}
             </if>
             <if test="emp.appointDate != null and emp.appointDate != ''">
-                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') like concat('%', #{exp.appointDate}, '%')
+                and DATE_FORMAT(ss_gmt_create,'%Y-%m-%d') like concat('%', #{emp.appointDate}, '%')
             </if>
         </where>
+    </select>
+
+    <select id="selectUserInfoByUserId"
+            resultType="com.quotorcloud.quotor.academy.api.vo.user.UserVO" resultMap="UserVOMap">
+        select user_id, name, username, phone, avatar, dept_id, dept_name, e_job_number, e_position_id,
+        e_position_name,e_id
+        from sys_user u left join bear_employee e
+        on u.user_id = e.e_user_id where user_id = #{userId}
     </select>
 
 </mapper>

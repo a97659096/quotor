@@ -20,6 +20,12 @@
         <result column="e_gmt_create" property="gmtCreate" />
         <result column="e_gmt_modified" property="gmtModified" />
     </resultMap>
+    
+    <resultMap id="ExpendTotalVoMap" type="com.quotorcloud.quotor.academy.api.vo.expend.ExpendSumVO">
+        <result column="name" property="name"/>
+        <result column="value" property="value"/>
+        <result column="color" property="color"/>
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
@@ -69,25 +75,33 @@
         order by e_gmt_create desc
     </select>
 
-<!--    根据-->
+<!--    根据 支出方式分组并查询-->
     <select id="selectExpendGroupByPayWay"
-            resultType="com.quotorcloud.quotor.academy.api.entity.expend.Expend" resultMap="BaseResultMap">
-        select e_pay_way, sum(e_money) from bear_expend
+            resultType="com.quotorcloud.quotor.academy.api.entity.expend.Expend" resultMap="ExpendTotalVoMap">
+        select et.id as type_id, et.color as color, et.name as name, coalesce(sum(e_money), 0) as value
+        from bear_expend_type et
+        left join
+        (select * from bear_expend
         <where>
             e_del_state = 0
+            <if test="exp.start != null and exp.start != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{exp.start}
+            </if>
             <if test="exp.eShopId != null and exp.eShopId != ''">
                 and e_shop_id = #{exp.eShopId}
             </if>
-            <if test='exp.nearDate == "1"'>
-                and e_gmt_create > DATE_SUB(CURDATE(), 1 week)
+            <if test="exp.eShopName != null and exp.eShopName != ''">
+                and e_shop_name = #{exp.eShopName}
             </if>
-            <if test='exp.nearDate == "2"'>
-                and e_gmt_create > DATE_SUB(CURDATE(), 1 month)
+            <if test="exp.end != null and exp.end != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{exp.end}
             </if>
-            <if test='exp.nearDate == "3"'>
-                and e_gmt_create > DATE_SUB(CURDATE(), 1 year)
+            <if test="exp.appointDate != null and exp.appointDate != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') like concat('%', #{exp.appointDate}, '%')
             </if>
         </where>
+        ) e on e.e_expend_type_id = et.id
+        group by type_id
     </select>
 
 

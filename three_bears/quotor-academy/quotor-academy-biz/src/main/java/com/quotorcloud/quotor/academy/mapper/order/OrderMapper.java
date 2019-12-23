@@ -43,4 +43,11 @@ public interface OrderMapper extends BaseMapper<Order> {
      */
     List<String> selectNotReachShopDays(@Param("days") Integer days);
 
+    /**
+     * 查询到客数量
+     * @param shopId
+     * @return
+     */
+    Integer selectToStoreGuest(String shopId);
+
 }

@@ -1927,11 +1927,11 @@ public class DateTimeUtil {
     }
 
     public static String localDatetimeToString(LocalDateTime localDateTime){
-        return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDateTime.now());
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(localDateTime);
     }
 
     public static String localDatetimeToMonth(LocalDateTime localDateTime){
-        return DateTimeFormatter.ofPattern("yyyy-MM").format(LocalDateTime.now());
+        return DateTimeFormatter.ofPattern("yyyy-MM").format(localDateTime);
     }
 
     //判断选择的日期是否是本周

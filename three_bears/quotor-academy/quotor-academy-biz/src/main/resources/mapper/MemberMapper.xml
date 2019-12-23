@@ -138,4 +138,15 @@
         where id = #{id}
     </select>
 
+
+    <select id="selectNewMemberCounts" resultType="java.lang.Integer">
+        select count(*) from bear_member
+        <where>
+            join_date = date_format(now(),'%Y-%m-%d')
+            <if test="shopId != null and shopId != ''">
+                and shop_id = #{shopId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

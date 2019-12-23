@@ -12,11 +12,11 @@ import com.google.common.collect.Maps;
 import com.quotorcloud.quotor.academy.api.dto.employee.EmployeeDTO;
 import com.quotorcloud.quotor.academy.api.entity.employee.Employee;
 import com.quotorcloud.quotor.academy.api.entity.employee.OrderDetailServiceStaff;
-import com.quotorcloud.quotor.academy.api.entity.expend.Expend;
 import com.quotorcloud.quotor.academy.api.entity.order.OrderDetail;
 import com.quotorcloud.quotor.academy.api.vo.Pager;
 import com.quotorcloud.quotor.academy.api.vo.employee.EmployeePerformanceVO;
 import com.quotorcloud.quotor.academy.api.vo.employee.EmployeeVO;
+import com.quotorcloud.quotor.academy.api.vo.user.UserVO;
 import com.quotorcloud.quotor.academy.mapper.employee.EmployeeMapper;
 import com.quotorcloud.quotor.academy.mapper.employee.OrderDetailServiceStaffMapper;
 import com.quotorcloud.quotor.academy.service.employee.EmployeeService;
@@ -118,6 +118,44 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      */
     @Override
     public JSONObject selectEmployeePerformanceGroupByShopId(EmployeeDTO employeeDTO) {
+
+        List<EmployeePerformanceVO> employeePerformanceVOS = employeeMapper.selectEmployeePerformance(employeeDTO);
+        Map<String, List<EmployeePerformanceVO>> performanceByShopIdMap = employeePerformanceVOS.stream()
+                .collect(Collectors.groupingBy(EmployeePerformanceVO::getShopId));
+        JSONObject jsonObject = new JSONObject();
+        getEcharts(employeeDTO, employeePerformanceVOS, jsonObject);
+        R r = remoteDeptService.listDeptAll();
+        List<SysDept> sysDepts = JSON.parseArray(JSON.toJSONString(r.getData()), SysDept.class);
+        Map<Integer, SysDept> deptById = Maps.uniqueIndex(sysDepts, SysDept::getDeptId);
+
+        List<JSONObject> jsonObjects = new ArrayList<>();
+        for (String shopId:performanceByShopIdMap.keySet()){
+
+            JSONObject json = new JSONObject();
+            List<EmployeePerformanceVO> employeePerformances = performanceByShopIdMap.get(shopId);
+            BigDecimal performanceByShopId = employeePerformances.stream()
+                    .map(EmployeePerformanceVO::getPerformance).reduce(BigDecimal::add).get();
+
+            json.put("shopId", shopId);
+            json.put("shopName", deptById.get(Integer.valueOf(shopId)).getName());
+            json.put("shopHeadImg", deptById.get(Integer.valueOf(shopId)).getHeadImg());
+            json.put("performance", performanceByShopId);
+            jsonObjects.add(json);
+
+        }
+        jsonObject.put("list", jsonObjects);
+        return jsonObject;
+    }
+
+    /**
+     * 获取echarts图
+     * @param dateType
+     * @param employeePerformanceVOS
+     * @param jsonObject
+     */
+    private void getEcharts(EmployeeDTO employeeDTO, List<EmployeePerformanceVO> employeePerformanceVOS, JSONObject jsonObject) {
+
+        Integer dateType = employeeDTO.getDateType();
         switch (dateType){
             case 1:
                 employeeDTO.setStart(DateTimeUtil.getWeekStartDate());
@@ -129,15 +167,10 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
                 employeeDTO.setAppointDate(DateTimeUtil.localDateToString(LocalDate.now()).substring(0,4));
                 break;
         }
-        List<EmployeePerformanceVO> employeePerformanceVOS = employeeMapper.selectEmployeePerformance(employeeDTO);
-        Map<String, List<EmployeePerformanceVO>> performanceByShopIdMap = employeePerformanceVOS.stream()
-                .collect(Collectors.groupingBy(EmployeePerformanceVO::getShopId));
 
         List<String> x = new LinkedList<>();
         List<BigDecimal> y = new LinkedList<>();
         BigDecimal totalMoney = new BigDecimal(0);
-
-        JSONObject jsonObject = new JSONObject();
         if(dateType.equals(1) || dateType.equals(2)){
             //分组根据日期
             Map<String, List<EmployeePerformanceVO>> map = new HashMap<>();
@@ -182,27 +215,6 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         jsonObject.put("x", x);
         jsonObject.put("y", y);
         jsonObject.put("total", totalMoney);
-        R r = remoteDeptService.listDeptAll();
-        List<SysDept> sysDepts = JSON.parseArray(JSON.toJSONString(r.getData()), SysDept.class);
-        Map<Integer, SysDept> deptById = Maps.uniqueIndex(sysDepts, SysDept::getDeptId);
-
-        List<JSONObject> jsonObjects = new ArrayList<>();
-        for (String shopId:performanceByShopIdMap.keySet()){
-
-            JSONObject json = new JSONObject();
-            List<EmployeePerformanceVO> employeePerformances = performanceByShopIdMap.get(shopId);
-            BigDecimal performanceByShopId = employeePerformances.stream()
-                    .map(EmployeePerformanceVO::getPerformance).reduce(BigDecimal::add).get();
-
-            json.put("shopId", shopId);
-            json.put("shopName", deptById.get(shopId).getName());
-            json.put("shopHeadImg", deptById.get(shopId).getHeadImg());
-            json.put("performance", performanceByShopId);
-            jsonObjects.add(json);
-
-        }
-        jsonObject.put("list", jsonObjects);
-        return jsonObject;
     }
 
     /**
@@ -211,8 +223,13 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      * @return
      */
     @Override
-    public IPage<EmployeePerformanceVO> selectEmployeePerFormance(Page page, EmployeeDTO employeeDTO) {
-        return employeeMapper.selectEmployeePerformance(page, employeeDTO);
+    public JSONObject selectEmployeePerFormance(EmployeeDTO employeeDTO) {
+        List<EmployeePerformanceVO> employeePerformanceVOs =
+                employeeMapper.selectEmployeePerformance(employeeDTO);
+        JSONObject jsonObject = new JSONObject();
+        getEcharts(employeeDTO, employeePerformanceVOs, jsonObject);
+        jsonObject.put("list", employeePerformanceVOs);
+        return jsonObject;
     }
 
     /**
@@ -285,11 +302,23 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
                         break;
                 }
             }
+            EmployeePerformanceVO employeePerformanceVO = new EmployeePerformanceVO();
+            employeePerformanceVO.setEmployeeId(employeeVO.getId());
+            employeePerformanceVO.setEmployeeName(employeeVO.getName());
+            employeePerformanceVO.setEmployeeHeadImg(employeeVO.getHeadImg());
+            employeePerformanceVO.setEmployeeJobNumber(employeeVO.getJobNumber());
+            employeePerformanceVO.setEmployeePosition(employeeVO.getPositionName());
+            employeePerformanceVO.setEmployeeSex(employeeVO.getSex());
+            employeePerformanceVO.setPerformance(performance);
+            employeePerformanceVO.setCardConsumeMoney(cardConsumeMoney);
+            employeePerformanceVO.setCardConsumeTimes(cardConsumeTimes);
+            employeePerformanceVO.setOpenCardTimes(openCardTimes);
+            employeePerformanceVO.setProductTimes(productTimes);
+            employeePerformanceVO.setProjectTimes(projectTimes);
+            employeePerformanceVO.setServiceMemberTimes(memberTimes);
+            employeePerformanceVO.setServiceNotMemberTimes(notMemberTiems);
             //封装
-            employeePerformanceVOS.add(EmployeePerformanceVO.builder().employeeId(employeeVO.getId()).employeeName(employeeVO.getName()).employeeHeadImg(employeeVO.getHeadImg())
-                    .employeeJobNumber(employeeVO.getJobNumber()).employeePosition(employeeVO.getPositionName()).employeeSex(employeeVO.getSex())
-                    .performance(performance).cardConsumeMoney(cardConsumeMoney).cardConsumeTimes(cardConsumeTimes).openCardTimes(openCardTimes)
-                    .productTimes(productTimes).projectTimes(projectTimes).serviceMemberTimes(memberTimes).serviceNotMemberTimes(notMemberTiems).build());
+            employeePerformanceVOS.add(employeePerformanceVO);
         }
         //根据业绩排序倒序
         if(!ComUtil.isEmpty(employeeDTO.getPerformanceSort()) && employeeDTO.getPerformanceSort().equals(1)){
@@ -336,6 +365,16 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     }
 
     /**
+     * 查询用户信息 与员工表联查
+     * @param userId
+     * @return
+     */
+    @Override
+    public UserVO selectUserInfoByUserId(String userId) {
+        return employeeMapper.selectUserInfoByUserId(userId);
+    }
+
+    /**
      * 按id查询员工信息
      * @param id
      * @return
@@ -350,7 +389,8 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
                 .eq(OrderDetailServiceStaff::getEmployeeId, employeeVO.getId()));
         //业绩求和
         employeeVO.setPerformance(employeePerformance.stream()
-                .map(OrderDetailServiceStaff::getPerformance).reduce(BigDecimal.ZERO, BigDecimal::add));
+                .map(OrderDetailServiceStaff::getPerformance)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
         return employeeVO;
     }
 

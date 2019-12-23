@@ -132,4 +132,15 @@
         having count(o_member_id) = 0
     </select>
 
+
+    <select id="selectToStoreGuest" resultType="java.lang.Integer">
+        select count(*) from bear_order
+        <where>
+            DATE_FORMAT(o_gmt_create,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')
+            <if test="shopId != null and shopId != ''">
+                and o_shop_id = #{shopId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

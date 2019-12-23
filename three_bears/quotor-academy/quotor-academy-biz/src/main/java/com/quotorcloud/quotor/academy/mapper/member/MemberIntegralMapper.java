@@ -13,4 +13,11 @@ import com.quotorcloud.quotor.academy.api.entity.member.MemberIntegral;
  */
 public interface MemberIntegralMapper extends BaseMapper<MemberIntegral> {
 
+    /**
+     * 查询会员积分
+     * @param memberId
+     * @return
+     */
+    Integer selectMemberIntegral(String memberId);
+
 }

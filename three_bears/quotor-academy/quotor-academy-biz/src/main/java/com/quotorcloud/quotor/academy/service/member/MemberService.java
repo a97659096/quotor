@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.quotorcloud.quotor.academy.api.dto.member.MemberDTO;
 import com.quotorcloud.quotor.academy.api.entity.member.Member;
 import com.quotorcloud.quotor.academy.api.vo.member.MemberVO;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
 
 import java.util.List;
 
@@ -19,13 +20,13 @@ import java.util.List;
  */
 public interface MemberService extends IService<Member> {
 
-    Boolean saveMember(MemberDTO memberDTO);
+    Boolean saveMember(QuotorUser user, MemberDTO memberDTO);
 
     Page<MemberVO> listMember(Page page, MemberDTO memberDTO);
 
-    Boolean updateMember(MemberDTO memberDTO);
+    Boolean updateMember(QuotorUser quotorUser, MemberDTO memberDTO, String id);
 
-    Boolean removeMember(String id);
+    Boolean removeMember(QuotorUser user, String id);
 
     MemberVO getMemberById(String id);
 

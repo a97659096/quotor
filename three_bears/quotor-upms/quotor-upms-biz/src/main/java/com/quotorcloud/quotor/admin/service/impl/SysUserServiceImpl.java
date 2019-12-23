@@ -43,6 +43,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -209,6 +210,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			UserVO userVoById = baseMapper.getUserVoById(userDto.getUserId());
 			sysUser.setPassword(MD5Util.formPassToDBPass(userDto.getPassword(), userVoById.getSalt()));
 		}
+		if(!ComUtil.isEmpty(userDto.getPhone())){
+
+		}
 		this.updateById(sysUser);
 
 		sysUserRoleService.remove(Wrappers.<SysUserRole>update().lambda()
@@ -221,6 +225,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		});
 		return Boolean.TRUE;
 	}
+
+
 
 	/**
 	 * 查询上级部门的用户信息

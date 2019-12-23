@@ -63,13 +63,12 @@
 
 <!--    查询收入信息，只查看业绩-->
     <select id="listOrderIncomeVO" resultType="com.quotorcloud.quotor.academy.api.vo.order.OrderIncomeVO" resultMap="OrderIncomeMap">
-
         select opw_pay_id, opw_name, COALESCE(sum(odp_pay_money),0) as money from bear_order_pay_way opw
         left join
         (select * from bear_order_detail_pay
         <where>
-            <if test="orderpay.shopId != null and shopId != ''">
-                and odp.odp_shop_id = #{shopId}
+            <if test="orderpay.shopId != null and orderpay.shopId != ''">
+                and odp_shop_id = #{orderpay.shopId}
             </if>
             <if test="orderpay.start != null and orderpay.start != ''">
                 and DATE_FORMAT(odp_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{orderpay.start}

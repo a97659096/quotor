@@ -19,6 +19,8 @@ import com.quotorcloud.quotor.academy.api.vo.member.MemberCardVO;
 import com.quotorcloud.quotor.academy.api.vo.member.MemberCountByShopIdVO;
 import com.quotorcloud.quotor.academy.api.vo.member.MemberVO;
 import com.quotorcloud.quotor.academy.api.vo.order.OrderWebVO;
+import com.quotorcloud.quotor.academy.log.annotation.OperationLog;
+import com.quotorcloud.quotor.academy.log.enums.OperationType;
 import com.quotorcloud.quotor.academy.mapper.member.MemberCardMapper;
 import com.quotorcloud.quotor.academy.mapper.member.MemberMapper;
 import com.quotorcloud.quotor.academy.mapper.order.OrderMapper;
@@ -72,7 +74,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     private MemberCardMapper memberCardMapper;
 
     @Override
-    public Boolean saveMember(MemberDTO memberDTO) {
+    @OperationLog(name = "新增会员", contentType = 1, operatorRef = 0, operatorObj = 1, table = "bear_member", type = OperationType.ADD, cloum = "name")
+    public Boolean saveMember(QuotorUser user, MemberDTO memberDTO) {
         Member member = new Member();
         //映射赋值
         mapMemberDODTO(memberDTO, member);
@@ -260,8 +263,10 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     }
 
     @Override
-    public Boolean updateMember(MemberDTO memberDTO) {
-        Member member = this.getById(memberDTO.getId());
+    @OperationLog(name = "修改会员", contentType = 1, operatorRef = 0, operatorObj = 1, idRef = 2,table = "bear_member",
+            type = OperationType.UPDATE, idField = "id")
+    public Boolean updateMember(QuotorUser quotorUser, MemberDTO memberDTO, String id) {
+        Member member = this.getById(id);
         //刪除圖片
         FileUtil.removeFileAndField(member, memberDTO, "headImg", FileConstants.FileType.FILE_MEMBER_IMG_DIR);
         //保存圖片
@@ -276,7 +281,9 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     }
 
     @Override
-    public Boolean removeMember(String id) {
+    @OperationLog(name = "删除会员", contentType = 1, operatorRef = 0, idRef = 1, table = "bear_member",
+            type = OperationType.DELETE, cloum = "name", idField = "id")
+    public Boolean removeMember(QuotorUser user, String id) {
         memberMapper.deleteById(id);
         return Boolean.TRUE;
     }

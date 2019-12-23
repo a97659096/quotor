@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
  * 员工业绩
  */
 @Data
-@Builder
 public class EmployeePerformanceVO {
 
     /**

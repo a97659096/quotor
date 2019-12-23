@@ -83,11 +83,21 @@ public class OrderDetailPayServiceImpl extends ServiceImpl<OrderDetailPayMapper,
         //查询根据业绩类型分类收入
         List<OrderIncomeVO> orderIncomeVOS = orderDetailPayMapper
                 .listOrderIncomeVO(detailPay);
+
+        List<String> x = new ArrayList<>();
+        List<BigDecimal> y = new ArrayList<>();
+        for (OrderIncomeVO orderIncomeVO:orderIncomeVOS){
+            x.add(orderIncomeVO.getPayWayName());
+            y.add(orderIncomeVO.getMoney());
+        }
+
         //计算总收入
         BigDecimal totalIncome = orderIncomeVOS.stream().map(OrderIncomeVO::getMoney)
                 .reduce(BigDecimal::add).get();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("totalIncome", totalIncome);
+        jsonObject.put("x", x);
+        jsonObject.put("y", y);
         jsonObject.put("details", orderIncomeVOS);
         return jsonObject;
     }

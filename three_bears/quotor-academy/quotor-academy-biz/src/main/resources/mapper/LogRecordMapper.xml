@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.log.LogRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.log.LogRecord">
+        <id column="lr_id" property="id" />
+        <result column="lr_name" property="name" />
+        <result column="lr_opeartion_type" property="opeartionType" />
+        <result column="lr_opeartion_event" property="opeartionEvent" />
+        <result column="lr_opeartion_user" property="opeartionUser" />
+        <result column="lr_shop_id" property="shopId" />
+        <result column="lr_type" property="type" />
+        <result column="lr_gmt_create" property="gmtCreate" />
+        <result column="lr_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        lr_id, lr_name, lr_opeartion_type, lr_opeartion_event, lr_opeartion_user, lr_shop_id, lr_type, lr_gmt_create, lr_gmt_modified
+    </sql>
+
+</mapper>

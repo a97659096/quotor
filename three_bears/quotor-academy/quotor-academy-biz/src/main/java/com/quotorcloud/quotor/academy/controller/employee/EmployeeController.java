@@ -81,4 +81,32 @@ public class EmployeeController {
     public R listBoxEmployee(String shopId){
         return R.ok(employeeService.selectEmployeeListBox(shopId));
     }
+
+    /**
+     * 查询用户信息
+     * @param userId
+     * @return
+     */
+    @GetMapping("userinfo")
+    public R userInfo(String userId){
+        return R.ok(employeeService.selectUserInfoByUserId(userId));
+    }
+
+    /**
+     * 查询业绩列表按门店分组
+     * @param employeeDTO
+     * @return
+     */
+    @GetMapping("performance/shop")
+    public R performanceShop(EmployeeDTO employeeDTO){
+        return R.ok(employeeService.selectEmployeePerformanceGroupByShopId(employeeDTO));
+    }
+
+    /**
+     * 查询员工业绩详情 按店铺
+     */
+    @GetMapping("performance/employee")
+    public R performanceEmployee(EmployeeDTO employeeDTO){
+        return R.ok(employeeService.selectEmployeePerFormance(employeeDTO));
+    }
 }

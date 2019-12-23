@@ -9,6 +9,7 @@ import com.quotorcloud.quotor.academy.api.entity.employee.Employee;
 import com.quotorcloud.quotor.academy.api.vo.Pager;
 import com.quotorcloud.quotor.academy.api.vo.employee.EmployeePerformanceVO;
 import com.quotorcloud.quotor.academy.api.vo.employee.EmployeeVO;
+import com.quotorcloud.quotor.academy.api.vo.user.UserVO;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ public interface EmployeeService extends IService<Employee> {
      * @param employeeDTO
      * @return
      */
-    IPage<EmployeePerformanceVO> selectEmployeePerFormance(Page page, EmployeeDTO employeeDTO);
+    JSONObject selectEmployeePerFormance(EmployeeDTO employeeDTO);
 
     /**
      * 汇总查询员工id
@@ -57,5 +58,12 @@ public interface EmployeeService extends IService<Employee> {
      * 查询项目绩效、卡绩效详细信息
      */
     IPage selectEmployeePerformanceDetails(Page page, EmployeeDTO employeeDTO);
+
+    /**
+     * 查询用户信息 与员工表联查
+     * @param userId
+     * @return
+     */
+    UserVO selectUserInfoByUserId(String userId);
 
 }

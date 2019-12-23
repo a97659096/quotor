@@ -69,4 +69,12 @@ public class ExpendController {
     public R selectExpendId(@PathVariable String id){
         return R.ok(expendService.selectExpendById(id));
     }
+
+    /**
+     * 总支出查询
+     */
+    @GetMapping("list/total")
+    public R selectExpendTotal(ExpendDTO expendDTO){
+        return R.ok(expendService.selectWXStatement(expendDTO));
+    }
 }

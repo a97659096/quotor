@@ -7,6 +7,8 @@ import com.quotorcloud.quotor.academy.api.dto.member.MemberDTO;
 import com.quotorcloud.quotor.academy.service.employee.EmployeeService;
 import com.quotorcloud.quotor.academy.service.member.MemberService;
 import com.quotorcloud.quotor.common.core.util.R;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
+import com.quotorcloud.quotor.common.security.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,17 +34,20 @@ public class MemberController {
 
     @PostMapping
     public R saveMember(MemberDTO memberDTO){
-        return R.ok(memberService.saveMember(memberDTO));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(memberService.saveMember(user, memberDTO));
     }
 
     @PutMapping
     public R updateMember(MemberDTO memberDTO){
-        return R.ok(memberService.updateMember(memberDTO));
+        QuotorUser quotorUser = SecurityUtils.getUser();
+        return R.ok(memberService.updateMember(quotorUser, memberDTO, memberDTO.getId()));
     }
 
     @DeleteMapping("{id}")
     public R deleteMember(@PathVariable String id){
-        return R.ok(memberService.removeMember(id));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(memberService.removeMember(user, id));
     }
 
     @GetMapping("list")

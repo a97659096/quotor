@@ -110,6 +110,12 @@ public class Order implements Serializable {
     private Integer replacementOrder;
 
     /**
+     * 补单时间
+     */
+    @TableField(value = "o_replacement_time")
+    private LocalDateTime replacementOrderTime;
+
+    /**
      * 订单状态：1已付款，2未付款，3尾款单
      */
     @TableField(value = "o_status")

@@ -168,4 +168,9 @@ public class EmployeeDTO {
     private Integer contentType;
 
     private String appointDate;
+
+    /**
+     * 1周2月3年
+     */
+    private Integer dateType;
 }

@@ -32,7 +32,12 @@ public interface MemberMapper extends BaseMapper<Member> {
 
     MemberVO selectMemberById(@Param("id") String id);
 
-
+    /**
+     * 查询新增会员数量
+     * @param shopId
+     * @return
+     */
+    Integer selectNewMemberCounts(String shopId);
 
 
 

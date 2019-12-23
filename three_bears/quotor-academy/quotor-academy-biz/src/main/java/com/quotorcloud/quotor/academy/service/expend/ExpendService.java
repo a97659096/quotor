@@ -36,7 +36,7 @@ public interface ExpendService extends IService<Expend> {
     /**
      * 查询近一个月，近一年，近一周的数据
      */
-//    JSONObject selectWXStatement(String appointDate);
+    JSONObject selectWXStatement(ExpendDTO expendDTO);
 
     JSONObject listExpendApp(ExpendDTO expendDTO);
 
