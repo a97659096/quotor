@@ -17,6 +17,8 @@ import com.quotorcloud.quotor.academy.api.vo.Pager;
 import com.quotorcloud.quotor.academy.api.vo.employee.EmployeePerformanceVO;
 import com.quotorcloud.quotor.academy.api.vo.employee.EmployeeVO;
 import com.quotorcloud.quotor.academy.api.vo.user.UserVO;
+import com.quotorcloud.quotor.academy.log.annotation.OperationLog;
+import com.quotorcloud.quotor.academy.log.enums.OperationType;
 import com.quotorcloud.quotor.academy.mapper.employee.EmployeeMapper;
 import com.quotorcloud.quotor.academy.mapper.employee.OrderDetailServiceStaffMapper;
 import com.quotorcloud.quotor.academy.service.employee.EmployeeService;
@@ -121,7 +123,6 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      */
     @Override
     public JSONObject selectEmployeePerformanceGroupByShopId(EmployeeDTO employeeDTO) {
-
         List<EmployeePerformanceVO> employeePerformanceVOS = employeeMapper.selectEmployeePerformance(employeeDTO);
         Map<String, List<EmployeePerformanceVO>> performanceByShopIdMap = employeePerformanceVOS.stream()
                 .collect(Collectors.groupingBy(EmployeePerformanceVO::getShopId));
@@ -403,7 +404,9 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      * @return
      */
     @Override
-    public Boolean updateEmployee(EmployeeDTO employeeDTO) {
+    @OperationLog(name = "修改会员", contentType = 5, operatorRef = 0, operatorObj = 1, idRef = 2,table = "bear_employee",
+            type = OperationType.UPDATE, idField = "e_id")
+    public Boolean updateEmployee(QuotorUser user, EmployeeDTO employeeDTO, String empId) {
         String id = employeeDTO.getId();
         if(ComUtil.isEmpty(id)){
             throw new MyException(ExceptionEnum.NOT_FIND_ID);
@@ -421,7 +424,9 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      * @return
      */
     @Override
-    public Boolean removeEmployee(String id) {
+    @OperationLog(name = "删除员工", contentType = 5, operatorRef = 0, idRef = 1, table = "bear_employee",
+            type = OperationType.DELETE, cloum = "e_name", idField = "e_id")
+    public Boolean removeEmployee(QuotorUser user, String id) {
         if(ComUtil.isEmpty(id)){
             throw new MyException(ExceptionEnum.NOT_FIND_ID);
         }
@@ -506,7 +511,9 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      * @return
      */
     @Override
-    public Boolean saveEmployee(EmployeeDTO employeeDTO) {
+    @OperationLog(name = "新增员工", contentType = 5, operatorRef = 0, operatorObj = 1, table = "bear_employee",
+            type = OperationType.ADD, cloum = "e_name")
+    public Boolean saveEmployee(QuotorUser user, EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         try {
             employeeMapper.insert(mapEmployeeDTOToDO(employeeDTO, employee));

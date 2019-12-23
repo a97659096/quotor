@@ -44,7 +44,7 @@ public class ConditionCardController {
     @PutMapping
     public R updateCard(@RequestBody ConditionCardDTO conditionCardDTO){
         QuotorUser quotorUser = SecurityUtils.getUser();
-        return R.ok(conditionCardService.updateConditionCard(quotorUser, conditionCardDTO));
+        return R.ok(conditionCardService.updateConditionCard(quotorUser, conditionCardDTO, conditionCardDTO.getId()));
     }
 
     /**

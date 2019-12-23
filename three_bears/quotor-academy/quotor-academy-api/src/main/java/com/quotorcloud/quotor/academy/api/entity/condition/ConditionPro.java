@@ -36,6 +36,7 @@ public class ConditionPro implements Serializable {
     /**
      * 名称
      */
+    @TableField(value = "p_name")
     private String pName;
 
     /**

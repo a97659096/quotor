@@ -9,6 +9,8 @@ import com.google.common.collect.Lists;
 import com.quotorcloud.quotor.academy.api.dto.course.TeacherDTO;
 import com.quotorcloud.quotor.academy.api.entity.teacher.Teacher;
 import com.quotorcloud.quotor.academy.api.vo.teacher.TeacherVO;
+import com.quotorcloud.quotor.academy.log.annotation.OperationLog;
+import com.quotorcloud.quotor.academy.log.enums.OperationType;
 import com.quotorcloud.quotor.academy.mapper.course.TeacherMapper;
 import com.quotorcloud.quotor.academy.service.ListBoxService;
 import com.quotorcloud.quotor.academy.service.course.TeacherService;
@@ -20,6 +22,7 @@ import com.quotorcloud.quotor.common.core.exception.MyException;
 import com.quotorcloud.quotor.common.core.util.ComUtil;
 import com.quotorcloud.quotor.common.core.util.FileUtil;
 import com.quotorcloud.quotor.common.core.util.PageUtil;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,7 +100,9 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
      * @return
      */
     @Override
-    public Boolean deleteTeacher(String id) {
+    @OperationLog(name = "删除讲师", contentType = 4, operatorRef = 0, idRef = 1, table = "bear_teacher",
+            type = OperationType.DELETE, cloum = "t_name", idField = "t_id")
+    public Boolean deleteTeacher(QuotorUser user, String id) {
         if(ComUtil.isEmpty(id)){
             throw new MyException(ExceptionEnum.NOT_FIND_ID);
         }
@@ -119,7 +124,9 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
      * @return
      */
     @Override
-    public Boolean updateTeacher(TeacherDTO teacherDTO) {
+    @OperationLog(name = "修改讲师", contentType = 4, operatorRef = 0, operatorObj = 1, idRef = 2,table = "bear_teacher",
+            type = OperationType.UPDATE, idField = "t_id")
+    public Boolean updateTeacher(QuotorUser user, TeacherDTO teacherDTO, String id) {
         if(ComUtil.isEmpty(teacherDTO.getId())){
             throw new MyException(ExceptionEnum.NOT_FIND_ID);
         }
@@ -178,7 +185,9 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
      * @return
      */
     @Override
-    public Boolean saveTeacher(TeacherDTO teacherDTO) {
+    @OperationLog(name = "新增讲师", contentType = 4, operatorRef = 0, operatorObj = 1,
+            table = "bear_teacher", type = OperationType.ADD, cloum = "t_name")
+    public Boolean saveTeacher(QuotorUser user, TeacherDTO teacherDTO) {
         try {
             Teacher teacher = new Teacher();
             teacherMapper.insert(mapTeacherDTOToDO(teacherDTO, teacher));

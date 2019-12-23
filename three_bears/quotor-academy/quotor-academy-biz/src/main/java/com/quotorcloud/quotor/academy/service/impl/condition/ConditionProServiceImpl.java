@@ -12,6 +12,8 @@ import com.quotorcloud.quotor.academy.api.entity.condition.ConditionCategory;
 import com.quotorcloud.quotor.academy.api.entity.condition.ConditionPro;
 import com.quotorcloud.quotor.academy.api.entity.condition.ConditionSetMealDetail;
 import com.quotorcloud.quotor.academy.api.vo.condition.ConditionProVO;
+import com.quotorcloud.quotor.academy.log.annotation.OperationLog;
+import com.quotorcloud.quotor.academy.log.enums.OperationType;
 import com.quotorcloud.quotor.academy.mapper.condition.ConditionProMapper;
 import com.quotorcloud.quotor.academy.service.condition.ConditionCategoryService;
 import com.quotorcloud.quotor.academy.service.condition.ConditionProService;
@@ -20,6 +22,7 @@ import com.quotorcloud.quotor.academy.util.ShopSetterUtil;
 import com.quotorcloud.quotor.common.core.constant.CommonConstants;
 import com.quotorcloud.quotor.common.core.constant.FileConstants;
 import com.quotorcloud.quotor.common.core.util.*;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -121,7 +124,8 @@ public class ConditionProServiceImpl extends ServiceImpl<ConditionProMapper, Con
      * @return
      */
     @Override
-    public Boolean saveConditionPro(ConditionProDTO conditionProDTO) {
+    @OperationLog(name = "新增产品/项目", contentType = 2, operatorRef = 0, operatorObj = 1, table = "bear_condition_pro", type = OperationType.ADD, cloum = "p_name")
+    public Boolean saveConditionPro(QuotorUser user, ConditionProDTO conditionProDTO) {
         ConditionPro conditionPro = new ConditionPro();
         mapDTOToDO(conditionProDTO, conditionPro);
         conditionPro.setPDelState(CommonConstants.STATUS_NORMAL);
@@ -138,7 +142,9 @@ public class ConditionProServiceImpl extends ServiceImpl<ConditionProMapper, Con
     }
 
     @Override
-    public Boolean updateConditionPro(ConditionProDTO conditionProDTO) {
+    @OperationLog(name = "修改产品/项目", contentType = 2, operatorRef = 0, operatorObj = 1, idRef = 2, table = "bear_condition_pro",
+            type = OperationType.UPDATE, idField = "p_id")
+    public Boolean updateConditionPro(QuotorUser user, ConditionProDTO conditionProDTO, String id) {
         ConditionPro conditionPro = conditionProMapper.selectById(conditionProDTO.getId());
         mapDTOToDO(conditionProDTO, conditionPro);
         //imgString不为空删除
@@ -233,7 +239,9 @@ public class ConditionProServiceImpl extends ServiceImpl<ConditionProMapper, Con
      * @return
      */
     @Override
-    public Boolean removeConditionPro(String id) {
+    @OperationLog(name = "删除产品/项目", contentType = 2, operatorRef = 0, idRef = 1, table = "bear_condition_pro",
+            type = OperationType.DELETE, cloum = "p_name", idField = "p_id")
+    public Boolean removeConditionPro(QuotorUser user, String id) {
         ConditionPro conditionPro = new ConditionPro();
         conditionPro.setId(id);
         conditionPro.setPDelState(CommonConstants.STATUS_DEL);

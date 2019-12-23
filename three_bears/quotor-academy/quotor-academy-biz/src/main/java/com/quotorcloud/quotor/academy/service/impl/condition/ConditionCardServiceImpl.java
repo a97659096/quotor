@@ -121,7 +121,7 @@ public class ConditionCardServiceImpl extends ServiceImpl<ConditionCardMapper, C
     }
 
     @Override
-    @OperationLog(name = "删除会员", contentType = 2, operatorRef = 0, idRef = 1, table = "bear_condition_card",
+    @OperationLog(name = "删除卡片", contentType = 2, operatorRef = 0, idRef = 1, table = "bear_condition_card",
             type = OperationType.DELETE, cloum = "c_name", idField = "c_id")
     public Boolean removeConditionCard(QuotorUser user, String id) {
         conditionCardMapper.deleteById(id);

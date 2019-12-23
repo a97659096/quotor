@@ -6,6 +6,7 @@ import com.quotorcloud.quotor.academy.api.dto.condition.ConditionProDTO;
 import com.quotorcloud.quotor.academy.api.entity.condition.ConditionCategory;
 import com.quotorcloud.quotor.academy.api.entity.condition.ConditionPro;
 import com.quotorcloud.quotor.academy.api.vo.condition.ConditionProVO;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
 
 /**
  * <p>
@@ -17,15 +18,15 @@ import com.quotorcloud.quotor.academy.api.vo.condition.ConditionProVO;
  */
 public interface ConditionProService extends IService<ConditionPro> {
 
-    Boolean saveConditionPro(ConditionProDTO conditionProDTO);
+    Boolean saveConditionPro(QuotorUser user, ConditionProDTO conditionProDTO);
 
     JSONObject listConditionPro(ConditionProDTO conditionProDTO);
 
     ConditionProVO selectProById(String id);
 
-    Boolean removeConditionPro(String id);
+    Boolean removeConditionPro(QuotorUser user, String id);
 
-    Boolean updateConditionPro(ConditionProDTO conditionProDTO);
+    Boolean updateConditionPro(QuotorUser user, ConditionProDTO conditionProDTO, String id);
 
     String treeProByCategory(ConditionCategory conditionCategory);
 

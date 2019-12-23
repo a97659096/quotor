@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.quotorcloud.quotor.academy.api.entity.teacher.Teacher;
 import com.quotorcloud.quotor.academy.api.dto.course.TeacherDTO;
 import com.quotorcloud.quotor.academy.api.vo.teacher.TeacherVO;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
 
 import java.util.List;
 import java.util.Set;
@@ -20,13 +21,13 @@ import java.util.Set;
  */
 public interface TeacherService extends IService<Teacher> {
 
-    Boolean saveTeacher(TeacherDTO teacherDTO);
+    Boolean saveTeacher(QuotorUser user, TeacherDTO teacherDTO);
 
     JSONObject listTeacher(TeacherDTO teacherDTO);
 
-    Boolean updateTeacher(TeacherDTO teacherDTO);
+    Boolean updateTeacher(QuotorUser user, TeacherDTO teacherDTO, String id);
 
-    Boolean deleteTeacher(String id);
+    Boolean deleteTeacher(QuotorUser user, String id);
 
     List<JSONObject> listBoxTeacher();
 

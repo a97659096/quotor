@@ -6,6 +6,8 @@ import com.quotorcloud.quotor.academy.api.dto.condition.ConditionProDTO;
 import com.quotorcloud.quotor.academy.api.entity.condition.ConditionCategory;
 import com.quotorcloud.quotor.academy.service.condition.ConditionProService;
 import com.quotorcloud.quotor.common.core.util.R;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
+import com.quotorcloud.quotor.common.security.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +28,8 @@ public class ConditionProController {
 
     @PostMapping
     public R saveConditionPro(ConditionProDTO conditionProDTO){
-        return R.ok(conditionProService.saveConditionPro(conditionProDTO));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(conditionProService.saveConditionPro(user, conditionProDTO));
     }
 
     @GetMapping("list")
@@ -36,12 +39,14 @@ public class ConditionProController {
 
     @PutMapping
     public R updateConditionPro(ConditionProDTO conditionProDTO){
-        return R.ok(conditionProService.updateConditionPro(conditionProDTO));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(conditionProService.updateConditionPro(user,conditionProDTO,conditionProDTO.getId()));
     }
 
     @DeleteMapping("/{id}")
     public R removeConditionProById(@PathVariable String id){
-        return R.ok(conditionProService.removeConditionPro(id));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(conditionProService.removeConditionPro(user, id));
     }
 
     @GetMapping("list/{id}")

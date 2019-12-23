@@ -130,6 +130,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      * @return
      */
     @Override
+    @OperationLog(name = "修改课程", contentType = 3, operatorRef = 0, operatorObj = 1, idRef = 2,table = "bear_course",
+            type = OperationType.UPDATE, idField = "c_id")
     public Boolean updateCourse(QuotorUser quotorUser, CourseDTO courseDTO, String id) {
         //判断唯一标识是否存在
         if(ComUtil.isEmpty(courseDTO.getId())){
@@ -161,6 +163,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      * @return
      */
     @Override
+    @OperationLog(name = "删除课程", contentType = 3, operatorRef = 0, idRef = 1, table = "bear_course",
+            type = OperationType.DELETE, cloum = "c_name", idField = "c_id")
     public Boolean removeCourse(QuotorUser quotorUser, String id) {
         if(ComUtil.isEmpty(id)){
             throw new MyException(ExceptionEnum.NOT_FIND_ID);
@@ -220,7 +224,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      */
     @Override
     @OperationLog(name = "新增课程", contentType = 3, operatorRef = 0, operatorObj = 1, table = "bear_course",
-            type = OperationType.ADD, cloum = "name")
+            type = OperationType.ADD, cloum = "c_name")
     public Boolean saveCourse(QuotorUser quotorUser, CourseDTO courseDTO) {
         Course course = new Course();
         BeanUtils.copyProperties(courseDTO, course,

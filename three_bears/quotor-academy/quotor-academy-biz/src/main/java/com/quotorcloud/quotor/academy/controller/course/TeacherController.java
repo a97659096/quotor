@@ -3,6 +3,8 @@ package com.quotorcloud.quotor.academy.controller.course;
 import com.quotorcloud.quotor.academy.api.dto.course.TeacherDTO;
 import com.quotorcloud.quotor.academy.service.course.TeacherService;
 import com.quotorcloud.quotor.common.core.util.R;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
+import com.quotorcloud.quotor.common.security.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +30,8 @@ public class TeacherController {
      */
     @PostMapping("save")
     public R saveTeacher(TeacherDTO teacherDTO){
-        return R.ok(teacherService.saveTeacher(teacherDTO));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(teacherService.saveTeacher(user, teacherDTO));
     }
 
     /**
@@ -53,7 +56,8 @@ public class TeacherController {
      */
     @PutMapping("update")
     public R updateTeacher(TeacherDTO teacherDTO){
-        return R.ok(teacherService.updateTeacher(teacherDTO));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(teacherService.updateTeacher(user, teacherDTO, teacherDTO.getId()));
     }
 
     /**
@@ -63,7 +67,8 @@ public class TeacherController {
      */
     @DeleteMapping("{id}")
     public R deleteTeacher(@PathVariable String id){
-        return R.ok(teacherService.deleteTeacher(id));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(teacherService.deleteTeacher(user, id));
     }
 
     /**

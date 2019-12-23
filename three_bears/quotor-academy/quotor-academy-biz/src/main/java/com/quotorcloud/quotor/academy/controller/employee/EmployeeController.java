@@ -4,6 +4,8 @@ package com.quotorcloud.quotor.academy.controller.employee;
 import com.quotorcloud.quotor.academy.api.dto.employee.EmployeeDTO;
 import com.quotorcloud.quotor.academy.service.employee.EmployeeService;
 import com.quotorcloud.quotor.common.core.util.R;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
+import com.quotorcloud.quotor.common.security.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +41,8 @@ public class EmployeeController {
      */
     @PostMapping("save")
     public R saveEmployee(EmployeeDTO employeeDTO){
-        return R.ok(employeeService.saveEmployee(employeeDTO));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(employeeService.saveEmployee(user, employeeDTO));
     }
 
     /**
@@ -59,7 +62,8 @@ public class EmployeeController {
      */
     @DeleteMapping("/{id}")
     public R deleteEmployee(@PathVariable String id){
-        return R.ok(employeeService.removeEmployee(id));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(employeeService.removeEmployee(user, id));
     }
 
     /**
@@ -69,7 +73,8 @@ public class EmployeeController {
      */
     @PutMapping("/update")
     public R updateEmployee(EmployeeDTO employeeDTO){
-        return R.ok(employeeService.updateEmployee(employeeDTO));
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(employeeService.updateEmployee(user, employeeDTO, employeeDTO.getId()));
     }
 
     /**

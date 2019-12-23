@@ -10,6 +10,7 @@ import com.quotorcloud.quotor.academy.api.vo.Pager;
 import com.quotorcloud.quotor.academy.api.vo.employee.EmployeePerformanceVO;
 import com.quotorcloud.quotor.academy.api.vo.employee.EmployeeVO;
 import com.quotorcloud.quotor.academy.api.vo.user.UserVO;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
 
 import java.util.List;
 
@@ -23,13 +24,13 @@ import java.util.List;
  */
 public interface EmployeeService extends IService<Employee> {
 
-    Boolean saveEmployee(EmployeeDTO employeeDTO);
+    Boolean saveEmployee(QuotorUser user, EmployeeDTO employeeDTO);
 
     JSONObject listEmployee(EmployeeDTO employeeDTO);
 
-    Boolean removeEmployee(String id);
+    Boolean removeEmployee(QuotorUser user, String id);
 
-    Boolean updateEmployee(EmployeeDTO employeeDTO);
+    Boolean updateEmployee(QuotorUser user, EmployeeDTO employeeDTO, String id);
 
     EmployeeVO selectEmployeeById(String id);
 
