@@ -1,6 +1,7 @@
 package com.quotorcloud.quotor.academy.controller.expend;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.quotorcloud.quotor.academy.api.dto.expend.ExpendDTO;
 import com.quotorcloud.quotor.academy.service.expend.ExpendService;
 import com.quotorcloud.quotor.common.core.util.R;
@@ -76,5 +77,16 @@ public class ExpendController {
     @GetMapping("list/total")
     public R selectExpendTotal(ExpendDTO expendDTO){
         return R.ok(expendService.selectWXStatement(expendDTO));
+    }
+
+    /**
+     * 查询支出列表  小程序
+     * @param page
+     * @param expendDTO
+     * @return
+     */
+    @GetMapping("list/applet")
+    public R selectExpendAppletPage(Page page, ExpendDTO expendDTO){
+        return R.ok(expendService.listExpendApp(page, expendDTO));
     }
 }

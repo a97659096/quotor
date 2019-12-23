@@ -131,20 +131,32 @@ public class RedisUtil {
 	}
 
 	/**
-	 * 普通缓存获取
+	 * 根据key获取值
+	 *
 	 * @param key 键
 	 * @return 值
 	 */
+	public Object get(String key) {
+		return key == null ? null : redisTemplate.opsForValue().get(key);
+	}
+
+
+
+//	/**
+//	 * 普通缓存获取
+//	 * @param key 键
+//	 * @return 值
+//	 */
 //	public Object get(String key){
 //		return this.get(key, 0);
 //	}
-
-	/**
-	 * 普通缓存获取并指定数据库
-	 * @param key 键
-	 * @param indexDB 数据库编号
-	 * @return 值
-	 */
+//
+//	/**
+//	 * 普通缓存获取并指定数据库
+//	 * @param key 键
+//	 * @param indexDB 数据库编号
+//	 * @return 值
+//	 */
 //	public Object get(String key, int indexDB){
 //		redisTemplate.indexDB.set(indexDB);
 //		return key == null ? null : redisTemplate.opsForValue().get(key);

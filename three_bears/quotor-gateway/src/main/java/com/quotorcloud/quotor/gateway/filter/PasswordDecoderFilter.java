@@ -52,13 +52,13 @@ public class PasswordDecoderFilter extends AbstractGatewayFilterFactory {
 	@Value("${security.encode.key:1234567812345678}")
 	private String encodeKey;
 
-	private static String decryptAES(String data, String pass) {
-		AES aes = new AES(Mode.CBC, Padding.NoPadding,
-			new SecretKeySpec(pass.getBytes(), KEY_ALGORITHM),
-			new IvParameterSpec(pass.getBytes()));
-		byte[] result = aes.decrypt(Base64.decode(data.getBytes(StandardCharsets.UTF_8)));
-		return new String(result, StandardCharsets.UTF_8);
-	}
+//	private static String decryptAES(String data, String pass) {
+//		AES aes = new AES(Mode.CBC, Padding.NoPadding,
+//			new SecretKeySpec(pass.getBytes(), KEY_ALGORITHM),
+//			new IvParameterSpec(pass.getBytes()));
+//		byte[] result = aes.decrypt(Base64.decode(data.getBytes(StandardCharsets.UTF_8)));
+//		return new String(result, StandardCharsets.UTF_8);
+//	}
 
 	@Override
 	public GatewayFilter apply(Object config) {
@@ -76,12 +76,12 @@ public class PasswordDecoderFilter extends AbstractGatewayFilterFactory {
 
 			String password = paramMap.get(PASSWORD);
 			if (StrUtil.isNotBlank(password)) {
-				try {
- 					password = decryptAES(password, encodeKey);
-				} catch (Exception e) {
-					log.error("密码解密失败:{}", password);
-					return Mono.error(e);
-				}
+//				try {
+// 					password = decryptAES(password, encodeKey);
+//				} catch (Exception e) {
+//					log.error("密码解密失败:{}", password);
+//					return Mono.error(e);
+//				}
 				paramMap.put(PASSWORD, password.trim());
 			}
 
@@ -94,4 +94,5 @@ public class PasswordDecoderFilter extends AbstractGatewayFilterFactory {
 			return chain.filter(exchange.mutate().request(newRequest).build());
 		};
 	}
+
 }

@@ -56,6 +56,10 @@ public class OrderWebVO implements Comparable<OrderWebVO> {
      */
     private String memberId;
 
+    private String memberName;
+
+    private String memberHeadImg;
+
     /**
      * 店铺标识
      */

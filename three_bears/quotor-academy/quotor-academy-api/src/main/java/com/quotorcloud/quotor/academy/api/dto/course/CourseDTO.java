@@ -88,4 +88,6 @@ public class CourseDTO {
 
     private String end;
 
+    private String middleDate;
+
 }

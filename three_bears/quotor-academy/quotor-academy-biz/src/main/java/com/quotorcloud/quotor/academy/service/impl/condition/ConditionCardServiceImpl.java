@@ -8,6 +8,8 @@ import com.quotorcloud.quotor.academy.api.entity.condition.ConditionCard;
 import com.quotorcloud.quotor.academy.api.entity.condition.ConditionCardDetail;
 import com.quotorcloud.quotor.academy.api.entity.condition.ConditionCardType;
 import com.quotorcloud.quotor.academy.api.vo.condition.ConditionCardVO;
+import com.quotorcloud.quotor.academy.log.annotation.OperationLog;
+import com.quotorcloud.quotor.academy.log.enums.OperationType;
 import com.quotorcloud.quotor.academy.mapper.condition.ConditionCardMapper;
 import com.quotorcloud.quotor.academy.mapper.condition.ConditionCardTypeMapper;
 import com.quotorcloud.quotor.academy.service.condition.ConditionCardDetailService;
@@ -18,6 +20,7 @@ import com.quotorcloud.quotor.academy.util.ShopSetterUtil;
 import com.quotorcloud.quotor.common.core.constant.CommonConstants;
 import com.quotorcloud.quotor.common.core.exception.MyException;
 import com.quotorcloud.quotor.common.core.util.*;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +65,8 @@ public class ConditionCardServiceImpl extends ServiceImpl<ConditionCardMapper, C
      */
     @Override
     @Transactional
-    public Boolean saveConditionCard(ConditionCardDTO conditionCardDTO) {
+    @OperationLog(name = "新增卡片", contentType = 2, operatorRef = 0, operatorObj = 1, table = "bear_condition_card", type = OperationType.ADD, cloum = "c_name")
+    public Boolean saveConditionCard(QuotorUser user, ConditionCardDTO conditionCardDTO) {
         shopSetterUtil.shopSetter(conditionCardDTO, conditionCardDTO.getShopId());
         ConditionCard conditionCard = getConditionCard(conditionCardDTO);
         conditionCard.setDelState(CommonConstants.STATUS_NORMAL);
@@ -90,7 +94,9 @@ public class ConditionCardServiceImpl extends ServiceImpl<ConditionCardMapper, C
     }
 
     @Override
-    public Boolean updateConditionCard(ConditionCardDTO conditionCardDTO) {
+    @OperationLog(name = "修改卡片", contentType = 2, operatorRef = 0, operatorObj = 1, idRef = 2, table = "bear_condition_card",
+            type = OperationType.UPDATE, idField = "c_id")
+    public Boolean updateConditionCard(QuotorUser user,ConditionCardDTO conditionCardDTO, String id) {
         //把有变化的类型放到集合里批量删除
         List<Integer> types = new ArrayList<>();
         if(!ComUtil.isEmpty(conditionCardDTO.getCardContent())){
@@ -115,7 +121,9 @@ public class ConditionCardServiceImpl extends ServiceImpl<ConditionCardMapper, C
     }
 
     @Override
-    public Boolean removeConditionCard(String id) {
+    @OperationLog(name = "删除会员", contentType = 2, operatorRef = 0, idRef = 1, table = "bear_condition_card",
+            type = OperationType.DELETE, cloum = "c_name", idField = "c_id")
+    public Boolean removeConditionCard(QuotorUser user, String id) {
         conditionCardMapper.deleteById(id);
         return Boolean.TRUE;
     }

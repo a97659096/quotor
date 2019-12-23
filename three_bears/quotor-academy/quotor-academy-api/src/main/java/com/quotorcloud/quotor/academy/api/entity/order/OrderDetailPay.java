@@ -110,6 +110,12 @@ public class OrderDetailPay implements Serializable {
     private String shopId;
 
     /**
+     * 店铺名称
+     */
+    @TableField(value = "odp_shop_name")
+    private String shopName;
+
+    /**
      * 创建时间
      */
     @TableField(value = "odp_gmt_create", fill = FieldFill.INSERT)

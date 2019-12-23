@@ -121,6 +121,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
              */
             OrderDTO orderDTO = new OrderDTO();
             orderDTO.setMemberIds(memberIds);
+
+            //TODO 后期有时间优化
             List<OrderWebVO> orderWebVOS = orderMapper.selectOrderWebVO(orderDTO);
             Map<String, List<OrderWebVO>> idOrderMap = orderWebVOS.stream()
                     .collect(Collectors.groupingBy(OrderWebVO::getMemberId));

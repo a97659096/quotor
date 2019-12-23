@@ -5,11 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.quotorcloud.quotor.academy.api.dto.course.CourseDTO;
 import com.quotorcloud.quotor.academy.api.entity.course.Course;
 import com.quotorcloud.quotor.academy.api.entity.teacher.Teacher;
 import com.quotorcloud.quotor.academy.api.vo.course.CourseVO;
+import com.quotorcloud.quotor.academy.log.annotation.OperationLog;
+import com.quotorcloud.quotor.academy.log.enums.OperationType;
 import com.quotorcloud.quotor.academy.mapper.course.CourseMapper;
 import com.quotorcloud.quotor.academy.mapper.course.TeacherMapper;
 import com.quotorcloud.quotor.academy.service.course.CourseService;
@@ -21,6 +24,7 @@ import com.quotorcloud.quotor.common.core.util.ComUtil;
 import com.quotorcloud.quotor.common.core.util.DateTimeUtil;
 import com.quotorcloud.quotor.common.core.util.FileUtil;
 import com.quotorcloud.quotor.common.core.util.PageUtil;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.ZoneOffset;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +56,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
     private static String COURSE_IMG = "courseImg/";
 
-
     /**
      * 查询课程下拉框
      * @return
@@ -68,6 +72,44 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
             jsonObject.put("name", course.getName());
             return jsonObject;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 查询小程序课程列表
+     * @param page
+     * @param courseDTO
+     * @return
+     */
+    @Override
+    public List<JSONObject> listCourseApplet(Page page, CourseDTO courseDTO) {
+        IPage<Course> iPage = courseMapper.selectCoursePage(page, courseDTO);
+        List<Course> records = iPage.getRecords();
+        //按日期分组
+        TreeMap<String, List<Course>> map = new TreeMap<>();
+        for (Course course : records){
+            //设置上课时间
+            if(!ComUtil.isEmpty(course.getStartDate()) && !ComUtil.isEmpty(course.getEndDate())){
+                String start = DateTimeUtil.localDatetimeToTimeString(course.getStartDate());
+                String end = DateTimeUtil.localDatetimeToTimeString(course.getEndDate());
+                course.setSchoolTime(start.substring(11,16) + "-" + end.substring(11,16));
+            }
+
+            String date = DateTimeUtil.localDatetimeToString(course.getStartDate());
+            if(map.keySet().contains(date)){
+                map.get(date).add(course);
+            }else {
+                List<Course> courses = Lists.newArrayList(course);
+                map.put(date, courses);
+            }
+        }
+        List<JSONObject> jsonObjects = new ArrayList<>();
+        for (String key:map.descendingKeySet()){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("time", key);
+            jsonObject.put("appointList", map.get(key));
+            jsonObjects.add(jsonObject);
+        }
+        return jsonObjects;
     }
 
     /**
@@ -88,7 +130,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      * @return
      */
     @Override
-    public Boolean updateCourse(CourseDTO courseDTO) {
+    public Boolean updateCourse(QuotorUser quotorUser, CourseDTO courseDTO, String id) {
         //判断唯一标识是否存在
         if(ComUtil.isEmpty(courseDTO.getId())){
             throw new MyException(ExceptionEnum.NOT_FIND_ID);
@@ -119,7 +161,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      * @return
      */
     @Override
-    public Boolean removeCourse(String id) {
+    public Boolean removeCourse(QuotorUser quotorUser, String id) {
         if(ComUtil.isEmpty(id)){
             throw new MyException(ExceptionEnum.NOT_FIND_ID);
         }
@@ -162,11 +204,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         //给Img加上地址
         if(!ComUtil.isEmpty(course.getStartDate()) && !ComUtil.isEmpty(course.getEndDate())){
             //先转成String 再转成 时间戳
-            String startStamp = DateTimeUtil.dateToStamp(DateTimeUtil.localDateToString(course.getStartDate()));
+            long startStamp = DateTimeUtil.localdatetimeToTimestamp(course.getStartDate());
             //先转成String 再转成 时间戳
-            String endStamp = DateTimeUtil.dateToStamp(DateTimeUtil.localDateToString(course.getEndDate()));
+            long endStamp = DateTimeUtil.localdatetimeToTimestamp(course.getEndDate());
 
-            courseVO.setDateRange(Lists.newArrayList(Long.valueOf(startStamp), Long.valueOf(endStamp)));
+            courseVO.setDateRange(Lists.newArrayList(startStamp, endStamp));
         }
         return courseVO;
     }
@@ -177,7 +219,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      * @return
      */
     @Override
-    public Boolean saveCourse(CourseDTO courseDTO) {
+    @OperationLog(name = "新增课程", contentType = 3, operatorRef = 0, operatorObj = 1, table = "bear_course",
+            type = OperationType.ADD, cloum = "name")
+    public Boolean saveCourse(QuotorUser quotorUser, CourseDTO courseDTO) {
         Course course = new Course();
         BeanUtils.copyProperties(courseDTO, course,
                 "img", "dateRange");
@@ -230,10 +274,15 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     }
 
     private void setCourseDODate(Course course, String dateRange){
-        List<String> date = DateTimeUtil.getStringDate(dateRange);
-        if(!ComUtil.isEmpty(date)){
-            course.setStartDate(DateTimeUtil.stringToLocalDate(date.get(0)));
-            course.setEndDate(DateTimeUtil.stringToLocalDate(date.get(1)));
+//        List<String> date = DateTimeUtil.getStringDate(dateRange);
+//        if(!ComUtil.isEmpty(date)){
+//            course.setStartDate(DateTimeUtil.stringToLocalDate(date.get(0)));
+//            course.setEndDate(DateTimeUtil.stringToLocalDate(date.get(1)));
+//        }
+        if(!ComUtil.isEmpty(dateRange)){
+            List<String> date = Splitter.on(CommonConstants.SEPARATOR).splitToList(dateRange);
+            course.setStartDate(LocalDateTime.ofEpochSecond(Long.parseLong(date.get(0)), 0, ZoneOffset.ofHours(8)));
+            course.setStartDate(LocalDateTime.ofEpochSecond(Long.parseLong(date.get(1)), 0, ZoneOffset.ofHours(8)));
         }
     }
 

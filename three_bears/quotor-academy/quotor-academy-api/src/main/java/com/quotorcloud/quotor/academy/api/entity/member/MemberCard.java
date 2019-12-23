@@ -40,6 +40,18 @@ public class MemberCard implements Serializable {
     private String memberId;
 
     /**
+     * 会员名称
+     */
+    @TableField(value = "mc_member_name")
+    private String memberName;
+
+    /**
+     * 会员头像
+     */
+    @TableField(value = "mc_member_head_img")
+    private String memberHeadImg;
+
+    /**
      * 卡片标识
      */
     @TableField(value = "mc_card_id")

@@ -79,6 +79,12 @@ public class Order implements Serializable {
     @TableField(value = "o_member_id")
     private String memberId;
 
+    @TableField(value = "o_member_name")
+    private String memberName;
+
+    @TableField(value = "o_member_head_img")
+    private String memberHeadImg;
+
     /**
      * 店铺标识
      */

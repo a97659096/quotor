@@ -19,7 +19,8 @@ import java.util.List;
 @EnablePigResourceServer
 @EnablePigFeignClients
 @SpringCloudApplication
-@ComponentScan(basePackages = {"com.quotorcloud.quotor.academy", "com.quotorcloud.quotor.common.core"})
+@ComponentScan(basePackages = {"com.quotorcloud.quotor.academy",
+        "com.quotorcloud.quotor.common.core"})
 public class QuotorAcademyBizApplication {
 
     public static void main(String[] args) {

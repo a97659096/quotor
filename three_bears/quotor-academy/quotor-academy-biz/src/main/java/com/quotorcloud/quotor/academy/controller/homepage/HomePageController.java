@@ -19,7 +19,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,6 +128,16 @@ public class HomePageController {
     public R listAppletTotalMargin(String shopId){
         MemberCard memberCard = new MemberCard();
         memberCard.setShopId(shopId);
+        return R.ok(memberCardService.countTotalCardMarginGroupByShopId(memberCard));
+    }
+
+    /**
+     * 查询店铺下面的所有会员的卡余量信息
+     * @param memberCard
+     * @return
+     */
+    @GetMapping("applet/total/margin/shop")
+    public R listAppletTotalMargin(MemberCard memberCard){
         return R.ok(memberCardService.countTotalCardMarginGroupByShopId(memberCard));
     }
 

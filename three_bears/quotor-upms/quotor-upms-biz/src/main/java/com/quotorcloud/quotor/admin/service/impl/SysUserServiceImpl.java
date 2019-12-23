@@ -201,7 +201,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	@CacheEvict(value = "user_details", key = "#userDto.username")
+//	@CacheEvict(value = "user_details", key = "#userDto.username")
 	public Boolean updateUser(UserDTO userDto) {
 		SysUser sysUser = new SysUser();
 		BeanUtils.copyProperties(userDto, sysUser);
@@ -210,19 +210,18 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			UserVO userVoById = baseMapper.getUserVoById(userDto.getUserId());
 			sysUser.setPassword(MD5Util.formPassToDBPass(userDto.getPassword(), userVoById.getSalt()));
 		}
-		if(!ComUtil.isEmpty(userDto.getPhone())){
-
-		}
 		this.updateById(sysUser);
 
-		sysUserRoleService.remove(Wrappers.<SysUserRole>update().lambda()
-			.eq(SysUserRole::getUserId, userDto.getUserId()));
-		userDto.getRole().forEach(roleId -> {
-			SysUserRole userRole = new SysUserRole();
-			userRole.setUserId(sysUser.getUserId());
-			userRole.setRoleId(roleId);
-			userRole.insert();
-		});
+		if(!ComUtil.isEmpty(userDto.getRole())){
+			sysUserRoleService.remove(Wrappers.<SysUserRole>update().lambda()
+				.eq(SysUserRole::getUserId, userDto.getUserId()));
+			userDto.getRole().forEach(roleId -> {
+				SysUserRole userRole = new SysUserRole();
+				userRole.setUserId(sysUser.getUserId());
+				userRole.setRoleId(roleId);
+				userRole.insert();
+			});
+		}
 		return Boolean.TRUE;
 	}
 

@@ -6,6 +6,8 @@
     <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.vo.member.MemberCardVO">
         <id column="mc_id" property="id" />
         <result column="mc_member_id" property="memberId" />
+        <result column="mc_member_name" property="memberName" />
+        <result column="mc_member_head_img" property="memberHeadImg"/>
         <result column="mc_card_id" property="cardId" />
         <result column="mc_card_type_id" property="cardTypeId" />
         <result column="mc_card_type_name" property="cardTypeName" />
@@ -47,11 +49,19 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        mc_id, mc_member_id, mc_card_id, mc_card_type_id, mc_card_type_name, mc_card_type_way, mc_card_name, mc_card_price, mc_card_number, mc_order_number, mc_expire, mc_status, mc_card_source, mc_card_start_date, mc_card_expire_date_type, mc_card_expire_date, mc_buy_date, mc_shop_id, mc_shop_name, mc_card_initial, mc_card_surplus, mc_gmt_create, mc_gmt_modified
+        mc_id, mc_member_id,mc_member_name,mc_member_head_img,
+        mc_card_id, mc_card_type_id, mc_card_type_name, mc_card_type_way,
+        mc_card_name, mc_card_price, mc_card_number, mc_order_number, mc_expire,
+        mc_status, mc_card_source, mc_card_start_date, mc_card_expire_date_type,
+        mc_card_expire_date, mc_buy_date, mc_shop_id, mc_shop_name, mc_card_initial,
+        mc_card_surplus, mc_gmt_create, mc_gmt_modified
     </sql>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List_Detail">
-        mcd_id, mcd_member_card_id, mcd_detail_type, mcd_content_id, mcd_content_name, mcd_content, mcd_content_type, mcd_content_initial, mcd_content_surplus, mcd_gmt_create, mcd_gmt_modified
+        mcd_id, mcd_member_card_id, mcd_detail_type, mcd_content_id,
+        mcd_content_name, mcd_content, mcd_content_type, mcd_content_initial,
+        mcd_content_surplus, mcd_gmt_create, mcd_gmt_modified
     </sql>
 
 <!--    分页查询会员卡信息-->
@@ -73,6 +83,9 @@
             </if>
             <if test="card.shopId != null and card.shopId != ''">
                 and mc.mc_shop_id = #{card.shopId}
+            </if>
+            <if test="card.shopName != null and card.shopName != ''">
+                and mc.mc_shop_name = #{card.shopName}
             </if>
         </where>
     </select>

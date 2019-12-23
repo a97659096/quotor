@@ -28,7 +28,9 @@ import com.quotorcloud.quotor.admin.api.entity.SysUser;
 import com.quotorcloud.quotor.admin.api.vo.UserVO;
 import com.quotorcloud.quotor.admin.service.SysUserService;
 import com.quotorcloud.quotor.common.core.constant.FileConstants;
+import com.quotorcloud.quotor.common.core.enums.SMSType;
 import com.quotorcloud.quotor.common.core.util.ComUtil;
+import com.quotorcloud.quotor.common.core.util.GenerationSequenceUtil;
 import com.quotorcloud.quotor.common.core.util.R;
 import com.quotorcloud.quotor.common.core.util.RedisUtil;
 import com.quotorcloud.quotor.common.log.annotation.SysLog;
@@ -53,8 +55,8 @@ public class UserController {
 
 	private final SysUserService userService;
 
-//	@Autowired
-//	private RedisUtil redisUtil;
+	@Autowired
+	private RedisUtil redisUtil;
 
 	/**
 	 * 获取当前用户全部信息
@@ -149,20 +151,46 @@ public class UserController {
 	@SysLog("更新用户信息")
 	@PutMapping
 	@PreAuthorize("@pms.hasPermission('sys_user_edit')")
-	public R updateUser(UserDTO userDto) {
+	public R updateUser(@RequestBody UserDTO userDto) {
 		return R.ok(userService.updateUser(userDto));
 	}
 
 	/**
-	 * 获取验证码
+	 * 获取修改手机号验证码
 	 * @return
 	 */
-	@GetMapping("auth-code")
+	@GetMapping("update-phone-auth-code")
 	public void getAuthCode(String phone, String userId){
 		AppConfig config = ConfigLoader.load(ConfigLoader.ConfigType.Message);
 		MessageSend submail = new MessageSend(config);
+		//生成验证码
+		String randNum = GenerationSequenceUtil.getRandNum(6);
 		submail.addTo(phone);
-		submail.addContent("");
+		submail.addContent("【三只熊】您正在进行" + SMSType.getSMSType("UPDATEPHONE") + "," + "您的验证码为" + randNum + "5分钟内有效");
+		submail.send();
+		redisUtil.set(userId + ":" +phone +"UPDATEPHONE", randNum, 300);
+	}
+
+	/**
+	 * 修改手机号
+	 * @param phone
+	 * @param userId
+	 * @param code
+	 * @return
+	 */
+	@PutMapping("update-phone")
+	public R updatePhone(String phone, String userId, String code){
+		String codeDatabase = (String) redisUtil.get(userId + ":" + phone + "UPDATEPHONE");
+		if(ComUtil.isEmpty(codeDatabase)){
+			return R.failed("验证码已过期，请重新获取");
+		}
+		if(!code.equals(codeDatabase)){
+			return R.failed("验证码不正确，请重新输入");
+		}
+		UserDTO userDTO = new UserDTO();
+		userDTO.setUserId(Integer.valueOf(userId));
+		userDTO.setPhone(phone);
+		return R.ok(userService.updateUser(userDTO));
 	}
 
 	/**

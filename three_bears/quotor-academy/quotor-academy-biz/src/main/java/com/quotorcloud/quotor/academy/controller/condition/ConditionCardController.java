@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.quotorcloud.quotor.academy.api.dto.condition.ConditionCardDTO;
 import com.quotorcloud.quotor.academy.service.condition.ConditionCardService;
 import com.quotorcloud.quotor.common.core.util.R;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
+import com.quotorcloud.quotor.common.security.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +32,8 @@ public class ConditionCardController {
      */
     @PostMapping
     public R saveCard(@RequestBody ConditionCardDTO conditionCardDTO){
-        return R.ok(conditionCardService.saveConditionCard(conditionCardDTO));
+        QuotorUser quotorUser = SecurityUtils.getUser();
+        return R.ok(conditionCardService.saveConditionCard(quotorUser, conditionCardDTO));
     }
 
     /**
@@ -40,7 +43,8 @@ public class ConditionCardController {
      */
     @PutMapping
     public R updateCard(@RequestBody ConditionCardDTO conditionCardDTO){
-        return R.ok(conditionCardService.updateConditionCard(conditionCardDTO));
+        QuotorUser quotorUser = SecurityUtils.getUser();
+        return R.ok(conditionCardService.updateConditionCard(quotorUser, conditionCardDTO));
     }
 
     /**
@@ -49,5 +53,11 @@ public class ConditionCardController {
     @GetMapping("list")
     public R listCard(Page page, ConditionCardDTO conditionCardDTO){
         return R.ok(conditionCardService.selectConditionCard(page, conditionCardDTO));
+    }
+
+    @DeleteMapping("{id}")
+    public R removeCard(@PathVariable String id){
+        QuotorUser user = SecurityUtils.getUser();
+        return R.ok(conditionCardService.removeConditionCard(user, id));
     }
 }

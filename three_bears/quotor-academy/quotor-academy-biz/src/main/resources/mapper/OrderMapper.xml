@@ -13,6 +13,8 @@
         <result column="o_not_member_arrive" property="notMemberArrive" />
         <result column="o_remark" property="remark" />
         <result column="o_member_id" property="memberId" />
+        <result column="o_member_name" property="memberName"/>
+        <result column="o_member_head_img" property="memberHeadImg"/>
         <result column="o_shop_id" property="shopId" />
         <result column="o_shop_name" property="shopName" />
         <result column="o_kd_time" property="kdTime" />
@@ -40,7 +42,6 @@
         <result column="od_gmt_modified" property="gmtModified" />
         <collection property="orderDetailPays" resultMap="OrderDetailPayMap"/>
     </resultMap>
-
 
     <!-- 订单服务员工 -->
     <resultMap id="OrderDetailServiceStaffMap" type="com.quotorcloud.quotor.academy.api.entity.employee.OrderDetailServiceStaff">
@@ -77,7 +78,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        o_id, o_expend_number, o_order_number, o_room_id, o_room_name, o_member_arrive, o_not_member_arrive, o_remark, o_member_id, o_shop_id, o_shop_name, o_kd_time, o_collect_money_time, o_replacement_order, o_status, o_type, o_gmt_create, o_gmt_modified
+        o_id, o_expend_number, o_order_number, o_room_id, o_room_name, o_member_arrive, o_not_member_arrive, o_remark,
+        o_member_id, o_member_name, o_member_head_img, o_shop_id, o_shop_name, o_kd_time, o_collect_money_time,
+         o_replacement_order, o_status, o_type, o_gmt_create, o_gmt_modified
     </sql>
 
     <!-- 通用查询结果列 -->
@@ -116,9 +119,13 @@
             <if test="order.shopId != null and order.shopId != ''">
                 and o.o_shop_id = #{order.shopId}
             </if>
+            <if test="order.payType != null and order.payType != ''">
+                and odp.odp_pay_type = #{order.payType}
+            </if>
         </where>
     </select>
 
+<!--    查询-->
     <select id="selectMemberReachShopFrequency" resultType="java.lang.String">
         select o_member_id as id from bear_order
         where o_gmt_create >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
@@ -131,7 +138,6 @@
         on m.id = o.o_member_id group by id
         having count(o_member_id) = 0
     </select>
-
 
     <select id="selectToStoreGuest" resultType="java.lang.Integer">
         select count(*) from bear_order

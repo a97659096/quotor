@@ -18,6 +18,7 @@
         <result column="odp_pay_before" property="payBefore" />
         <result column="odp_pay_later" property="payLater" />
         <result column="odp_shop_id" property="shopId"/>
+        <result column="odp_shop_name" property="shopName"/>
         <result column="odp_gmt_create" property="gmtCreate" />
         <result column="odp_gmt_modified" property="gmtModified" />
     </resultMap>
@@ -45,6 +46,9 @@
         <where>
             <if test="pay.shopId != null and pay.shopId != ''">
                 and odp_shop_id = #{pay.shopId}
+            </if>
+            <if test="pay.shopName != null and shopName != ''">
+                and odp_shop_name like concat('%', #{pay.shopName}, '%')
             </if>
             <if test="pay.payMoneyType != null">
                 and odp_pay_money_type = #{pay.payMoneyType}

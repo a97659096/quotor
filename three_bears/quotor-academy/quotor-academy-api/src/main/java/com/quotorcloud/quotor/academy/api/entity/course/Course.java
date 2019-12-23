@@ -101,13 +101,13 @@ public class Course implements Serializable {
      * 课程开始日期
      */
     @TableField(value = "c_start_date")
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     /**
      * 课程结束日期
      */
     @TableField(value = "c_end_date")
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     /**
      * 上课开始时间
@@ -153,6 +153,9 @@ public class Course implements Serializable {
      */
     @TableField(value = "c_gmt_modified",fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime gmtModified;
+
+    @TableField(exist = false)
+    private String schoolTime;
 
 
 }

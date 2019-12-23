@@ -26,6 +26,16 @@ public class MemberCardVO {
     private String memberId;
 
     /**
+     * 会员名称
+     */
+    private String memberName;
+
+    /**
+     * 会员头像
+     */
+    private String memberHeadImg;
+
+    /**
      * 卡片标识
      */
     private String cardId;

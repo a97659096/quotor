@@ -1876,6 +1876,32 @@ public class DateTimeUtil {
     }
 
     /**
+     * TODO 时间是否需要添加类型转换器，待确定
+     * 将前端传入的字符串拆并赋值
+     * @param dateRange [10000000,1000000] 拆开并转换成日期类型yyyy-MM-dd 返回List<String></>
+     */
+    public static List<String> getStringDateTime(String dateRange) {
+        if(ComUtil.isEmpty(dateRange)){
+            return null;
+        }
+        //分割成集合
+        List<String> dateList =
+                Splitter.on(CommonConstants.SEPARATOR).splitToList(dateRange);
+        //时间必须为两个，起始时间,或者起始时间比结束时间要大，则抛出异常
+        if(dateList.size() < 2 || Long.valueOf(dateList.get(0)) > Long.valueOf(dateList.get(1))){
+            throw new MyException(ExceptionEnum.DATE_RANGE_ERROR);
+        }
+        List<String> stringList = new LinkedList<>();
+        //开始时间
+        String startDateString = DateTimeUtil.stampToDate(dateList.get(0));
+        //结束时间
+        String endDateString = DateTimeUtil.stampToDate(dateList.get(1));
+        stringList.add(0, startDateString);
+        stringList.add(1, endDateString);
+        return stringList;
+    }
+
+    /**
      * 时间戳转时间
      * @param s
      * @return
@@ -1930,6 +1956,15 @@ public class DateTimeUtil {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(localDateTime);
     }
 
+    public static String localDatetimeToTimeString(LocalDateTime localDateTime){
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(localDateTime);
+    }
+
+    public static LocalDateTime stringToLocalDatetime(String localDateTime){
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse(localDateTime, df);
+    }
+
     public static String localDatetimeToMonth(LocalDateTime localDateTime){
         return DateTimeFormatter.ofPattern("yyyy-MM").format(localDateTime);
     }
@@ -1968,14 +2003,19 @@ public class DateTimeUtil {
     }
 
     //获取日期第一天
-    public static String getWeekStartDate(){
+    public static String getWeekStartDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 设置时间格式
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        Date date = cal.getTime();
-        return formatDatetoString(date);
+        cal.setTime(new Date());
+        // 判断要计算的日期是否是周日，如果是则减一天计算周六的，否则会出问题，计算到下一周去了
+        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天
+        if (1 == dayWeek) {
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        cal.setFirstDayOfWeek(Calendar.MONDAY);// 设置一个星期的第一天，按中国的习惯一个星期的第一天是星期一
+        int day = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天
+        cal.add(Calendar.DATE, cal.getFirstDayOfWeek() - day);// 根据日历的规则，给当前日期减去星期几与一个星期第一天的差值
+        return sdf.format(cal.getTime());
     }
 
     //对set日期排序

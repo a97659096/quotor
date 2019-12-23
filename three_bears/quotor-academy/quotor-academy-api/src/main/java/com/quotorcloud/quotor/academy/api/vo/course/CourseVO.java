@@ -77,4 +77,6 @@ public class CourseVO {
      * 课程状态：1已发布，2待发布，3已下架
      */
     private Integer status;
+
+    private String schoolTime;
 }

@@ -1,6 +1,7 @@
 package com.quotorcloud.quotor.academy.service.expend;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.quotorcloud.quotor.academy.api.dto.expend.ExpendDTO;
 import com.quotorcloud.quotor.academy.api.entity.expend.Expend;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -38,7 +39,7 @@ public interface ExpendService extends IService<Expend> {
      */
     JSONObject selectWXStatement(ExpendDTO expendDTO);
 
-    JSONObject listExpendApp(ExpendDTO expendDTO);
+    JSONObject listExpendApp(Page page, ExpendDTO expendDTO);
 
 
 }

@@ -66,7 +66,6 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     @Autowired
     private OrderDetailServiceStaffMapper orderDetailServiceStaffMapper;
 
-
     private static String HEAD_IMG = "headImg/";
 
     private static String WORK_LIST = "worksList/";
@@ -100,7 +99,11 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         }
         //查询店铺下的员工
         List<Employee> employees = employeeMapper.selectList(new QueryWrapper<Employee>()
+                //未删除
                 .eq("e_del_state", CommonConstants.STATUS_NORMAL)
+                //在职
+                .eq("e_work_state", 1)
+                //店铺标识
                 .eq("e_shop_id", ComUtil.isEmpty(shopId)?user.getDeptId():shopId));
         //转换格式进行拼接员工列表
         return employees.stream().map(employee -> {

@@ -38,5 +38,11 @@ public interface MemberCardService extends IService<MemberCard> {
     /**
      * 计算总余量根据门店分组
      */
-    List<JSONObject> countTotalCardMarginGroupByShopId(MemberCard memberCard);
+    JSONObject countTotalCardMarginGroupByShopId(MemberCard memberCard);
+
+    /**
+     * 计算总余量根据会员分组
+     */
+    JSONObject countTotalCardMarginGroupByMemberId(MemberCard memberCard);
+
 }

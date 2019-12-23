@@ -26,6 +26,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 
@@ -40,6 +41,8 @@ import java.util.List;
 @EnablePigResourceServer
 @EnablePigFeignClients
 @SpringCloudApplication
+@ComponentScan(basePackages = {"com.quotorcloud.quotor.admin",
+		"com.quotorcloud.quotor.common.core"})
 public class QuotorAdminApplication {
 
 	public static void main(String[] args) {

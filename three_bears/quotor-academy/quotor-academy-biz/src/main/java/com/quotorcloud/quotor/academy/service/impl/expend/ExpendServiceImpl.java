@@ -201,8 +201,14 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
      */
     @Override
     public JSONObject countTotalExpend(ExpendDTO expendDTO) {
-        List<Expend> expends = expendMapper.selectExpendPage(expendDTO);
-        BigDecimal totalExpend = expends.stream().map(Expend::getEMoney).reduce(BigDecimal::add).get();
+        //默认查询本周
+        expendDTO.setStart(DateTimeUtil.getWeekStartDate());
+
+        List<Expend> expends = expendMapper
+                .selectExpendPage(expendDTO);
+
+        BigDecimal totalExpend = expends.stream().map(Expend::getEMoney).
+                reduce(BigDecimal::add).get();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("totalExpend", totalExpend);
         return jsonObject;
@@ -228,7 +234,6 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
                 break;
         }
         List<Expend> expends = expendMapper.selectExpendPage(expendDTO);
-        List<ExpendSumVO> expendsGroupByPayWay = expendMapper.selectExpendGroupByPayWay(expendDTO);
         JSONObject jsonObject = new JSONObject();
         List<String> x = new LinkedList<>();
         List<BigDecimal> y = new LinkedList<>();
@@ -275,6 +280,7 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
             }
         }
 
+        List<ExpendSumVO> expendsGroupByPayWay = expendMapper.selectExpendGroupByPayWay(expendDTO);
         for (ExpendSumVO expendSumVO : expendsGroupByPayWay){
             JSONObject jsonObject1 = new JSONObject();
             jsonObject1.put("color", expendSumVO.getColor());
@@ -295,12 +301,19 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
      * @return
      */
     @Override
-    public JSONObject listExpendApp(ExpendDTO expendDTO) {
-        Page<Expend> page = PageUtil.getPage(expendDTO.getPageNo(), expendDTO.getPageSize());
-        IPage<Expend> expendIPage = expendMapper.selectExpendPage(page, expendDTO);
-        List<ExpendVO> expendVOS = mapDOAndVo(expendIPage.getRecords());
-        //分组
-        Map<String, List<ExpendVO>> map = new HashMap<>();
+    public JSONObject listExpendApp(Page page, ExpendDTO expendDTO) {
+        //设置日期
+        if(!ComUtil.isEmpty(expendDTO.getDateRange())){
+            List<String> stringDate = DateTimeUtil.getStringDate(expendDTO.getDateRange());
+            if(!ComUtil.isEmpty(stringDate)){
+                expendDTO.setStart(stringDate.get(0));
+                expendDTO.setEnd(stringDate.get(1));
+            }
+        }
+        List<Expend> expendIPage = expendMapper.selectExpendPage(expendDTO);
+        List<ExpendVO> expendVOS = mapDOAndVo(expendIPage);
+        //分组,key值排序
+        TreeMap<String, List<ExpendVO>> map = new TreeMap<>();
         for (ExpendVO expendVO:expendVOS){
             String date = DateTimeUtil.localDatetimeToString(expendVO.getGmtCreate());
             if(map.keySet().contains(date)){
@@ -314,7 +327,7 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
         JSONObject jsonObject = new JSONObject();
         List<JSONObject> jsonObjects = new ArrayList<>();
         BigDecimal totalMoney = new BigDecimal(0);
-        for (String date:map.keySet()){
+        for (String date:map.descendingKeySet()){
             List<ExpendVO> expendVOS1 = map.get(date);
             JSONObject json = new JSONObject();
             json.put("date", date);

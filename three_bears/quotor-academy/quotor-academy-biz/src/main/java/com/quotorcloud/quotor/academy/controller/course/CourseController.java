@@ -1,8 +1,11 @@
 package com.quotorcloud.quotor.academy.controller.course;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.quotorcloud.quotor.academy.api.dto.course.CourseDTO;
 import com.quotorcloud.quotor.academy.service.course.CourseService;
 import com.quotorcloud.quotor.common.core.util.R;
+import com.quotorcloud.quotor.common.security.service.QuotorUser;
+import com.quotorcloud.quotor.common.security.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +45,8 @@ public class CourseController {
      */
     @PostMapping("save")
     public R saveCourse(CourseDTO courseDTO){
-        return R.ok(courseService.saveCourse(courseDTO));
+        QuotorUser quotorUser = SecurityUtils.getUser();
+        return R.ok(courseService.saveCourse(quotorUser, courseDTO));
     }
 
     /**
@@ -74,7 +78,8 @@ public class CourseController {
      */
     @DeleteMapping("/{id}")
     public R removeCourse(@PathVariable String id){
-        return R.ok(courseService.removeCourse(id));
+        QuotorUser quotorUser = SecurityUtils.getUser();
+        return R.ok(courseService.removeCourse(quotorUser, id));
     }
 
     /**
@@ -84,7 +89,20 @@ public class CourseController {
      */
     @PutMapping("update")
     public R updateCourse(CourseDTO courseDTO){
-        return R.ok(courseService.updateCourse(courseDTO));
+        QuotorUser quotorUser = SecurityUtils.getUser();
+        return R.ok(courseService.updateCourse(quotorUser, courseDTO));
+    }
+
+
+    /**
+     * 小程序查询课程列表
+     * @param page
+     * @param courseDTO
+     * @return
+     */
+    @GetMapping("list/applet")
+    public R listApplet(Page page, CourseDTO courseDTO){
+        return R.ok(courseService.listCourseApplet(page, courseDTO));
     }
 
 }

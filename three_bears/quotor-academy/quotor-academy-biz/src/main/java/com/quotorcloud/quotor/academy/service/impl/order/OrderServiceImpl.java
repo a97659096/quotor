@@ -143,7 +143,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             Set<Integer> consumeWay = new HashSet<>();
             for (OrderDetail orderDetail:orderDetails){
                 //设置服务员工
-                List<OrderDetailServiceStaff> orderDetailServiceStaffs = orderDetailStaffMap.get(orderDetail.getId());
+                List<OrderDetailServiceStaff> orderDetailServiceStaffs =
+                        orderDetailStaffMap.get(orderDetail.getId());
+
                 if(!ComUtil.isEmpty(orderDetailServiceStaffs)){
                     staffs.addAll(orderDetailServiceStaffs.stream()
                             .map(OrderDetailServiceStaff::getEmployeeName).collect(Collectors.toList()));

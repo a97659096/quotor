@@ -53,13 +53,17 @@
                 and c_type = #{course.type}
             </if>
             <if test="course.start != null and course.start != ''">
-                and c_start_date <![CDATA[>=]]> #{course.start}
+                and DATE_FORMAT(c_start_date,'%Y-%m-%d') <![CDATA[>=]]> #{course.start}
             </if>
             <if test="course.end != null and course.end != ''">
-                and c_start_date <![CDATA[<=]]> #{course.end}
+                and DATE_FORMAT(c_start_date,'%Y-%m-%d') <![CDATA[<=]]> #{course.end}
             </if>
             <if test="course.surplusPoll != null">
                 and c_surplus_poll <![CDATA[<=]]> #{course.surplusPoll}
+            </if>
+            <if test="course.middleDate != null and course.middleDate != ''">
+                and DATE_FORMAT(c_start_date,'%Y-%m-%d') <![CDATA[<=]]> #{course.middleDate}
+                and #{course.middleDate} <![CDATA[<=]]> DATE_FORMAT(c_end_date,'%Y-%m-%d')
             </if>
         </where>
         order by c_gmt_create desc

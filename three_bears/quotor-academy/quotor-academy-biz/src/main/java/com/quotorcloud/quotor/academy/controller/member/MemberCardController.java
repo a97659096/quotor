@@ -1,6 +1,5 @@
 package com.quotorcloud.quotor.academy.controller.member;
 
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.quotorcloud.quotor.academy.api.entity.member.MemberCard;
 import com.quotorcloud.quotor.academy.service.member.MemberCardService;

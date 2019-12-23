@@ -13,4 +13,6 @@ public class OrderDTO {
     private List<String> memberIds;
 
     private String shopId;
+
+    private Integer payType;
 }
