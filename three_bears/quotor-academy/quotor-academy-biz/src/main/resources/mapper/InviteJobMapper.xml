@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.invitejob.InviteJobMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.invitejob.InviteJob">
+        <id column="id" property="id" />
+        <result column="position_id" property="positionId" />
+        <result column="position_name" property="positionName" />
+        <result column="phone" property="phone" />
+        <result column="welfare" property="welfare" />
+        <result column="salary_start" property="salaryStart" />
+        <result column="salary_end" property="salaryEnd" />
+        <result column="address" property="address" />
+        <result column="shop_id" property="shopId" />
+        <result column="status" property="status" />
+        <result column="position_detail" property="positionDetail" />
+        <result column="skill_require" property="skillRequire" />
+        <result column="skill_super" property="skillSuper" />
+        <result column="owner_detail" property="ownerDetail" />
+        <result column="start_date" property="startDate" />
+        <result column="end_date" property="endDate" />
+        <result column="issue_time" property="issueTime" />
+        <result column="type" property="type" />
+        <result column="xdr_id" property="xdrId" />
+        <result column="xdr_name" property="xdrName" />
+        <result column="img" property="img"/>
+        <result column="del_state" property="delState"/>
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapVO" type="com.quotorcloud.quotor.academy.api.vo.invitejob.InviteJobVO">
+        <id column="id" property="id" />
+        <result column="position_id" property="positionId" />
+        <result column="position_name" property="positionName" />
+        <result column="phone" property="phone" />
+        <result column="welfare" property="welfare" />
+        <result column="salary_start" property="salaryStart" />
+        <result column="salary_end" property="salaryEnd" />
+        <result column="address" property="address" />
+        <result column="shop_id" property="shopId" />
+        <result column="shop_name" property="shopName"/>
+        <result column="shop_head_img" property="shopHeadImg"/>
+        <result column="status" property="status" />
+        <result column="position_detail" property="positionDetail" />
+        <result column="skill_require" property="skillRequire" />
+        <result column="skill_super" property="skillSuper" />
+        <result column="owner_detail" property="ownerDetail" />
+        <result column="start_date" property="startDate" />
+        <result column="end_date" property="endDate" />
+        <result column="issue_time" property="issueTime" />
+        <result column="type" property="type" />
+        <result column="xdr_id" property="xdrId" />
+        <result column="xdr_head_img" property="xdrHeadImg"/>
+        <result column="xdr_name" property="xdrName" />
+        <result column="img" property="imgDatabase"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, position_id, position_name, phone, welfare, salary_start, salary_end, address, shop_id, status, position_detail, skill_require, skill_super, owner_detail, start_date, end_date, issue_time, type, xdr_id, xdr_name
+    </sql>
+    <sql id="Base_Column_List_Invite">
+        id, position_id, position_name, bij.phone, welfare,
+        salary_start, salary_end, address,
+        shop_id, dept.name as shop_name, dept_head_img as shop_head_img, status, position_detail,
+        skill_require, start_date,
+        end_date, issue_time, type
+    </sql>
+    <sql id="Base_Column_List_Find">
+        id, position_id, position_name, bij.phone, welfare, salary_start,
+        salary_end, address, shop_id, status, position_detail,
+        skill_require, skill_super, owner_detail,
+        start_date, end_date, issue_time, type,
+        xdr_id, user.avatar, xdr_name
+    </sql>
+    <select id="listInviteJob" resultType="com.quotorcloud.quotor.academy.api.vo.invitejob.InviteJobVO" resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List_Invite"></include>
+        from bear_invite_job bij left join sys_dept dept on bij.shop_id = dept.dept_id
+        <where>
+            bij.del_state = 0
+            and type = 1
+            <if test="ij.shopId != null and ij.shopId != ''">
+                bij.shop_id = #{ij.shopId}
+            </if>
+            <if test="ij.xdrName != null and ij.xdrName != ''">
+                bij.xdr_name like concat('%', #{ij.xdrName}, '%')
+            </if>
+            <if test="ij.start != null and ij.start != ''">
+                bij.start_date <![CDATA[>=]]> #{ij.start}
+            </if>
+            <if test="ij.end != null and ij.end != ''">
+                bij.end_date <![CDATA[<=]]> #{ij.end}
+            </if>
+            <if test="ij.phone != null and ij.phone != ''">
+                bij.phone like concat('%',#{ij.phone},'%')
+            </if>
+            <if test="ij.salaryStart != null">
+                bij.salary_start <![CDATA[>=]]> #{ij.salaryStart}
+            </if>
+            <if test="ij.salaryEnd != null">
+                bij.salary_start <![CDATA[<=]]> #{ij.salaryEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="listFindJob" resultType="com.quotorcloud.quotor.academy.api.vo.invitejob.InviteJobVO"
+            resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List_Find"></include>
+        from bear_invite_job bij left join sys_user user on bij.xdr_id = user.user_id
+        <where>
+            bij.del_state = 0
+            and type = 2
+            <if test="ij.shopId != null and ij.shopId != ''">
+                bij.shop_id = #{ij.shopId}
+            </if>
+            <if test="ij.xdrName != null and ij.xdrName != ''">
+                bij.xdr_name like concat('%', #{ij.xdrName}, '%')
+            </if>
+            <if test="ij.start != null and ij.start != ''">
+                bij.start_date <![CDATA[>=]]> #{ij.start}
+            </if>
+            <if test="ij.end != null and ij.end != ''">
+                bij.end_date <![CDATA[<=]]> #{ij.end}
+            </if>
+            <if test="ij.phone != null and ij.phone != ''">
+                bij.phone like concat('%',#{ij.phone},'%')
+            </if>
+            <if test="ij.salaryStart != null">
+                bij.salary_start <![CDATA[>=]]> #{ij.salaryStart}
+            </if>
+            <if test="ij.salaryEnd != null">
+                bij.salary_end <![CDATA[<=]]> #{salaryEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectInviteJobById" resultType="com.quotorcloud.quotor.academy.api.vo.invitejob.InviteJobVO"
+            resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List_Invite"></include>
+        from bear_invite_job bij left join sys_dept dept on bij.shop_id = dept.dept_id
+        where bij.del_state = 0 and bij.type =1 and bij.id = #{id}
+    </select>
+
+    <select id="selectFindJobById" resultType="com.quotorcloud.quotor.academy.api.vo.invitejob.InviteJobVO" resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List_Find"></include>
+        from bear_invite_job bij left join sys_user user on bij.xdr_id = user.user_id
+        where bij.del_state = 0 and bij.type = 2 and bij.id = #{id}
+    </select>
+
+</mapper>

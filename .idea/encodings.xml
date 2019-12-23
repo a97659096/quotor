@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/three_bears" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-academy" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-academy/quotor-academy-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-academy/quotor-academy-biz" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-auth" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-common/quotor-common-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-common/quotor-common-custom" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-common/quotor-common-log" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-common/quotor-common-security" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-config" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-eureka" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-gateway" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-upms" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-upms/quotor-upms-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-upms/quotor-upms-biz" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-visual" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-visual/quotor-codegen" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-visual/quotor-monitor" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/three_bears/quotor-visual/quotor-zipkin" charset="UTF-8" />
+  </component>
+</project>

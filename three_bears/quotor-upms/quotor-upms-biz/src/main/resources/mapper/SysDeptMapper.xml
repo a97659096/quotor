@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright (c) 2019-2020, 冷冷 (wangiegie@gmail.com).
+  ~  <p>
+  ~  Licensed under the GNU Lesser General Public License 3.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~  <p>
+  ~ https://www.gnu.org/licenses/lgpl.html
+  ~  <p>
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.admin.mapper.SysDeptMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.quotorcloud.quotor.admin.api.entity.SysDept">
+		<id column="dept_id" property="deptId"/>
+		<result column="name" property="name"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="del_flag" property="delFlag"/>
+	</resultMap>
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMapVO" type="com.quotorcloud.quotor.admin.api.vo.DeptVO">
+		<id column="dept_id" property="deptId"/>
+		<result column="name" property="name"/>
+		<result column="head_img" property="headImg"/>
+		<result column="number" property="number"/>
+		<result column="intro" property="intro"/>
+		<result column="manager" property="manager"/>
+		<result column="phone" property="phone"/>
+		<result column="environment" property="environmentDatabase"/>
+		<result column="message_count" property="messageCount"/>
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+        dept_id AS deptId, parent_id AS parentId, name, sort, create_time AS createTime, update_time AS updateTime, del_flag AS delFlag
+    </sql>
+
+	<sql id="Base_Column_List_VO">
+        dept_id ,head_img parent_id , name, number, intro, environment, manager, phone, create_time, message_count
+    </sql>
+
+	<!--关联查询部门列表-->
+	<select id="listDepts" resultType="com.quotorcloud.quotor.admin.api.entity.SysDept">
+		SELECT
+			t.*
+		FROM
+			sys_dept t
+		LEFT JOIN sys_dept_relation dr ON t.dept_id = dr.descendant
+		WHERE dr.ancestor = 0
+	</select>
+    <select id="listDeptPage" resultType="com.quotorcloud.quotor.admin.api.vo.DeptVO" resultMap="BaseResultMapVO">
+		select
+		<include refid="Base_Column_List_VO"></include>
+		from sys_dept
+		<where>
+			<if test="dept.name != null and dept.name != ''">
+				name like concat('%', #{dept.name}, '%')
+			</if>
+		</where>
+	</select>
+	<select id="selectDeptById" resultType="com.quotorcloud.quotor.admin.api.vo.DeptVO" resultMap="BaseResultMapVO">
+		select
+		<include refid="Base_Column_List_VO"></include>
+		from sys_dept
+		where dept_id = #{id}
+	</select>
+</mapper>

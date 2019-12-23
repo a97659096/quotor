@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.condition.ConditionCategoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.condition.ConditionCategory">
+        <id column="c_id" property="id" />
+        <result column="c_name" property="cName" />
+        <result column="c_parent_id" property="cParentId" />
+        <result column="c_type" property="cType" />
+        <result column="c_shop_id" property="cShopId" />
+        <result column="c_del_state" property="cDelState" />
+        <result column="c_gmt_create" property="cGmtCreate" />
+        <result column="c_gmt_modified" property="cGmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        c_id, c_name, c_parent_id, c_type, c_shop_id, c_del_state, c_gmt_create, c_gmt_modified
+    </sql>
+
+</mapper>

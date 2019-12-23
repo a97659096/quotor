@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.inn.InnTeacherMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.inn.InnTeacher">
+        <id column="id" property="id" />
+        <result column="head_img" property="headImg" />
+        <result column="teacher_name" property="teacherName" />
+        <result column="sex" property="sex" />
+        <result column="salary" property="salary" />
+        <result column="intro" property="intro" />
+        <result column="del_state" property="delState" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, head_img, teacher_name, sex, salary, intro, del_state, gmt_create, gmt_modified
+    </sql>
+
+</mapper>

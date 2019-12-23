@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.appoint.AppointMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.appoint.Appoint">
+        <id column="id" property="id" />
+        <result column="member_id" property="memberId" />
+        <result column="population" property="population" />
+        <result column="appoint_date" property="appointDate" />
+        <result column="waste_book" property="wasteBook" />
+        <result column="new_customer" property="newCustomer" />
+        <result column="order_number" property="orderNumber" />
+        <result column="remark" property="remark" />
+        <result column="appoint_state" property="appointState" />
+        <result column="shop_id" property="shopId" />
+        <result column="shop_name" property="shopName" />
+        <result column="appoint_staff_id" property="appointStaffId" />
+        <result column="appoint_staff_name" property="appointStaffName" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="projects" property="projects" />
+        <result column="room_id" property="roomId" />
+        <result column="room_name" property="roomName" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapVO" type="com.quotorcloud.quotor.academy.api.vo.appoint.AppointVO">
+        <id column="id" property="id" />
+        <result column="member_id" property="memberId" />
+        <result column="name" property="memberName"/>
+        <result column="phone" property="memberPhone"/>
+        <result column="head_img" property="memberHeadImg"/>
+        <result column="population" property="population" />
+        <result column="appoint_date" property="appointDate" />
+        <result column="waste_book" property="wasteBook" />
+        <result column="new_customer" property="newCustomer" />
+        <result column="order_number" property="orderNumber" />
+        <result column="remark" property="remark" />
+        <result column="appoint_state" property="appointState" />
+        <result column="shop_id" property="shopId" />
+        <result column="shop_name" property="shopName" />
+        <result column="appoint_staff_id" property="appointStaffId" />
+        <result column="appoint_staff_name" property="appointStaffName" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="projects" property="projects" />
+        <result column="room_id" property="roomId" />
+        <result column="room_name" property="roomName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id,a.appoint_id, a.member_id, a.population, a.appoint_date, a.waste_book, a.new_customer, a.order_number, a.remark, a.appoint_state, a.shop_id, a.shop_name, a.appoint_staff_id, a.appoint_staff_name, a.start_time, a.end_time, a.projects, a.room_id, a.room_name, a.gmt_create, a.gmt_modified
+    </sql>
+    <select id="selectAppointPage" resultType="com.quotorcloud.quotor.academy.api.vo.appoint.AppointVO" resultMap="BaseResultMapVO">
+        select
+        m.name,m.number,m.phone,m.head_img,
+        <include refid="Base_Column_List"></include>
+        from bear_appoint a left join bear_member m on a.member_id = m.id
+        <where>
+            <if test="appoint.shopId != null and appoint.shopId != ''">
+                and a.shop_id = #{appoint.shopId}
+            </if>
+            <if test="appoint.appointId != null and appoint.appointId != ''">
+                and a.appoint_id = #{appoint.appointId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAppoint" resultType="com.quotorcloud.quotor.academy.api.vo.appoint.AppointVO">
+        select
+        m.name,m.number,m.phone,m.head_img,
+        <include refid="Base_Column_List"></include>
+        from bear_appoint a left join bear_member m on a.member_id = m.id
+        <where>
+            <if test="appoint.shopId != null and appoint.shopId != ''">
+                and a.shop_id = #{appoint.shopId}
+            </if>
+            <if test="appoint.appointId != null and appoint.appointId != ''">
+                and a.appoint_id = #{appoint.appointId}
+            </if>
+            <if test="appoint.appointDate != null and appoint.appointDate != ''">
+                and appoint_date = #{appoint.appointDate}
+            </if>
+        </where>
+    </select>
+    <select id="selectAppointForm" resultType="com.quotorcloud.quotor.academy.api.vo.appoint.AppointVO" resultMap="BaseResultMapVO">
+        select
+        m.name,m.number,m.phone,m.head_img,
+        <include refid="Base_Column_List"></include>
+        from bear_appoint a left join bear_member m on a.member_id = m.id
+        <where>
+            <if test="appoint.shopId != null and appoint.shopId != ''">
+                and shop_id = #{appoint.shopId}
+            </if>
+            <if test="appoint.appointId != null and appoint.appointId != ''">
+                and appoint_id = #{appoint.appointId}
+            </if>
+            <if test="appoint.appointDate != null and appoint.appointDate != ''">
+                and appoint_date = #{appoint.appointDate}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectAppointCounts" resultType="java.lang.Integer">
+        select count(*) from bear_appoint
+        <where>
+            appoint_date = date_format(now(),'%Y-%m-%d')
+            <if test="shopId != null and shopId != ''">
+                and shop_id = #{shopId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

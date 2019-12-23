@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor.iml" filepath="$PROJECT_DIR$/three_bears/quotor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-academy/quotor-academy.iml" filepath="$PROJECT_DIR$/three_bears/quotor-academy/quotor-academy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-academy/quotor-academy-api/quotor-academy-api.iml" filepath="$PROJECT_DIR$/three_bears/quotor-academy/quotor-academy-api/quotor-academy-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-academy/quotor-academy-biz/quotor-academy-biz.iml" filepath="$PROJECT_DIR$/three_bears/quotor-academy/quotor-academy-biz/quotor-academy-biz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-auth/quotor-auth.iml" filepath="$PROJECT_DIR$/three_bears/quotor-auth/quotor-auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-visual/quotor-codegen/quotor-codegen.iml" filepath="$PROJECT_DIR$/three_bears/quotor-visual/quotor-codegen/quotor-codegen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-common/quotor-common.iml" filepath="$PROJECT_DIR$/three_bears/quotor-common/quotor-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-common/quotor-common-core/quotor-common-core.iml" filepath="$PROJECT_DIR$/three_bears/quotor-common/quotor-common-core/quotor-common-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-common/quotor-common-custom/quotor-common-custom.iml" filepath="$PROJECT_DIR$/three_bears/quotor-common/quotor-common-custom/quotor-common-custom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-common/quotor-common-log/quotor-common-log.iml" filepath="$PROJECT_DIR$/three_bears/quotor-common/quotor-common-log/quotor-common-log.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-common/quotor-common-security/quotor-common-security.iml" filepath="$PROJECT_DIR$/three_bears/quotor-common/quotor-common-security/quotor-common-security.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-config/quotor-config.iml" filepath="$PROJECT_DIR$/three_bears/quotor-config/quotor-config.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-eureka/quotor-eureka.iml" filepath="$PROJECT_DIR$/three_bears/quotor-eureka/quotor-eureka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-gateway/quotor-gateway.iml" filepath="$PROJECT_DIR$/three_bears/quotor-gateway/quotor-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/quotor-master.iml" filepath="$PROJECT_DIR$/.idea/quotor-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-visual/quotor-monitor/quotor-monitor.iml" filepath="$PROJECT_DIR$/three_bears/quotor-visual/quotor-monitor/quotor-monitor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-upms/quotor-upms.iml" filepath="$PROJECT_DIR$/three_bears/quotor-upms/quotor-upms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-upms/quotor-upms-api/quotor-upms-api.iml" filepath="$PROJECT_DIR$/three_bears/quotor-upms/quotor-upms-api/quotor-upms-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-upms/quotor-upms-biz/quotor-upms-biz.iml" filepath="$PROJECT_DIR$/three_bears/quotor-upms/quotor-upms-biz/quotor-upms-biz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-visual/quotor-visual.iml" filepath="$PROJECT_DIR$/three_bears/quotor-visual/quotor-visual.iml" />
+      <module fileurl="file://$PROJECT_DIR$/three_bears/quotor-visual/quotor-zipkin/quotor-zipkin.iml" filepath="$PROJECT_DIR$/three_bears/quotor-visual/quotor-zipkin/quotor-zipkin.iml" />
+    </modules>
+  </component>
+</project>

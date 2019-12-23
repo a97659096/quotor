@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.condition.ConditionContentCommissionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.condition.ConditionContentCommission">
+        <result column="ccc_id" property="id" />
+        <result column="ccc_content_id" property="contentId" />
+        <result column="content_name" property="contentName"/>
+        <result column="ccc_commission" property="commission" />
+        <result column="ccc_commission_type" property="commissionType" />
+        <result column="ccc_position_id" property="positionId" />
+        <result column="ccc_position_name" property="positionName" />
+        <result column="ccc_gmt_create" property="gmtCreate" />
+        <result column="ccc_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ccc_id, ccc_content_id, ccc_commission, ccc_commission_type, ccc_position_id, ccc_position_name, ccc_gmt_create, ccc_gmt_modified
+    </sql>
+<!--    查询项目和产品的提成列表-->
+    <select id="listProCommissionPage"
+            resultType="com.quotorcloud.quotor.academy.api.entity.condition.ConditionContentCommission">
+        select p_name as content_name,<include refid="Base_Column_List"></include>
+        from bear_condition_pro cp left join bear_condition_content_commission cc
+        on cp.p_id = cc.ccc_content_id
+        <where>
+            cp.p_del_state = 0
+            <if test="commission.shopId != null and commission.shopId != ''">
+                and cp.p_shop_id = #{commission.shopId}
+            </if>
+            <if test="commission.positionId != null and commission.positionId != ''">
+                and cc.ccc_position_id = #{commission.positionId}
+            </if>
+            <if test="commission.categoryId != null and commission.categoryId != ''">
+                and cp.p_category_id = #{commission.categoryId}
+            </if>
+            <if test="commission.contentType != null">
+                and cp.p_type = #{commission.contentType}
+            </if>
+        </where>
+    </select>
+
+<!--    查询卡片的提成列表-->
+    <select id="listCardCommissionPage"
+            resultType="com.quotorcloud.quotor.academy.api.entity.condition.ConditionContentCommission">
+        select c_name as content_name,<include refid="Base_Column_List"></include>
+        from bear_condition_card cp left join bear_condition_content_commission cc
+        on cp.c_id = cc.ccc_content_id
+        <where>
+            cp.c_del_state = 0
+            <if test="commission.shopId != null and commission.shopId != ''">
+                and cp.c_shop_id = #{commission.shopId}
+            </if>
+            <if test="commission.positionId != null and commission.positionId != ''">
+                and cc.ccc_position_id = #{commission.positionId}
+            </if>
+            <if test="commission.categoryId != null and commission.categoryId != ''">
+                and cp.c_category_id = #{commission.categoryId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.ConditionCardDetailGiveMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.condition.ConditionCardDetailGive">
+        <result column="cpd_id" property="cpdId" />
+        <result column="cpd_cd_id" property="cpdCdId" />
+        <result column="cd_content_id" property="cdContentId" />
+        <result column="cd_name" property="cdName" />
+        <result column="cd_price" property="cdPrice" />
+        <result column="cd_count" property="cdCount" />
+        <result column="cd_give_money" property="cdGiveMoney" />
+        <result column="cpd_gmt_create" property="cpdGmtCreate" />
+        <result column="cpd_gmt_modified" property="cpdGmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        cpd_id, cpd_cd_id, cd_content_id, cd_name, cd_price, cd_count, cd_give_money, cpd_gmt_create, cpd_gmt_modified
+    </sql>
+
+</mapper>

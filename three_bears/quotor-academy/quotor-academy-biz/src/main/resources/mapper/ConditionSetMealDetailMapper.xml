@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.condition.ConditionSetMealDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.condition.ConditionSetMealDetail">
+        <result column="smd_id" property="smdId" />
+        <result column="smd_pro_id" property="smdProId" />
+        <result column="smd_content_id" property="smdContentId" />
+        <result column="smd_name" property="smdName" />
+        <result column="smd_price" property="smdPrice" />
+        <result column="smd_number" property="smdNumber" />
+        <result column="smd_discount" property="smdDiscount" />
+        <result column="smd_gmt_create" property="smdGmtCreate" />
+        <result column="smd_gmt_modified" property="smdGmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        smd_id, smd_pro_id, smd_content_id, smd_name, smd_price, smd_number, smd_discount, smd_gmt_create, smd_gmt_modified
+    </sql>
+
+</mapper>

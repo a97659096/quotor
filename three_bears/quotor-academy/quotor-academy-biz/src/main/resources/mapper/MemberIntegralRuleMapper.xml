@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.member.MemberIntegralRuleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.member.MemberIntegralRule">
+        <id column="mir_id" property="id" />
+        <result column="mir_name" property="name" />
+        <result column="mir_apply_member" property="applyMember" />
+        <result column="mir_rule_type" property="ruleType" />
+        <result column="mir_consumer_money" property="consumerMoney" />
+        <result column="mir_give_integral" property="giveIntegral" />
+        <result column="mir_effect_date_type" property="effectDateType" />
+        <result column="mir_effect_date" property="effectDate" />
+        <result column="mir_shop_id" property="shopId" />
+        <result column="mir_shop_name" property="shopName" />
+        <result column="mir_gmt_create" property="gmtCreate" />
+        <result column="mir_gmr_modified" property="gmrModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        mir_id, mir_name, mir_apply_member, mir_rule_type, mir_consumer_money, mir_give_integral, mir_effect_date_type, mir_effect_date, mir_shop_id, mir_shop_name, mir_gmt_create, mir_gmr_modified
+    </sql>
+
+</mapper>

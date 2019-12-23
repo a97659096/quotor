@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.employee.EmployeeAttendanceRuleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.employee.EmployeeAttendanceRule">
+        <id column="ear_id" property="id" />
+        <result column="ear_name" property="name" />
+        <result column="ear_slogan" property="slogan" />
+        <result column="ear_type" property="type" />
+        <result column="ear_start_time" property="startTime" />
+        <result column="ear_end_time" property="endTime" />
+        <result column="ear_workday" property="workday" />
+        <result column="ear_start_overwork_time" property="startOverworkTime" />
+        <result column="ear_not_workday" property="notWorkday" />
+        <result column="ear_overtime_start_use" property="overtimeStartUse" />
+        <result column="ear_shop_id" property="shopId" />
+        <result column="ear_shop_name" property="shopName"/>
+        <result column="ear_apply_emp" property="applyEmp" />
+        <result column="ear_emp_user_id_list" property="empUserIdList" />
+        <result column="ear_creater_id" property="createrId" />
+        <result column="ear_creater_name" property="createrName" />
+        <result column="ear_del_state" property="delState" />
+        <result column="ear_gmt_create" property="gmtCreate" />
+        <result column="ear_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMapVO" type="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeAttendanceRuleVO">
+        <id column="ear_id" property="id" />
+        <result column="ear_name" property="name" />
+        <result column="ear_slogan" property="slogan" />
+        <result column="ear_type" property="type" />
+        <result column="ear_start_time" property="startTime" />
+        <result column="ear_end_time" property="endTime" />
+        <result column="ear_workday" property="workday" />
+        <result column="ear_start_overwork_time" property="startOverworkTime" />
+        <result column="ear_not_workday" property="notWorkday" />
+        <result column="ear_overtime_start_use" property="overtimeStartUse" />
+        <result column="ear_shop_id" property="shopId" />
+        <result column="ear_shop_name" property="shopName"/>
+        <result column="ear_apply_emp" property="applyEmp" />
+        <result column="ear_emp_user_id_list" property="empUserIdList" />
+        <result column="ear_creater_id" property="createrId" />
+        <result column="ear_creater_name" property="createrName" />
+        <result column="ear_gmt_create" property="gmtCreate"/>
+    </resultMap>
+
+    <sql id="Table_Name">
+        bear_employee_attendance_rule
+    </sql>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ear_id, ear_name, ear_slogan, ear_type, ear_start_time, ear_end_time, ear_workday, ear_start_overwork_time, ear_not_workday, ear_overtime_start_use, ear_shop_id, ear_apply_emp, ear_emp_user_id_list, ear_creater_id, ear_creater_name,
+        ear_del_state, ear_gmt_create, ear_gmt_modified
+    </sql>
+    <select id="listEmployeeAttendanceRule"
+            resultType="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeAttendanceRuleVO"
+            resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List"></include>
+        from
+        <include refid="Table_Name"></include>
+        <where>
+            ear_del_state = 0
+            <if test="rule.name != null and rule.name != ''">
+                and ear_name like concat('%', #{rule.name}, '%')
+            </if>
+            <if test="rule.id != null and rule.id != ''">
+                and ear_id = #{rule.id}
+            </if>
+        </where>
+    </select>
+
+</mapper>

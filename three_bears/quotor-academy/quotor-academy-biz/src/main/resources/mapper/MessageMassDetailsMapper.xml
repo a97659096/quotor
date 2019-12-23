@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.message.MessageMassDetailsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.message.MessageMassDetails">
+        <id column="mmd_id" property="mmdId" />
+        <result column="mmd_mass_id" property="mmdMassId" />
+        <result column="mmd_receive_phone" property="mmdReceivePhone" />
+        <result column="mmd_receive_name" property="mmdReceiveName" />
+        <result column="mmd_receive_state" property="mmdReceiveState" />
+        <result column="mmd_gmt_create" property="mmdGmtCreate" />
+        <result column="mmd_gmt_modified" property="mmdGmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        mmd_id, mmd_mass_id, mmd_receive_phone, mmd_receive_name, mmd_receive_state, mmd_gmt_create, mmd_gmt_modified
+    </sql>
+
+</mapper>

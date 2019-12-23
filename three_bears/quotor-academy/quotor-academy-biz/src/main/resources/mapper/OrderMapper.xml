@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.order.OrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.vo.order.OrderWebVO">
+        <id column="o_id" property="id" />
+        <result column="o_expend_number" property="expendNumber" />
+        <result column="o_order_number" property="orderNumber" />
+        <result column="o_room_id" property="roomId" />
+        <result column="o_room_name" property="roomName" />
+        <result column="o_member_arrive" property="memberArrive" />
+        <result column="o_not_member_arrive" property="notMemberArrive" />
+        <result column="o_remark" property="remark" />
+        <result column="o_member_id" property="memberId" />
+        <result column="o_shop_id" property="shopId" />
+        <result column="o_shop_name" property="shopName" />
+        <result column="o_kd_time" property="kdTime" />
+        <result column="o_collect_money_time" property="collectMoneyTime" />
+        <result column="o_replacement_order" property="replacementOrder" />
+        <result column="o_status" property="status" />
+        <result column="o_type" property="type" />
+        <result column="o_gmt_create" property="gmtCreate" />
+        <result column="o_gmt_modified" property="gmtModified" />
+        <collection property="orderDetails" resultMap="OrderDetailMap"/>
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="OrderDetailMap" type="com.quotorcloud.quotor.academy.api.entity.order.OrderDetail">
+        <id column="od_id" property="id" />
+        <result column="od_order_id" property="orderId" />
+        <result column="od_content_id" property="contentId" />
+        <result column="od_content_name" property="contentName" />
+        <result column="od_content_price" property="contentPrice" />
+        <result column="od_content_quantity" property="contentQuantity" />
+        <result column="od_content_type" property="contentType" />
+        <result column="od_subtotal" property="subtotal" />
+        <result column="od_pay_money" property="payMoney" />
+        <result column="od_gmt_create" property="gmtCreate" />
+        <result column="od_gmt_modified" property="gmtModified" />
+        <collection property="orderDetailPays" resultMap="OrderDetailPayMap"/>
+    </resultMap>
+
+
+    <!-- 订单服务员工 -->
+    <resultMap id="OrderDetailServiceStaffMap" type="com.quotorcloud.quotor.academy.api.entity.employee.OrderDetailServiceStaff">
+        <id column="ss_id" property="id" />
+        <result column="ss_order_detail_id" property="orderDetailId" />
+        <result column="ss_employee_id" property="employeeId" />
+        <result column="ss_employee_name" property="employeeName" />
+        <result column="ss_employee_no" property="employeeNo"/>
+        <result column="ss_performance" property="performance" />
+        <result column="ss_card_expend" property="cardExpend" />
+        <result column="ss_commission" property="commission" />
+        <result column="ss_gmt_create" property="gmtCreate" />
+        <result column="ss_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="OrderDetailPayMap" type="com.quotorcloud.quotor.academy.api.entity.order.OrderDetailPay">
+        <result column="odp_id" property="id" />
+        <result column="odp_order_detail_id" property="orderDetailId" />
+        <result column="odp_pay_way_id" property="payWayId" />
+        <result column="odp_pay_way_name" property="payWayName" />
+        <result column="odp_member_card_id" property="memberCardId" />
+        <result column="odp_member_card_type_id" property="memberCardTypeId" />
+        <result column="odp_member_card_type_name" property="memberCardTypeName" />
+        <result column="odp_card_id" property="cardId" />
+        <result column="odp_pay_money" property="payMoney" />
+        <result column="odp_pay_type" property="payType" />
+        <result column="odp_pay_money_type" property="payMoneyType" />
+        <result column="odp_pay_before" property="payBefore" />
+        <result column="odp_pay_later" property="payLater" />
+        <result column="odp_gmt_create" property="gmtCreate" />
+        <result column="odp_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        o_id, o_expend_number, o_order_number, o_room_id, o_room_name, o_member_arrive, o_not_member_arrive, o_remark, o_member_id, o_shop_id, o_shop_name, o_kd_time, o_collect_money_time, o_replacement_order, o_status, o_type, o_gmt_create, o_gmt_modified
+    </sql>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Order_Detail_List">
+        od_id, od_order_id, od_content_id, od_content_name, od_content_price, od_content_quantity, od_content_type, od_subtotal, od_pay_money, od_gmt_create, od_gmt_modified
+    </sql>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Order_Detail_Pay_List">
+        odp_id, odp_order_detail_id, odp_pay_way_id, odp_pay_way_name, odp_member_card_id, odp_member_card_type_id, odp_member_card_type_name, odp_card_id, odp_pay_money, odp_pay_type, odp_pay_money_type, odp_pay_before, odp_pay_later, odp_gmt_create, odp_gmt_modified
+    </sql>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Order_Detail_Service_Staff">
+        ss_id, ss_order_detail_id, ss_employee_id, ss_employee_name, ss_performance, ss_card_expend, ss_commission, ss_gmt_create, ss_gmt_modified
+    </sql>
+
+    <select id="selectOrderWebVO" resultType="com.quotorcloud.quotor.academy.api.vo.order.OrderWebVO"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>,
+        <include refid="Order_Detail_List"/>,
+        <include refid="Order_Detail_Pay_List"/>
+        from bear_order o left join bear_order_detail od on o.o_id = od.od_order_id
+        left join bear_order_detail_pay odp on od.od_id = odp.odp_order_detail_id
+        <where>
+            <if test="order.memberIds != null and order.memberIds.size > 0">
+                o.o_member_id in
+                <foreach collection="order.memberIds" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="order.memberId != null and order.memberId != ''">
+                and o.o_member_id = #{order.memberId}
+            </if>
+            <if test="order.shopId != null and order.shopId != ''">
+                and o.o_shop_id = #{order.shopId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectMemberReachShopFrequency" resultType="java.lang.String">
+        select o_member_id as id from bear_order
+        where o_gmt_create >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+        GROUP BY o_member_id HAVING count(*) <![CDATA[>=]]> #{times}
+    </select>
+
+    <select id="selectNotReachShopDays" resultType="java.lang.String">
+        select id from bear_member m
+        left join (select o_member_id  from bear_order where o_gmt_create >= DATE_SUB(CURDATE(), INTERVAL #{days} DAY)) o
+        on m.id = o.o_member_id group by id
+        having count(o_member_id) = 0
+    </select>
+
+
+    <select id="selectToStoreGuest" resultType="java.lang.Integer">
+        select count(*) from bear_order
+        <where>
+            DATE_FORMAT(o_gmt_create,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')
+            <if test="shopId != null and shopId != ''">
+                and o_shop_id = #{shopId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

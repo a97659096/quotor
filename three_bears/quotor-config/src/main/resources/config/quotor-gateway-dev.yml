@@ -1,0 +1,54 @@
+spring:
+  cloud:
+    gateway:
+      locator:
+        enabled: true
+      routes:
+        # 认证中心
+        - id: quotor-auth
+          uri: lb://quotor-auth
+          predicates:
+            - Path=/auth/**
+          filters:
+            # 验证码处理
+            - ValidateCodeGatewayFilter
+            # 前端密码解密
+            - PasswordDecoderFilter
+        #UPMS 模块
+        - id: quotor-upms
+          uri: lb://quotor-upms
+          predicates:
+            - Path=/admin/**
+          filters:
+            # 限流配置
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@remoteAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+              # 降级配置
+            - name: Hystrix
+              args:
+                name: default
+                fallbackUri: 'forward:/fallback'
+        # 代码生成模块
+        - id: quotor-codegen
+          uri: lb://quotor-codegen
+          predicates:
+            - Path=/gen/**
+        - id: quotor-academy
+          uri: lb://quotor-academy
+          predicates:
+            - Path=/acad/**
+security:
+  basic:
+    enabled: false
+  encode:
+    # 前端密码密钥，必须16位
+    key: 'thanks,pig4cloud'
+
+# 不校验验证码终端
+ignore:
+  clients:
+    - test
+

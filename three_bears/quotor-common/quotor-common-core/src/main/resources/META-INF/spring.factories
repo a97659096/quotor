@@ -1,0 +1,19 @@
+<<<<<<< HEAD
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.quotorcloud.quotor.common.core.config.JacksonConfig,\
+  com.quotorcloud.quotor.common.core.config.RedisTemplateConfig,\
+  com.quotorcloud.quotor.common.core.config.RestTemplateConfig,\
+  com.quotorcloud.quotor.common.core.config.FilterIgnorePropertiesConfig,\
+  com.quotorcloud.quotor.common.core.exception.GlobalExceptionHandler,\
+  com.quotorcloud.quotor.common.core.util.SpringContextHolder,\
+  com.quotorcloud.quotor.common.core.mybatis.WebMvcConfig
+=======
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.quotorcloud.quotor.common.core.config.JacksonConfig,\
+  com.quotorcloud.quotor.common.core.config.RedisTemplateConfig,\
+  com.quotorcloud.quotor.common.core.config.RestTemplateConfig,\
+  com.quotorcloud.quotor.common.core.config.FilterIgnorePropertiesConfig,\
+  com.quotorcloud.quotor.common.core.exception.GlobalExceptionHandler,\
+  com.quotorcloud.quotor.common.core.util.SpringContextHolder,\
+  com.quotorcloud.quotor.common.core.mybatis.WebMvcConfig
+>>>>>>> f071e21517ccad8511bbc9a1897d878cba71684a

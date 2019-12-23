@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.employee.EmployeeAttendanceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.employee.EmployeeAttendance">
+        <id column="ea_id" property="id" />
+        <result column="ea_user_id" property="userId" />
+        <result column="ea_sign_in_time" property="signInTime" />
+        <result column="ea_sign_out_time" property="signOutTime" />
+        <result column="ea_date" property="date" />
+        <result column="ea_attendance_rule_id" property="attendanceRuleId" />
+        <result column="ea_attendance_state" property="attendanceState" />
+        <result column="ea_overtime" property="overtime" />
+        <result column="ea_update_att_state" property="updateAttState"/>
+        <result column="ea_gmt_create" property="gmtCreate" />
+        <result column="ea_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMapVO" type="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeAttendanceVO">
+        <id column="ea_id" property="attId" />
+        <result column="ea_user_id" property="empUserId" />
+        <result column="ea_sign_in_time" property="signInTime" />
+        <result column="ea_sign_out_time" property="signOutTime" />
+        <result column="ea_date" property="date" />
+        <result column="ea_attendance_rule_id" property="ruleId" />
+        <result column="ea_attendance_state" property="attState" />
+        <result column="ea_update_att_state" property="updateAttState"/>
+        <result column="ea_overtime" property="overWorkTime" />
+        <result column="e_name" property="empName"/>
+        <result column="e_shop_id" property="shopId"/>
+        <result column="e_shop_name" property="shopName"/>
+        <result column="e_number" property="empNumber"/>
+        <result column="e_user_id" property="empUserId"/>
+        <result column="e_head_img" property="headImg"/>
+        <result column="e_phone" property="phone"/>
+    </resultMap>
+    <resultMap id="AttStatisticsVO" type="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeAttendanceStatisticsVO">
+        <result column="e_name" property="empName"/>
+        <result column="e_number" property="empNumber"/>
+        <result column="attdays" property="attDays"/>
+        <result column="normal" property="normal"/>
+        <result column="belate" property="beLate"/>
+        <result column="leave_early" property="leaveEarly"/>
+        <result column="lack_att" property="lackAtt"/>
+        <result column="over_work" property="overWork"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ea_id, ea_user_id, ea_sign_in_time, ea_sign_out_time, ea_date, ea_attendance_rule_id,
+        ea_attendance_state, ea_update_att_state, ea_overtime, ea_gmt_create, ea_gmt_modified, e_name, e_shop_id, e_shop_name,
+        e_number, e_head_img, e_phone
+    </sql>
+
+<!--    查询统计信息-->
+    <sql id="Base_Column_Statistics">
+        e_name, e_number, attdays, normal, belate, leave_early, lack_att, over_work
+    </sql>
+
+    <sql id="Table_Name">
+        bear_employee_attendance
+    </sql>
+
+    <select id="listCheckWorkAttendance"
+            resultType="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeAttendanceVO" resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List"></include>
+        from
+        <include refid="Table_Name"></include> ea left join bear_employee e on ea.ea_user_id = e.e_user_id
+        <where>
+            <if test="attendance.shopId != null and attendance.shopId != ''">
+                e_shop_id = #{attendance.shpId}
+            </if>
+            <if test="attendance.start != null and attendance.start != ''">
+                and ea_date <![CDATA[>=]]> #{attendance.start}
+            </if>
+            <if test="attendance.end != null and attendance.end != ''">
+                and ea_date <![CDATA[<=]]> #{attendance.end}
+            </if>
+            <if test="attendance.dateMonth != null attendance.dateMonth != ''">
+                and ea_date like concat('%', #{attendance.dateMonth}, '%')
+            </if>
+            <if test="attendance.attendanceState != null">
+                and ea_attendance_state = #{attendance.attendanceState}
+            </if>
+            <if test="attendance.date != null and attendance.date != ''">
+                and ea_date = #{attendance.date}
+            </if>
+        </where>
+    </select>
+    <select id="selectAttendanceStatistics"
+            resultType="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeAttendanceStatisticsVO">
+        select
+        e_name, e_number, sum(case when ea_update_att_state = 1 then 1 else 0 end) as attdays,
+         sum(case when ea_attendance_state = '正常' then 1 else 0 end) as normal,
+         sum(case when ea_attendance_state like concat('%','迟到','%') then 1 else 0 end) as belate,
+         sum(case when ea_attendance_state like concat('%','早退','%') then 1 else 0 end) as leave_early,
+         sum(case when ea_attendance_state = '缺卡' then 1 else 0 end) as lack_att,
+         sum(case when ea_attendance_state like concat('%','加班' ,'%') then 1 else 0 end) as over_work
+        from
+        <include refid="Table_Name"></include> ea left join bear_employee e on ea.ea_user_id = e.e_user_id
+        <where>
+            <if test="attendance.shopId != null and attendance.shopId != ''">
+                e_shop_id = #{attendance.shpId}
+            </if>
+            <if test="attendance.start != null and attendance.start != ''">
+                and ea_date <![CDATA[>=]]> #{attendance.start}
+            </if>
+            <if test="attendance.end != null and attendance.end != ''">
+                and ea_date <![CDATA[<=]]> #{attendance.end}
+            </if>
+        </where>
+        group by ea_user_id
+    </select>
+
+</mapper>

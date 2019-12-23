@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.message.MessageTemplateCategoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.message.MessageTemplateCategory">
+        <id column="category_id" property="categoryId" />
+        <result column="category_name" property="categoryName" />
+        <result column="del_state" property="delState"/>
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        category_id, category_name, del_state, gmt_create, gmt_modified
+    </sql>
+<!--    <select id="listBoxByShopId" resultType="com.quotorcloud.quotor.academy.api.entity.message.MessageTemplateCategory">-->
+<!--        select-->
+<!--        <include refid="Base_Column_List"></include>-->
+<!--        from bear_message_template_category-->
+<!--        where del_state = 0 and (category_type = 1 or (category_shop_id = #{shopId} and category_type = 2))-->
+<!--    </select>-->
+
+    <select id="listBoxByShopId" resultType="com.quotorcloud.quotor.academy.api.entity.message.MessageTemplateCategory">
+        select
+        <include refid="Base_Column_List"></include>
+        from bear_message_template_category
+        where del_state = 0
+    </select>
+
+</mapper>

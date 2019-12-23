@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.condition.ConditionCardTypeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.vo.condition.ConditionCardTypeVO">
+        <id column="cct_id" property="id" />
+        <result column="cct_name" property="name" />
+        <result column="cct_type" property="type" />
+        <result column="cct_way" property="way" />
+        <result column="cct_shop_id" property="shopId" />
+        <result column="cct_shop_name" property="shopName" />
+        <collection property="conditionCardTemplates" resultMap="BaseResultMapTemplate"></collection>
+    </resultMap>
+
+<!--    模板对应map-->
+    <resultMap id="BaseResultMapTemplate" type="com.quotorcloud.quotor.academy.api.entity.condition.ConditionCardTemplate">
+        <id column="cct_id" property="id" />
+        <result column="cct_property_name" property="propertyName" />
+        <result column="cct_property_id" property="propertyId" />
+        <result column="cct_del_state" property="delState" />
+        <result column="cct_gmt_create" property="gmtCreate" />
+        <result column="cct_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ty.cct_id, ty.cct_name,ty.cct_type, ty.cct_way, ty.cct_shop_id, ty.cct_shop_name, ty.cct_gmt_create, ty.cct_gmt_modified
+    </sql>
+    <sql id="Base_Column_List_Template">
+        te.cct_id, te.cct_property_name, te.cct_property_id, te.cct_del_state, te.cct_gmt_create, te.cct_gmt_modified
+    </sql>
+
+<!--    关联查询-->
+    <select id="selectCardTypeVoByTypeId"
+            resultType="com.quotorcloud.quotor.academy.api.vo.condition.ConditionCardTypeVO" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>,
+        <include refid="Base_Column_List_Template"/>
+        from bear_condition_card_type ty
+        left join bear_condition_card_type_template tt on ty.cct_id = tt.type_id
+        left join bear_condition_card_template te on tt.template_id = te.cct_id
+        where ty.cct_id = #{typeId} and te.cct_del_state = 0
+    </select>
+
+</mapper>

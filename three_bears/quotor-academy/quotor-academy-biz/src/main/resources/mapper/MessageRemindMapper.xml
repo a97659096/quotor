@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.message.MessageRemindMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.message.MessageRemind">
+        <result column="remind_id" property="remindId" />
+        <result column="remind_description" property="remindDescription" />
+        <result column="remind_status" property="remindStatus" />
+        <result column="remind_content" property="remindContent" />
+        <result column="remind_role" property="remindRole" />
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        remind_id, remind_description, remind_status, message_content, remind_role
+    </sql>
+
+</mapper>

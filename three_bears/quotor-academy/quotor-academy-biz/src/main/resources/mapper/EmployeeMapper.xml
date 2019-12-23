@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.employee.EmployeeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.employee.Employee">
+        <id column="e_id" property="id" />
+        <result column="e_name" property="name" />
+        <result column="e_sex" property="sex" />
+        <result column="e_phone" property="phone" />
+        <result column="e_email" property="email" />
+        <result column="e_join_date" property="joinDate" />
+        <result column="e_alias" property="alias" />
+        <result column="e_shop_id" property="shopId" />
+        <result column="e_shop_name" property="shopName" />
+        <result column="e_position_id" property="positionId" />
+        <result column="e_position_name" property="positionName" />
+        <result column="e_head_title_id" property="headTitleId" />
+        <result column="e_head_title_name" property="headTitleName" />
+        <result column="e_job_number" property="jobNumber" />
+        <result column="e_wechat_number" property="wechatNumber" />
+        <result column="e_identity_card" property="identityCard" />
+        <result column="e_head_img" property="headImg" />
+        <result column="e_address" property="address" />
+        <result column="e_emergency_contact" property="emergencyContact" />
+        <result column="e_emer_phone" property="emerPhone" />
+        <result column="e_skill" property="skill" />
+        <result column="e_describe" property="description" />
+        <result column="e_works" property="works" />
+        <result column="e_work_state" property="workState" />
+        <result column="e_subscribe" property="subscribe" />
+        <result column="e_sort" property="sort" />
+        <result column="e_del_state" property="delState"/>
+        <result column="e_remark" property="remark"/>
+        <result column="e_user_id" property="userId"/>
+        <result column="e_gmt_create" property="gmtCreate" />
+        <result column="e_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <resultMap id="AppointEmployeeMap" type="com.quotorcloud.quotor.academy.api.dto.appoint.AppointEmployeeDTO">
+        <result column="e_id" property="employeeId"/>
+        <result column="e_name" property="employeeName"/>
+        <result column="e_job_number" property="employeeNo"/>
+        <result column="e_position_name" property="positionName"/>
+    </resultMap>
+
+    <resultMap id="EmployeePerformanceMap" type="com.quotorcloud.quotor.academy.api.vo.employee.EmployeePerformanceVO">
+        <result column="e_id" property="employeeId"/>
+        <result column="e_name" property="employeeName"/>
+        <result column="e_head_img" property="employeeHeadImg"/>
+        <result column="e_position_name" property="employeePosition"/>
+        <result column="e_shop_id" property="shopId"/>
+<!--        <result column="ss_performance" property="performance"/>-->
+        <result column="card_consume_money" property="cardConsumeMoney"/>
+        <result column="card_consume_times" property="cardConsumeTimes"/>
+        <result column="ss_commission" property="allotCommission"/>
+        <result column="od_content_id" property="contentId"/>
+        <result column="od_content_name" property="contentName"/>
+        <result column="od_content_quantity" property="contentTimes"/>
+        <result column="od_content_type" property="contentType"/>
+        <result column="odp_pay_money" property="performance"/>
+        <result column="ss_gmt_create" property="gmtCreate"/>
+    </resultMap>
+
+    <resultMap id="EmployeePerformanceMapAll" type="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeVO">
+        <id column="e_id" property="id" />
+        <result column="e_name" property="name" />
+        <result column="e_sex" property="sex" />
+        <result column="e_shop_id" property="shopId" />
+        <result column="e_head_img" property="headImg" />
+        <result column="e_position_name" property="positionName" />
+        <result column="e_job_number" property="jobNumber" />
+        <collection property="serviceEmployees" resultMap="orderServiceStaffMap"/>
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="orderServiceStaffMap" type="com.quotorcloud.quotor.academy.api.entity.employee.OrderDetailServiceStaff">
+        <id column="ss_id" property="id" />
+        <result column="ss_order_detail_id" property="orderDetailId" />
+        <result column="ss_employee_id" property="employeeId" />
+        <result column="ss_employee_name" property="employeeName" />
+        <result column="ss_employee_no" property="employeeNo"/>
+        <result column="ss_performance" property="performance" />
+        <result column="ss_card_expend" property="cardExpend" />
+        <result column="ss_commission" property="commission" />
+        <result column="ss_gmt_create" property="gmtCreate" />
+        <result column="ss_gmt_modified" property="gmtModified" />
+        <association property="orderDetail" resultMap="OrderDetailMap"/>
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="OrderDetailMap" type="com.quotorcloud.quotor.academy.api.entity.order.OrderDetail">
+        <id column="od_id" property="id" />
+        <result column="od_order_id" property="orderId" />
+        <result column="od_content_id" property="contentId" />
+        <result column="od_content_name" property="contentName" />
+        <result column="od_content_price" property="contentPrice" />
+        <result column="od_content_quantity" property="contentQuantity" />
+        <result column="od_content_type" property="contentType" />
+        <result column="od_subtotal" property="subtotal" />
+        <result column="od_pay_money" property="payMoney" />
+        <result column="od_gmt_create" property="gmtCreate" />
+        <result column="od_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <resultMap id="UserVOMap" type="com.quotorcloud.quotor.academy.api.vo.user.UserVO">
+        <result column="user_id" property="userId"/>
+        <result column="avater" property="headImg"/>
+        <result column="e_position_name" property="positionName"/>
+        <result column="phone" property="phone"/>
+        <result column="name" property="name"/>
+        <result column="e_job_number" property="jobNumber"/>
+        <result column="e_position_id" property="positionId"/>
+        <result column="e_id" property="employeeId"/>
+        <result column="dept_id" property="shopId"/>
+        <result column="dept_name" property="shopName"/>
+        <result column="username" property="username"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        e_id, e_name, e_sex, e_phone, e_email, e_join_date,
+        e_alias, e_shop_id, e_shop_name, e_position_id, e_position_name,
+        e_head_title_id, e_head_title_name, e_job_number, e_wechat_number,
+        e_identity_card, e_head_img, e_address, e_emergency_contact, e_emer_phone,
+        e_skill, e_describe, e_works, e_work_state, e_subscribe,
+        e_sort,e_del_state,e_remark,e_user_id, e_gmt_create, e_gmt_modified
+    </sql>
+
+    <!--    查询员工绩效sql-->
+    <sql id="Employee_Performance_List">
+        e_id,e_name,e_head_img,e_position_name,e_shop_id, odp_pay_money ,od_content_id,od_content_name,
+        od_content_quantity,od_content_type,ss_gmt_create
+    </sql>
+
+    <select id="selectEmployeePositionAndHeadTitle" resultType="com.quotorcloud.quotor.academy.api.entity.employee.Employee" resultMap="BaseResultMap">
+        select e_position_name,e_head_title_name from bear_employee
+    </select>
+
+    <!-- 查询预约员工封装   -->
+    <select id="selectAppointEmployee" resultType="com.quotorcloud.quotor.academy.api.dto.appoint.AppointEmployeeDTO"
+    resultMap="AppointEmployeeMap">
+        select e_id, e_name, e_job_number, e_position_name from bear_employee
+        <where>
+            e_del_state = 0 and e_work_state = 1
+            <if test="shopId != null and shopId != ''">
+                and e_shop_id = #{shopId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 订单服务员工查询列 -->
+    <sql id="Order_Service_Staff_List">
+        ss_id, ss_order_detail_id, ss_employee_id, ss_employee_name, ss_performance, ss_card_expend, ss_commission, ss_gmt_create, ss_gmt_modified
+    </sql>
+
+    <!-- 订单详情查询列 -->
+    <sql id="Order_Detail">
+        od_id, od_order_id, od_content_id, od_content_name, od_content_price, od_content_quantity, od_content_type, od_subtotal, od_pay_money, od_gmt_create, od_gmt_modified
+    </sql>
+
+    <!--查询员工业绩-->
+    <select id="selectEmployeePerformanceAll"
+            resultType="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeVO"
+            resultMap="EmployeePerformanceMapAll">
+        select
+        e_id,e_name,e_head_img,e_job_number, e_sex, e_shop_id, e_position_name,
+        <include refid="Order_Service_Staff_List"></include>,
+        <include refid="Order_Detail"></include>
+        from bear_employee e right join bear_order_detail_service_staff ss on e.e_id = ss.ss_employee_id
+        left join bear_order_detail od on ss.ss_order_detail_id = od.od_id
+        <where>
+            <if test="emp.shopId != null and emp.shopId != ''">
+                e.e_shop_id = #{emp.shopId}
+            </if>
+            <if test="emp.id != null and emp.id != ''">
+                and e.e_id = #{emp.id}
+            </if>
+            <if test="emp.date != null and emp.date != ''">
+                and DATE_FORMAT(ss.ss_gmt_crate,'%Y-%m-%d') = #{emp.date}
+            </if>
+            <if test="emp.positionId != null and emp.positionId != ''">
+                and ss.ss_employee_position_id = #{emp.positionId}
+            </if>
+        </where>
+    </select>
+
+    <!--查询员工业绩-->
+     <select id="selectEmployeePerformance"
+            resultType="com.quotorcloud.quotor.academy.api.vo.employee.EmployeePerformanceVO"
+            resultMap="EmployeePerformanceMap">
+        select
+        <include refid="Employee_Performance_List">
+        </include>
+        from bear_employee e
+        right join bear_order_detail_service_staff ss
+        on e.e_id = ss.ss_employee_id
+        left join bear_order_detail od
+        on ss.ss_order_detail_id = od.od_id
+        left join bear_order_detail_pay odp
+        on od.od_id = odp.odp_order_detail_id
+        <where>
+            odp.odp_pay_type=2
+            <if test="emp.shopId != null and emp.shopId != ''">
+                and e.e_shop_id = #{emp.shopId}
+            </if>
+            <if test="emp.shopName != null and emp.shopName != ''">
+                and e.e_shop_name like concat('%',#{emp.shopId},'%')
+            </if>
+            <if test="emp.id != null and emp.id != ''">
+                and e.e_id = #{emp.id}
+            </if>
+            <if test="emp.contentType != null">
+                and od.od_content_type = #{emp.contentType}
+            </if>
+            <if test="emp.start != null and emp.start != ''">
+                and DATE_FORMAT(ss_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{emp.start}
+            </if>
+            <if test="emp.end != null and emp.end != ''">
+                and DATE_FORMAT(ss_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{emp.end}
+            </if>
+            <if test="emp.appointDate != null and emp.appointDate != ''">
+                and DATE_FORMAT(ss_gmt_create,'%Y-%m-%d') like concat('%', #{emp.appointDate}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectUserInfoByUserId"
+            resultType="com.quotorcloud.quotor.academy.api.vo.user.UserVO" resultMap="UserVOMap">
+        select user_id, name, username, phone, avatar, dept_id, dept_name, e_job_number, e_position_id,
+        e_position_name,e_id
+        from sys_user u left join bear_employee e
+        on u.user_id = e.e_user_id where user_id = #{userId}
+    </select>
+
+</mapper>

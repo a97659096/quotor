@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.message.MessageOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.message.MessageOrder">
+        <id column="mo_id" property="id" />
+        <result column="mo_title" property="title" />
+        <result column="mo_amount" property="amount" />
+        <result column="mo_price" property="price" />
+        <result column="out_trade_no" property="outTradeNo" />
+        <result column="mo_pay_time" property="payTime" />
+        <result column="mo_purchaser" property="purchaser" />
+        <result column="mo_purchaser_id" property="purchaserId" />
+        <result column="mo_shop_id" property="shopId" />
+        <result column="mo_shop_name" property="shopName" />
+        <result column="mo_pay_type" property="payType" />
+        <result column="mo_pay_state" property="payState" />
+        <result column="mo_ip" property="ip" />
+        <result column="mo_state" property="state" />
+        <result column="mo_gmt_create" property="gmtCreate" />
+        <result column="mo_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        mo_id, mo_title, mo_amount, mo_price, out_trade_no, mo_pay_time, mo_purchaser, mo_purchaser_id, mo_shop_id, mo_shop_name, mo_pay_type, mo_pay_state, mo_ip, mo_state, mo_gmt_create, mo_gmt_modified
+    </sql>
+
+</mapper>

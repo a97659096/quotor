@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.message.MessageTemplateMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.message.MessageTemplate">
+        <id column="mt_id" property="id" />
+        <result column="mt_content" property="content" />
+        <result column="mt_del_state" property="delState" />
+        <result column="mt_template_id" property="templateId" />
+        <result column="mt_check_state" property="checkState" />
+        <result column="mt_pass_time" property="passTime" />
+        <result column="mt_fail_cause" property="failCause" />
+        <result column="mt_token" property="token" />
+        <result column="mt_signature" property="signature" />
+        <result column="mt_trigger_time" property="triggerTime" />
+        <result column="mt_category_id" property="categoryId" />
+        <result column="mt_gmt_create" property="gmtCreate" />
+        <result column="mt_gmt_modified" property="gmtModified" />
+    </resultMap>
+    <resultMap id="BaseResultMapVO" type="com.quotorcloud.quotor.academy.api.vo.message.MessageCategoryTemplateVO">
+        <id column="mc_category_id" property="categoryId" />
+        <result column="mc_category_name" property="categoryName"/>
+        <collection column="message_templates" property="messageTemplates" resultMap="BaseResultMap"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List_Template">
+        mt_id, mt_content, mt_del_state, mt_template_id, mt_check_state, mt_pass_time, mt_fail_cause, mt_token, mt_signature, mt_trigger_time, mt_category_id, mt_gmt_create, mt_gmt_modified
+    </sql>
+    <sql id="Base_Column_List_Category">
+        mc_category_id, mc_category_name
+    </sql>
+    <select id="listMessageCategoryTemplate"
+            resultType="com.quotorcloud.quotor.academy.api.vo.message.MessageCategoryTemplateVO" resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List_Category"></include>,
+        <include refid="Base_Column_List_Template"></include>
+        from bear_message_category mc left join bear_message_template mt on mc.mc_category_id = mt.mt_category_id
+        where mc.mt_del_state = 0
+    </select>
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.expend.ExpendMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.expend.Expend">
+        <result column="e_id" property="id" />
+        <result column="e_expend_type_id" property="eExpendTypeId" />
+        <result column="e_expend_type_name" property="eExpendTypeName" />
+        <result column="e_shop_id" property="eShopId" />
+        <result column="e_shop_name" property="eShopName" />
+        <result column="e_payment" property="ePayment" />
+        <result column="e_pay_way" property="ePayWay" />
+        <result column="e_money" property="eMoney" />
+        <result column="e_pay_time" property="ePayTime" />
+        <result column="e_expend_content" property="eExpendContent" />
+        <result column="e_employee_name_list" property="eEmployeeNameList" />
+        <result column="e_img" property="eImg" />
+        <result column="e_del_state" property="eDelState" />
+        <result column="e_gmt_create" property="gmtCreate" />
+        <result column="e_gmt_modified" property="gmtModified" />
+    </resultMap>
+    
+    <resultMap id="ExpendTotalVoMap" type="com.quotorcloud.quotor.academy.api.vo.expend.ExpendSumVO">
+        <result column="name" property="name"/>
+        <result column="value" property="value"/>
+        <result column="color" property="color"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        e_id, e_expend_type_id, e_expend_type_name, e_shop_id, e_shop_name, e_payment, e_pay_way, e_money, e_pay_time, e_expend_content, e_employee_name_list, e_img, e_del_state, e_gmt_create, e_gmt_modified
+    </sql>
+
+    <select id="selectExpendPage" resultType="com.quotorcloud.quotor.academy.api.entity.expend.Expend" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from bear_expend
+        <where>
+            e_del_state = 0
+            <if test="exp.eExpendTypeId != null and exp.eExpendTypeId !=''">
+                and e_expend_type_id like concat('%', #{exp.eExpendTypeId}, '%')
+            </if>
+            <if test="exp.eExpendTypeName != null and exp.eExpendTypeName !=''">
+                and e_expend_type_name like concat('%', #{exp.eExpendTypeName}, '%')
+            </if>
+            <if test="exp.ePayment != null and exp.ePayment != ''">
+                and e_payment like concat('%', #{exp.ePayment}, '%')
+            </if>
+            <if test="exp.ePayWay != null and exp.ePayWay != ''">
+                and e_pay_way = #{exp.ePayWay}
+            </if>
+            <if test="exp.eShopName != null and exp.eShopName != ''">
+                and e_shop_name = #{exp.eShopName}
+            </if>
+            <if test="exp.start != null and exp.start != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{exp.start}
+            </if>
+            <if test="exp.eShopId != null and exp.eShopId != ''">
+                and e_shop_id = #{exp.eShopId}
+            </if>
+            <if test="exp.end != null and exp.end != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{exp.end}
+            </if>
+            <if test="exp.startMoney != null and exp.startMoney != ''">
+                and e_money <![CDATA[>=]]> #{exp.startMoney}
+            </if>
+            <if test="exp.endMoney != null and exp.endMoney != ''">
+                and e_money <![CDATA[<=]]> #{exp.endMoney}
+            </if>
+            <if test="exp.appointDate != null and exp.appointDate != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') like concat('%', #{exp.appointDate}, '%')
+            </if>
+        </where>
+        order by e_gmt_create desc
+    </select>
+
+<!--    根据 支出方式分组并查询-->
+    <select id="selectExpendGroupByPayWay"
+            resultType="com.quotorcloud.quotor.academy.api.entity.expend.Expend" resultMap="ExpendTotalVoMap">
+        select et.id as type_id, et.color as color, et.name as name, coalesce(sum(e_money), 0) as value
+        from bear_expend_type et
+        left join
+        (select * from bear_expend
+        <where>
+            e_del_state = 0
+            <if test="exp.start != null and exp.start != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{exp.start}
+            </if>
+            <if test="exp.eShopId != null and exp.eShopId != ''">
+                and e_shop_id = #{exp.eShopId}
+            </if>
+            <if test="exp.eShopName != null and exp.eShopName != ''">
+                and e_shop_name = #{exp.eShopName}
+            </if>
+            <if test="exp.end != null and exp.end != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{exp.end}
+            </if>
+            <if test="exp.appointDate != null and exp.appointDate != ''">
+                and DATE_FORMAT(e_gmt_create,'%Y-%m-%d') like concat('%', #{exp.appointDate}, '%')
+            </if>
+        </where>
+        ) e on e.e_expend_type_id = et.id
+        group by type_id
+    </select>
+
+
+</mapper>

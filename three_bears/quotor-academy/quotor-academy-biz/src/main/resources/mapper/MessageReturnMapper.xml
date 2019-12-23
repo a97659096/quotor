@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.message.MessageReturnMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.message.MessageReturn">
+        <id column="mr_id" property="id" />
+        <result column="mr_send_time" property="sendTime" />
+        <result column="mr_content" property="content" />
+        <result column="mr_return_count" property="returnCount" />
+        <result column="mr_phone" property="phone" />
+        <result column="mr_return_time" property="returnTime" />
+        <result column="mr_name" property="name" />
+        <result column="mr_shop_id" property="shopId" />
+        <result column="mr_shop_name" property="shopName" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        mr_id, mr_send_time, mr_content, mr_return_count, mr_phone, mr_return_time, mr_name, mr_shop_id, mr_shop_name, gmt_create, gmt_modified
+    </sql>
+
+</mapper>

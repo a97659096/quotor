@@ -1,0 +1,101 @@
+# 加解密根密码
+jasypt:
+  encryptor:
+    password: pig #根密码
+
+# Spring 相关
+spring:
+  servlet:
+    multipart:
+      max-file-size: "100MB"
+      max-request-size: "200MB"
+  redis:
+    password: 123456
+    host: 192.168.3.21
+    port: 6379
+    key:
+      prefix:
+        orderId: "quotor:orderId"
+        memberId: "quotor:memberId"
+  # zipkin
+  zipkin:
+    enabled: true
+    base-url: http://quotor-zipkin
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      # 默认的采样比率为0.1，不能看到所有请求数据
+      # 更改采样比率为1，就能看到所有的请求数据了，但是这样会增加接口调用延迟
+      probability: 1.0
+
+# 暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+# feign 配置
+feign:
+  hystrix:
+    enabled: true
+  okhttp:
+    enabled: true
+  httpclient:
+    enabled: false
+  client:
+    config:
+      default:
+        connectTimeout: 10000
+        readTimeout: 10000
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+
+# hystrix 配置
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 60000
+  shareSecurityContext: true
+
+#请求处理的超时时间
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
+
+# mybaits-plus配置
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      table-underline: true
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# spring security 配置
+security:
+  oauth2:
+    resource:
+      loadBalanced: true
+      #检查token是否有效
+      token-info-uri: http://quotor-auth/oauth/check_token
+
+attendance:
+#  二维码地址
+  qrurl: ""
+#  二维码过期时间 秒数
+  expireSecond: 5

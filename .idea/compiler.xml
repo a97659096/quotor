@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="quotor-common-custom" />
+        <module name="quotor-academy-biz" />
+        <module name="quotor-gateway" />
+        <module name="quotor-eureka" />
+        <module name="quotor-config" />
+        <module name="quotor-upms-api" />
+        <module name="quotor-common-security" />
+        <module name="quotor-common-core" />
+        <module name="quotor-academy-api" />
+        <module name="quotor-upms-biz" />
+        <module name="quotor-zipkin" />
+        <module name="quotor-auth" />
+        <module name="quotor-monitor" />
+        <module name="quotor-codegen" />
+        <module name="quotor-common-log" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="quotor" target="1.8" />
+      <module name="quotor-academy" target="1.8" />
+      <module name="quotor-academy-api" target="1.8" />
+      <module name="quotor-academy-biz" target="1.8" />
+      <module name="quotor-auth" target="1.8" />
+      <module name="quotor-codegen" target="1.8" />
+      <module name="quotor-common" target="1.8" />
+      <module name="quotor-common-core" target="1.8" />
+      <module name="quotor-common-custom" target="1.8" />
+      <module name="quotor-common-log" target="1.8" />
+      <module name="quotor-common-security" target="1.8" />
+      <module name="quotor-config" target="1.8" />
+      <module name="quotor-eureka" target="1.8" />
+      <module name="quotor-gateway" target="1.8" />
+      <module name="quotor-monitor" target="1.8" />
+      <module name="quotor-upms" target="1.8" />
+      <module name="quotor-upms-api" target="1.8" />
+      <module name="quotor-upms-biz" target="1.8" />
+      <module name="quotor-visual" target="1.8" />
+      <module name="quotor-zipkin" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

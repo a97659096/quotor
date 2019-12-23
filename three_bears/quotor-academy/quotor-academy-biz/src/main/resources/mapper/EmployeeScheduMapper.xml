@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.employee.EmployeeScheduMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.employee.EmployeeSchedu">
+        <id column="es_id" property="esId" />
+        <result column="es_employee_id" property="esEmployeeId" />
+        <result column="es_employee_name" property="esEmployeeName"/>
+        <result column="es_shop_id" property="esShopId"/>
+        <result column="es_start_date" property="esStartDate" />
+        <result column="es_end_date" property="esEndDate"/>
+        <result column="es_class_id" property="esClassId" />
+        <result column="es_gmt_create" property="esGmtCreate" />
+        <result column="es_gmt_modified" property="esGmtModified" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapVo" type="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeScheduVO">
+        <id column="es_id" property="scheduId" />
+        <result column="es_employee_name" property="title"/>
+        <result column="es_start_date" property="start" />
+        <result column="es_end_date" property="end"/>
+        <result column="color" property="color"/>
+        <result column="es_class_id" property="classId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        es_id, es_employee_id,es_employee_name, es_start_date,
+        es_end_date, es_class_id,es_shop_id, es_gmt_create, es_gmt_modified
+    </sql>
+    <sql id="Base_Column_List_Vo">
+        es_id, es_employee_name, es_start_date, es_end_date, es_class_id, class.color
+    </sql>
+    <select id="selectEmployeeScheduVO" resultType="com.quotorcloud.quotor.academy.api.vo.employee.EmployeeScheduVO">
+        select
+        <include refid="Base_Column_List_Vo"></include>
+        from bear_employee_schedu es
+        left join bear_employee_schedu_class class
+        on es.es_class_id = class.id
+        where es.es_shop_id = #{shopId}
+    </select>
+
+</mapper>

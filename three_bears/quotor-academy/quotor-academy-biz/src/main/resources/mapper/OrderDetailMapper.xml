@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.order.OrderDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.order.OrderDetail">
+        <id column="od_id" property="id" />
+        <result column="od_order_id" property="orderId" />
+        <result column="od_content_id" property="contentId" />
+        <result column="od_content_name" property="contentName" />
+        <result column="od_content_price" property="contentPrice" />
+        <result column="od_content_quantity" property="contentQuantity" />
+        <result column="od_content_type" property="contentType" />
+        <result column="od_subtotal" property="subtotal" />
+        <result column="od_pay_money" property="payMoney" />
+        <result column="od_gmt_create" property="gmtCreate" />
+        <result column="od_gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        od_id, od_order_id, od_content_id, od_content_name, od_content_price, od_content_quantity, od_content_type, od_subtotal, od_pay_money, od_gmt_create, od_gmt_modified
+    </sql>
+
+</mapper>

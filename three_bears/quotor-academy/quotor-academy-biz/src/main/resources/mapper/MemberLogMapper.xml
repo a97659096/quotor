@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotorcloud.quotor.academy.mapper.member.MemberLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.quotorcloud.quotor.academy.api.entity.member.MemberLog">
+        <id column="id" property="id" />
+        <result column="employee_id" property="employeeId" />
+        <result column="remark" property="remark" />
+        <result column="img" property="img" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMapVO" type="com.quotorcloud.quotor.academy.api.vo.member.MemberLogVO">
+        <id column="id" property="id" />
+        <result column="employee_id" property="employeeId" />
+        <result column="member_id" property="memberId"/>
+        <result column="member_name" property="memberName"/>
+        <result column="member_head_img" property="memberHeadImg"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="employee_head_img" property="employeeHeadImg"/>
+        <result column="remark" property="remark" />
+        <result column="img" property="imgDatabase" />
+        <result column="gmt_create" property="gmtCreate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, employee_id, remark, img, gmt_create, gmt_modified
+    </sql>
+    <sql id="Base_Column_List_Vo">
+        ml.id, ml.employee_id, ml.member_id, emp.e_name as employee_name, emp.e_head_img as employee_head_img,
+        ml.remark, ml.img, ml.gmt_create, m.name as member_name, m.head_img as member_head_img
+    </sql>
+
+<!--    按id进行查询-->
+    <select id="selectMemberLog" resultType="com.quotorcloud.quotor.academy.api.vo.member.MemberLogVO"
+            resultMap="BaseResultMapVO">
+        select
+        <include refid="Base_Column_List_Vo"></include>
+        from bear_member_log ml left join bear_employee emp on ml.employee_Id = emp.e_id
+        left join bear_member m on ml.member_id = m.id
+        <where>
+            <if test="memberLog.id != null and memberLog.id != ''">
+                ml.id = #{memberLog.id}
+            </if>
+            <if test="memberLog.memberId != null and memberLog.memberId != ''">
+                ml.member_id = #{memberLog.memberId}
+            </if>
+            <if test="memberLog.employeeId != null and memberLog.employeeId != ''">
+                ml.employee_id =#{memberLog.employeeId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
