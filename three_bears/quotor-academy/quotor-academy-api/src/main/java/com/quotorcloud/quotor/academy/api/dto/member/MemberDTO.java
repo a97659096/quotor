@@ -175,4 +175,15 @@ public class MemberDTO {
     private String joinDateStart;
 
     private String joinDateEnd;
+    //会员个数
+    private Integer memberCount;
+    /**
+     * 1周，2月，3年
+     */
+    private Integer dateType;
+
+    /**
+     * 指定日期用于按月份或者年查询
+     */
+    private String appointDate;
 }

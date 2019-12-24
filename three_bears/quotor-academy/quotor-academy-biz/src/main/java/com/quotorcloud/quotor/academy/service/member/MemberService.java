@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.quotorcloud.quotor.academy.api.dto.member.MemberDTO;
+import com.quotorcloud.quotor.academy.api.dto.order.OrderIncomeDTO;
 import com.quotorcloud.quotor.academy.api.entity.member.Member;
 import com.quotorcloud.quotor.academy.api.vo.member.MemberVO;
 import com.quotorcloud.quotor.common.security.service.QuotorUser;
@@ -41,5 +42,15 @@ public interface MemberService extends IService<Member> {
      * @return
      */
     JSONObject countMemberTimesGroupByShopId(MemberDTO memberDTO);
+
+    //按照入会时间查找会员总个数
+    MemberDTO countMemberTime(MemberDTO memberDTO);
+
+    //消费人次
+    Integer countConsumer(String id);
+    /**
+     * 计算近一月，近三月，近一年增长的会员个数
+     */
+    JSONObject selectOrderRecently(MemberDTO meberDTO);
 
 }

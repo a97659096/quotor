@@ -39,6 +39,19 @@ public interface MemberMapper extends BaseMapper<Member> {
      */
     Integer selectNewMemberCounts(String shopId);
 
+    /**
+     * 根据入会时间查询会员个数
+     * @param memberDTO
+     * @return
+     */
+    MemberDTO countMemberTime(@Param("memberDTO")MemberDTO memberDTO);
+
+    /**
+     * 消费人次
+     * @return
+     */
+    Integer countConsumer(String id);
+
 
 
 }

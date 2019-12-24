@@ -2,6 +2,8 @@ package com.quotorcloud.quotor.academy.controller.order;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.quotorcloud.quotor.academy.api.dto.expend.ExpendDTO;
+import com.quotorcloud.quotor.academy.api.dto.order.OrderIncomeDTO;
 import com.quotorcloud.quotor.academy.api.entity.message.MessageRemind;
 import com.quotorcloud.quotor.academy.api.vo.order.OrderIncomesVO;
 import com.quotorcloud.quotor.academy.service.order.OrderDetailPayService;
@@ -34,6 +36,14 @@ public class OrderDetailPayController {
     @GetMapping("list")
     public R countOrderIncome(OrderIncomesVO orderIncomesVO){
         return R.ok(orderDetailPayService.countOrderIncome(orderIncomesVO));
+    }
+
+    /**
+     * 总支出查询
+     */
+    @GetMapping("list/total")
+    public R selectExpendTotal(OrderIncomeDTO orderIncomeDTO){
+        return R.ok(orderDetailPayService.selectOrderRecently(orderIncomeDTO));
     }
 
 }

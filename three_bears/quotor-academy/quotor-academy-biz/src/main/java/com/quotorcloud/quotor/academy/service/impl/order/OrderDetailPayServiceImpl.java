@@ -2,8 +2,12 @@ package com.quotorcloud.quotor.academy.service.impl.order;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.quotorcloud.quotor.academy.api.dto.order.OrderIncomeDTO;
+import com.quotorcloud.quotor.academy.api.entity.expend.Expend;
 import com.quotorcloud.quotor.academy.api.entity.order.OrderDetailPay;
+import com.quotorcloud.quotor.academy.api.vo.expend.ExpendSumVO;
 import com.quotorcloud.quotor.academy.api.vo.order.OrderIncomeVO;
 import com.quotorcloud.quotor.academy.api.vo.order.OrderIncomesVO;
 import com.quotorcloud.quotor.academy.mapper.order.OrderDetailPayMapper;
@@ -12,14 +16,14 @@ import com.quotorcloud.quotor.academy.service.order.OrderDetailPayService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.quotorcloud.quotor.admin.api.entity.SysDept;
 import com.quotorcloud.quotor.admin.api.feign.RemoteDeptService;
+import com.quotorcloud.quotor.common.core.util.DateTimeUtil;
 import com.quotorcloud.quotor.common.core.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -157,5 +161,74 @@ public class OrderDetailPayServiceImpl extends ServiceImpl<OrderDetailPayMapper,
     @Override
     public List<OrderIncomesVO> countOrderIncome(OrderIncomesVO orderIncomesVO) {
         return orderDetailPayMapper.listOrderIncomesVO(orderIncomesVO);
+    }
+
+    /**
+     * 查询近一个月，近三个月，近一年的数据
+     *
+     * @param orderIncomeDTO
+     */
+    @Override
+    public JSONObject selectOrderRecently(OrderIncomeDTO orderIncomeDTO) {
+        Integer dateType = orderIncomeDTO.getDateType();
+        switch (dateType){
+            case 1:
+                orderIncomeDTO.setStart(DateTimeUtil.getWeekStartDate());
+                break;
+            case 2:
+                orderIncomeDTO.setAppointDate(DateTimeUtil.localDateToString(LocalDate.now()).substring(0,7));
+                break;
+            case 3:
+                orderIncomeDTO.setAppointDate(DateTimeUtil.localDateToString(LocalDate.now()).substring(0,4));
+                break;
+        }
+        List<OrderIncomeDTO> orderRecently = orderDetailPayMapper.selectOrderRecently(orderIncomeDTO);
+        JSONObject jsonObject = new JSONObject();
+        List<String> x = new LinkedList<>();
+        List<BigDecimal> y = new LinkedList<>();
+        BigDecimal totalMoney = new BigDecimal(0);
+        if(dateType.equals(1) || dateType.equals(2)){
+            //分组根据日期
+            Map<String, List<OrderIncomeDTO>> map = new HashMap<>();
+            for (OrderIncomeDTO orderIncomeDTO1:orderRecently){
+                String date = DateTimeUtil.localDatetimeToString(orderIncomeDTO1.getCreateTime());
+                if(map.keySet().contains(date)){
+                    map.get(date).add(orderIncomeDTO1);
+                }else {
+                    List<OrderIncomeDTO> expendList = Lists.newArrayList(orderIncomeDTO);
+                    map.put(date, expendList);
+                }
+            }
+            Set<String> dates = DateTimeUtil.getOrderByDate(map.keySet());
+            for (String date: dates){
+                BigDecimal money = map.get(date).stream().map(OrderIncomeDTO::getOrderMoney).reduce(BigDecimal::add).get();
+                x.add(date);
+                y.add(money);
+                totalMoney = totalMoney.add(money);
+            }
+        }else {
+            //分组根据月份
+            Map<String, List<OrderIncomeDTO>> map = new HashMap<>();
+            for (OrderIncomeDTO OrderIncomeDTO1:orderRecently){
+                String date = DateTimeUtil.localDatetimeToMonth(OrderIncomeDTO1.getEGmtCreate());
+                if(map.keySet().contains(date)){
+                    map.get(date).add(orderIncomeDTO);
+                }else {
+                    List<OrderIncomeDTO> orderIncomeList = Lists.newArrayList(orderIncomeDTO);
+                    map.put(date, orderIncomeList);
+                }
+            }
+            Set<String> strings = new HashSet<>(map.keySet());
+            for (String date:strings){
+                BigDecimal money = map.get(date).stream().map(OrderIncomeDTO::getOrderMoney).reduce(BigDecimal::add).get();
+                x.add(date);
+                y.add(money);
+                totalMoney = totalMoney.add(money);
+            }
+        }
+        jsonObject.put("x",x);
+        jsonObject.put("y",y);
+        jsonObject.put("total", totalMoney);
+        return jsonObject;
     }
 }

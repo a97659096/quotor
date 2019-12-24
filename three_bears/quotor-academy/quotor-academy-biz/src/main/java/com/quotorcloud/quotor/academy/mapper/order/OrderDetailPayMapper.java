@@ -1,10 +1,15 @@
 package com.quotorcloud.quotor.academy.mapper.order;
 
+import com.quotorcloud.quotor.academy.api.dto.expend.ExpendDTO;
+import com.quotorcloud.quotor.academy.api.dto.order.OrderIncomeDTO;
+import com.quotorcloud.quotor.academy.api.entity.expend.Expend;
 import com.quotorcloud.quotor.academy.api.entity.order.OrderDetailPay;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.quotorcloud.quotor.academy.api.vo.order.OrderIncomeVO;
 import com.quotorcloud.quotor.academy.api.vo.order.OrderIncomesVO;
+import com.quotorcloud.quotor.common.core.util.R;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -32,6 +37,14 @@ public interface OrderDetailPayMapper extends BaseMapper<OrderDetailPay> {
      * @param
      * @return
      */
-    List<OrderIncomesVO> listOrderIncomesVO(@Param("orderpays") OrderIncomesVO orderIncomesVO);
+    List<OrderIncomesVO> listOrderIncomesVO(@Param("orderIncomesVO") OrderIncomesVO orderIncomesVO);
+
+    /**
+     * 查询最近收入
+     * @param orderIncomeDTO
+     * @return
+     */
+    List<OrderIncomeDTO> selectOrderRecently(@Param("orderIncomeDTO") OrderIncomeDTO orderIncomeDTO);
+
 
 }

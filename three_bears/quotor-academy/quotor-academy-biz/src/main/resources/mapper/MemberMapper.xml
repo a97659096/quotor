@@ -148,5 +148,23 @@
             </if>
         </where>
     </select>
+    <select id="countMemberTime" resultType="com.quotorcloud.quotor.academy.api.dto.member.MemberDTO">
+        select count(*) as memberCount from bear_member bm
+        <where>
+            bm.member = 1
+            <if test="shopId != null and shopId != ''">
+                and bm.shop_id = #{memberDTO.shopId}
+            </if>
+            <if test="memberDTO.joinDateStart != null and memberDTO.joinDateStart != ''">
+                and DATE_FORMAT(bm.join_date,'%Y-%m-%d') <![CDATA[>=]]> #{memberDTO.joinDateStart}
+            </if>
+            <if test="memberDTO.joinDateEnd != null and memberDTO.joinDateEnd != ''">
+                and DATE_FORMAT(bm.join_date,'%Y-%m-%d') <![CDATA[<=]]> #{memberDTO.joinDateEnd}
+            </if>
+        </where>
+    </select>
+    <select id="countConsumer" resultType="java.lang.Integer">
+        select count(*) from bear_order
+    </select>
 
 </mapper>

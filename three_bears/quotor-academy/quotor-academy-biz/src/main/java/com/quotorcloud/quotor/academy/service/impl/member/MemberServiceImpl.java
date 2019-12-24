@@ -368,13 +368,53 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
                         .shopHeadImg(memberList.get(0).getShopHeadImg()).build());
                 memberSize = memberSize+memberList.size();
             }
-
         }
         JSONObject jsonObject = new JSONObject();
 //        jsonObject.put("rateOfIncrease", rateOfIncrease);
         jsonObject.put("list", memberCountByShopIdVOS);
         jsonObject.put("totalMemberSize", memberSize);
         return jsonObject;
+    }
+
+    /**
+     * 根据入会时间查询会员个数
+     * @param memberDTO
+     * @return
+     */
+    @Override
+    public MemberDTO countMemberTime(MemberDTO memberDTO) {
+        return memberMapper.countMemberTime(memberDTO);
+    }
+
+    /**
+     * 消费人次
+     * @return
+     */
+    @Override
+    public Integer countConsumer(String id) {
+        return  memberMapper.countConsumer(id);
+    }
+
+    /**
+     * 计算近一月，近三月，近一年增长的会员个数
+     *
+     * @param meberDTO
+     */
+    @Override
+    public JSONObject selectOrderRecently(MemberDTO meberDTO) {
+        Integer dateType = meberDTO.getDateType();
+        switch (dateType){
+            case 1:
+                LocalDate.now().minusMonths(1);
+                break;
+            case 2:
+                LocalDate.now().minusMonths(3);
+                break;
+            case 3:
+                LocalDate.now().minusYears(1);
+                break;
+        }
+        return null;
     }
 
 
@@ -424,4 +464,5 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
             member.setReferreName(byId.getName());
         }
     }
+
 }

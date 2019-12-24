@@ -1,6 +1,8 @@
 package com.quotorcloud.quotor.academy.service.order;
 
 import com.alibaba.fastjson.JSONObject;
+import com.quotorcloud.quotor.academy.api.dto.expend.ExpendDTO;
+import com.quotorcloud.quotor.academy.api.dto.order.OrderIncomeDTO;
 import com.quotorcloud.quotor.academy.api.entity.order.OrderDetailPay;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.quotorcloud.quotor.academy.api.vo.order.OrderIncomesVO;
@@ -41,4 +43,9 @@ public interface OrderDetailPayService extends IService<OrderDetailPay> {
      * @return
      */
     List<OrderIncomesVO> countOrderIncome(OrderIncomesVO orderIncomesVO);
+
+    /**
+     * 查询近一个月，近三个年，近一年的数据
+     */
+    JSONObject selectOrderRecently(OrderIncomeDTO orderIncomeDTO);
 }

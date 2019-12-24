@@ -80,17 +80,49 @@
         on opw.opw_pay_id = odp.odp_pay_way_id
         WHERE opw.opw_type = 2  group by opw_pay_id
     </select>
-    <select id="listOrderIncomesVO" resultType="com.quotorcloud.quotor.academy.api.vo.order.OrderIncomesVO" resultMap="OrderIncomeMap">
+    <select id="listOrderIncomesVO" resultType="com.quotorcloud.quotor.academy.api.vo.order.OrderIncomesVO">
         SELECT
             bod.od_content_name AS contentName,
             bodp.odp_pay_money AS orderMoney,
-            bodss.ss_employee_name AS employeeName
+            bodss.ss_employee_name AS employeeName,
+            bo.o_member_name AS memberName,
+            bo.o_member_head_img AS memberHeadImg
         FROM
             bear_order bo
         LEFT JOIN bear_order_detail bod ON bo.o_id = bod.od_order_id
         LEFT JOIN bear_order_detail_pay bodp ON bod.od_id = bodp.odp_order_detail_id
         LEFT JOIN bear_order_detail_service_staff bodss ON bod.od_id = bodss.ss_order_detail_id
-        WHERE bodp.odp_pay_type = 2
+        <where>
+            bodp.odp_pay_type = 2
+            <if test="orderIncomesVO.searchName != null and orderIncomesVO.searchName != ''">
+                and bodss.ss_employee_name like ('%',#{orderIncomesVO.searchName},'%')
+            </if>
+            <if test="orderIncomesVO.start != null and orderIncomesVO.start != ''">
+                and DATE_FORMAT(bodp.odp_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{orderIncomesVO.start}
+            </if>
+            <if test="orderIncomesVO.end != null and orderIncomesVO.end != ''">
+                and DATE_FORMAT(bodp.odp_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{orderIncomesVO.end}
+            </if>
+        </where>
     </select>
-
+    <select id="selectOrderRecently" resultType="com.quotorcloud.quotor.academy.api.dto.order.OrderIncomeDTO">
+        SELECT
+        bod.od_content_name AS contentName,
+        bodp.odp_pay_money AS orderMoney,
+        bodss.ss_employee_name AS employeeName,
+        bo.o_member_name AS memberName,
+        bo.o_member_head_img AS memberHeadImg,
+        bodp.odp_gmt_create as createTime
+        FROM
+        bear_order bo
+        LEFT JOIN bear_order_detail bod ON bo.o_id = bod.od_order_id
+        LEFT JOIN bear_order_detail_pay bodp ON bod.od_id = bodp.odp_order_detail_id
+        LEFT JOIN bear_order_detail_service_staff bodss ON bod.od_id = bodss.ss_order_detail_id
+        <where>
+        bodp.odp_pay_type = 2
+            <if test="orderIncomeDTO.appointDate != null and orderIncomeDTO.appointDate != ''">
+                and DATE_FORMAT(bodp.odp_gmt_create,'%Y-%m-%d') like concat('%', #{orderIncomeDTO.appointDate}, '%')
+            </if>
+        </where>
+    </select>
 </mapper>

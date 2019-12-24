@@ -70,4 +70,24 @@ public class MemberController {
         return R.ok(jsonObject);
     }
 
+    /**
+     * 根据入会时间查询会员个数
+     * @param memberDTO
+     * @return
+     */
+    @GetMapping("memberCount")
+    public R countMemberTime(MemberDTO memberDTO){
+        return R.ok( memberService.countMemberTime(memberDTO));
+    }
+
+    /**
+     * 查询消费人数
+     * @param
+     * @return
+     */
+    @GetMapping("countConsumer")
+    public R countConsumer(String id){
+        return R.ok( memberService.countConsumer(id));
+    }
+
 }

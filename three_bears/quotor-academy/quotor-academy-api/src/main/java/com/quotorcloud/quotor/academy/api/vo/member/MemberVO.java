@@ -222,4 +222,5 @@ public class MemberVO {
     //上次消费次数
     private Integer lastConsumeTimes;
 
+
 }

@@ -16,7 +16,7 @@ spring:
 # 类似的 redis 使用quotor-redis ,gateway 换成 quotor-gateway
 eureka:
   instance:
-    hostname: quotor-eureka
+    hostname: 127.0.0.1
     prefer-ip-address: true
   client:
     register-with-eureka: false
