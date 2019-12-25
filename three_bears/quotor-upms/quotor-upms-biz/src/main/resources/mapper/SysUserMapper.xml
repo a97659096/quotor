@@ -43,6 +43,7 @@
 	<resultMap id="userVoResultMap" type="com.quotorcloud.quotor.admin.api.vo.UserVO">
 		<id column="user_id" property="userId"/>
 		<result column="username" property="username"/>
+		<result column="name" property="name"/>
 		<result column="password" property="password"/>
 		<result column="salt" property="salt"/>
 		<result column="phone" property="phone"/>
@@ -67,6 +68,7 @@
 
 	<sql id="userRoleSql">
 		`user`.user_id,
+		`user`.name,
 		`user`.username,
 		`user`.`password`,
 		`user`.salt,

@@ -55,6 +55,12 @@ public class OrderPayWay implements Serializable {
     private String source;
 
     /**
+     * 颜色
+     */
+    @TableField(value = "opw_color")
+    private String color;
+
+    /**
      * 状态1启用，2停用
      */
     @TableField(value = "opw_state")

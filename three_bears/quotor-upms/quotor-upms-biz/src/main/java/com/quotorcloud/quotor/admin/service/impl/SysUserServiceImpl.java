@@ -83,7 +83,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		sysUser.setDelFlag(String.valueOf(CommonConstants.STATUS_NORMAL));
 		sysUser.setSalt(GenerationSequenceUtil.generateUUID(null));
 
-		sysUser.setPassword(MD5Util.formPassToDBPass(userDto.getPassword(), sysUser.getSalt()));
+//		sysUser.setPassword(MD5Util.formPassToDBPass(userDto.getPassword(), sysUser.getSalt()));
+		sysUser.setPassword(ENCODER.encode(userDto.getPassword()));
 		//插入图片
 		if(!ComUtil.isEmpty(userDto.getHeadImg())){
 			String avatar = FileUtil.saveFile(userDto.getHeadImg(), FileConstants.FileType.FILE_USER_IMG_DIR, HEAD_IMG);

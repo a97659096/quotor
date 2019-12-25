@@ -63,8 +63,8 @@ public class ConditionProServiceImpl extends ServiceImpl<ConditionProMapper, Con
                 .list(new QueryWrapper<ConditionCategory>()
                 .eq(!ComUtil.isEmpty(shopId),
                         "c_shop_id", shopId)
-                .eq(!ComUtil.isEmpty(conditionCategory.getTypes()),
-                        "p_type", conditionCategory.getTypes()));
+                .in(!ComUtil.isEmpty(conditionCategory.getTypes()),
+                        "c_type", conditionCategory.getTypes()));
 
         List<TreeNode> treeNodes = categoryTreeList.stream().map(categoryTree -> {
             TreeNode treeNode = new TreeNode();
@@ -124,7 +124,8 @@ public class ConditionProServiceImpl extends ServiceImpl<ConditionProMapper, Con
      * @return
      */
     @Override
-    @OperationLog(name = "新增产品/项目", contentType = 2, operatorRef = 0, operatorObj = 1, table = "bear_condition_pro", type = OperationType.ADD, cloum = "p_name")
+    @OperationLog(name = "新增产品/项目", contentType = 2, operatorRef = 0, operatorObj = 1, table = "bear_condition_pro",
+            type = OperationType.ADD, cloum = "pName")
     public Boolean saveConditionPro(QuotorUser user, ConditionProDTO conditionProDTO) {
         ConditionPro conditionPro = new ConditionPro();
         mapDTOToDO(conditionProDTO, conditionPro);
@@ -164,7 +165,8 @@ public class ConditionProServiceImpl extends ServiceImpl<ConditionProMapper, Con
         List<String> pCategoryIds = conditionProDTO.getCategoryIds();
         //新增的时候传的数组，我取他的最后一个
         if(!ComUtil.isEmpty(pCategoryIds)){
-            ConditionCategory categoryServiceOne = conditionCategoryService.getOne(new QueryWrapper<ConditionCategory>().eq("c_id",
+            ConditionCategory categoryServiceOne = conditionCategoryService
+                    .getOne(new QueryWrapper<ConditionCategory>().eq("c_id",
                     pCategoryIds.get(pCategoryIds.size()-1)));
             conditionPro.setPCategoryId(pCategoryIds.get(pCategoryIds.size()-1));
             conditionPro.setPCategoryName(categoryServiceOne.getCName());
@@ -240,7 +242,7 @@ public class ConditionProServiceImpl extends ServiceImpl<ConditionProMapper, Con
      */
     @Override
     @OperationLog(name = "删除产品/项目", contentType = 2, operatorRef = 0, idRef = 1, table = "bear_condition_pro",
-            type = OperationType.DELETE, cloum = "p_name", idField = "p_id")
+            type = OperationType.DELETE, cloum = "pName", idField = "p_id")
     public Boolean removeConditionPro(QuotorUser user, String id) {
         ConditionPro conditionPro = new ConditionPro();
         conditionPro.setId(id);

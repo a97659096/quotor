@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.time.LocalDate;
+
 /**
  * 微信配置类
  */
@@ -15,7 +17,7 @@ public class WeChatConfig {
      * 公众号appid
      */
 //    @Value("${wxpay.appid}")
-    private String appId;
+    private String appId = "wx23032bcb86509950";
 
     /**
      * 公众号秘钥
@@ -39,7 +41,7 @@ public class WeChatConfig {
      * 开放平台回调url
      */
 //    @Value("${wxopen.redirect_url}")
-    private String openRedirectUrl;
+    private String openRedirectUrl = "http://6169a0c1.ngrok.io/acad/wechat/course/order/callback";
 
     /**
      * 微信开放平台二维码连接
@@ -72,19 +74,19 @@ public class WeChatConfig {
      * 商户号id
      */
 //    @Value("${wxpay.mer_id}")
-    private String mchId;
+    private String mchId = "1559096631";
 
     /**
      * 支付key
      */
 //    @Value("${wxpay.key}")
-    private String key;
+    private String key = "Zhengxuefengandsanzhixiong157143";
 
     /**
      * 预约课程微信支付回调url
      */
 //    @Value("${wxpay.callback}")
-    private String appointCoursePayCallbackUrl;
+    private String appointCoursePayCallbackUrl="http://6169a0c1.ngrok.io/acad/wechat/course/order/callback";
 
     /**
      * 预约讲师微信支付回调url

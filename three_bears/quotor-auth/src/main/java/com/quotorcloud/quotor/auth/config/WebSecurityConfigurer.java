@@ -65,7 +65,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 			.antMatchers(
 				"/actuator/**",
-				"/token/**","/test/**").permitAll()
+				"/token/**","/test/**",
+				"/wechat/**").permitAll()
 			.anyRequest().authenticated()
 			.and().csrf().disable();
 	}

@@ -12,8 +12,10 @@ import com.quotorcloud.quotor.academy.service.member.MemberCardService;
 import com.quotorcloud.quotor.academy.service.member.MemberService;
 import com.quotorcloud.quotor.academy.service.order.OrderDetailPayService;
 import com.quotorcloud.quotor.academy.service.order.OrderService;
+import com.quotorcloud.quotor.academy.util.ShopSetterUtil;
 import com.quotorcloud.quotor.common.core.util.DateTimeUtil;
 import com.quotorcloud.quotor.common.core.util.R;
+import com.quotorcloud.quotor.common.security.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +30,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("home/page")
-public class HomePageController {
+public class AppHomePageController {
 
     @Autowired
     private MemberCardService memberCardService;
@@ -45,6 +47,9 @@ public class HomePageController {
     @Autowired
     private HomePageService homePageService;
 
+    @Autowired
+    private ShopSetterUtil shopSetterUtil;
+
     /**
      * 小程序首页
      * @param shopId
@@ -52,29 +57,30 @@ public class HomePageController {
      */
     @GetMapping("applet/total")
     public R listAppletTotal(String shopId){
+        String deptId = String.valueOf(SecurityUtils.getUser().getDeptId());
         //计算总余量
         MemberCard memberCard = new MemberCard();
-        memberCard.setShopId(shopId);
+        memberCard.setShopId(deptId);
         JSONObject totalCardMargin = memberCardService.countTotalCardMargin(memberCard);
 
         //计算总卡耗
         OrderDetailPay orderDetailPay = new OrderDetailPay();
-        orderDetailPay.setShopId(shopId);
+        orderDetailPay.setShopId(deptId);
         JSONObject totalCardConsume = orderDetailPayService.countTotalCardConsume(orderDetailPay);
 
         //计算总支出
         ExpendDTO expendDTO = new ExpendDTO();
-        expendDTO.setEShopId(shopId);
+        expendDTO.setEShopId(deptId);
         JSONObject totalExpend = expendService.countTotalExpend(expendDTO);
 
         //计算总会员数
         MemberDTO memberDTO = new MemberDTO();
-        memberDTO.setShopId(shopId);
+        memberDTO.setShopId(deptId);
         JSONObject memberTimes = memberService.countMemberTimes(memberDTO);
 
         //计算今日收入
         OrderDetailPay detailPay = new OrderDetailPay();
-        detailPay.setShopId(shopId);
+        detailPay.setShopId(deptId);
         detailPay.setStart(DateTimeUtil.localDateToString(LocalDate.now()));
         JSONObject totalIncome = orderDetailPayService.countDailyTotalIncome(detailPay);
 
@@ -125,9 +131,7 @@ public class HomePageController {
      * @return
      */
     @GetMapping("applet/total/margin")
-    public R listAppletTotalMargin(String shopId){
-        MemberCard memberCard = new MemberCard();
-        memberCard.setShopId(shopId);
+    public R listAppletTotalMargin(MemberCard memberCard){
         return R.ok(memberCardService.countTotalCardMarginGroupByShopId(memberCard));
     }
 
@@ -137,7 +141,7 @@ public class HomePageController {
      * @return
      */
     @GetMapping("applet/total/margin/shop")
-    public R listAppletTotalMargin(MemberCard memberCard){
+    public R listAppletTotalMarginByShop(MemberCard memberCard){
         return R.ok(memberCardService.countTotalCardMarginGroupByShopId(memberCard));
     }
 
@@ -147,9 +151,7 @@ public class HomePageController {
      * @return
      */
     @GetMapping("applet/total/consume")
-    public R listAppletTotalConsume(String shopId){
-        OrderDetailPay orderDetailPay = new OrderDetailPay();
-        orderDetailPay.setShopId(shopId);
+    public R listAppletTotalConsume(OrderDetailPay orderDetailPay){
         return R.ok(orderDetailPayService.countTotalCardConsumeGroupByShopId(orderDetailPay));
     }
 
@@ -159,9 +161,7 @@ public class HomePageController {
      * @return
      */
     @GetMapping("applet/total/member-count")
-    public R listAppletTotalMemberCount(String shopId){
-        MemberDTO memberDTO = new MemberDTO();
-        memberDTO.setShopId(shopId);
+    public R listAppletTotalMemberCount(MemberDTO memberDTO){
         return R.ok(memberService.countMemberTimesGroupByShopId(memberDTO));
     }
 

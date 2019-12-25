@@ -96,6 +96,6 @@ security:
 
 attendance:
 #  二维码地址
-  qrurl: ""
+  qrurl: "www.quotor.cn/acad/employee/attendance/check-work"
 #  二维码过期时间 秒数
   expireSecond: 5

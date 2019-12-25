@@ -47,4 +47,6 @@ public class UserDTO extends SysUser {
 	private MultipartFile headImg;
 
 	private String headImgString;
+
+	private String code;
 }

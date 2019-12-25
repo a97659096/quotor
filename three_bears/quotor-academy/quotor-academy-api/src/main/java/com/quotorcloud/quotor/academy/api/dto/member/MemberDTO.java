@@ -172,7 +172,7 @@ public class MemberDTO {
     /**
      * 按入会日期返回查找时会用到
      */
-    private String joinDateStart;
+    private String start;
 
-    private String joinDateEnd;
+    private String end;
 }

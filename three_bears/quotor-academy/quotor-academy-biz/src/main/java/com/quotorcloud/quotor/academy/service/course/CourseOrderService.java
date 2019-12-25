@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public interface CourseOrderService extends IService<CourseOrder> {
 
-    String saveCourseOrder(CourseOrderDTO courseOrderDTO, HttpServletRequest request);
+    String saveCourseOrder(String courseId, String name, String userId, String phone, HttpServletRequest request);
 
     Map<String, String> saveJSAPICourseOrder(CourseOrderDTO courseOrderDTO, HttpServletRequest request);
 

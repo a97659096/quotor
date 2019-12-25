@@ -89,13 +89,13 @@ public class Course implements Serializable {
      * 加盟商价格
      */
     @TableField(value = "c_join_shop_price")
-    private Integer joinShopPrice;
+    private BigDecimal joinShopPrice;
 
     /**
      * 学员价格
      */
     @TableField(value = "c_student_price")
-    private Integer studentPrice;
+    private BigDecimal studentPrice;
 
     /**
      * 课程开始日期

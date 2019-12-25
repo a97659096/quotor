@@ -2,6 +2,12 @@ package com.quotorcloud.quotor.academy.controller.employee;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.quotorcloud.quotor.academy.api.entity.employee.EmployeeAttendance;
 import com.quotorcloud.quotor.academy.service.employee.EmployeeAttendanceService;
 import com.quotorcloud.quotor.academy.util.OrderUtil;
@@ -9,10 +15,16 @@ import com.quotorcloud.quotor.common.core.util.DateTimeUtil;
 import com.quotorcloud.quotor.common.core.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -38,8 +50,7 @@ public class EmployeeAttendanceController {
     /**
      * 扫码地址
      */
-    @Value("${attendance.qrurl}")
-    private static String ATTENDANCE_QR;
+    private static String ATTENDANCE_QR = "www.quotor.cn/acad/employee/attendance/check-work";
 
     @Autowired
     private OrderUtil orderUtil;
@@ -50,8 +61,30 @@ public class EmployeeAttendanceController {
      * @param response
      */
     @GetMapping("getqr")
-    public void getAttendanceQr(HttpServletResponse response){
-        orderUtil.genertorQRCode(ATTENDANCE_QR + "?timestamp=" + System.currentTimeMillis() , response);
+    public void getAttendanceQr(HttpServletRequest request, HttpServletResponse response){
+//        orderUtil.genertorQRCode(ATTENDANCE_QR + "?timestamp=" + System
+//                .currentTimeMillis() , response);
+        String codeUrl = ATTENDANCE_QR + "?timestamp=" + System
+                .currentTimeMillis();
+        try{
+            //生成二维码配置
+            Map<EncodeHintType,Object> hints =  new HashMap<>();
+            //设置纠错等级
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+            //编码类型
+            hints.put(EncodeHintType.CHARACTER_SET,"UTF-8");
+
+            BitMatrix bitMatrix = new MultiFormatWriter()
+                    .encode(codeUrl, BarcodeFormat.QR_CODE,400,400,hints);
+            OutputStream out =  response.getOutputStream();
+
+            response.setContentType("image/jpeg");
+            MatrixToImageWriter.writeToStream(bitMatrix,"png",out);
+//            MatrixToImageWriter.writeToStream(bitMatrix,out);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**

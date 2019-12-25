@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -84,13 +85,27 @@ public class OrderUtil {
             //编码类型
             hints.put(EncodeHintType.CHARACTER_SET,"UTF-8");
 
-            BitMatrix bitMatrix = new MultiFormatWriter().encode(codeUrl, BarcodeFormat.QR_CODE,400,400,hints);
+            BitMatrix bitMatrix = new MultiFormatWriter()
+                    .encode(codeUrl, BarcodeFormat.QR_CODE,400,400,hints);
             OutputStream out =  response.getOutputStream();
 
             MatrixToImageWriter.writeToStream(bitMatrix,"png",out);
+//            MatrixToImageWriter.writeToStream(bitMatrix,out);
         }catch (Exception e){
             e.printStackTrace();
         }
 
+    }
+
+    public static BufferedImage toBufferedImage(BitMatrix matrix) {
+        int width = matrix.getWidth();
+        int height = matrix.getHeight();
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+            }
+        }
+        return image;
     }
 }

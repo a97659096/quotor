@@ -86,7 +86,7 @@ public class ExpendController {
      * @return
      */
     @GetMapping("list/applet")
-    public R selectExpendAppletPage(Page page, ExpendDTO expendDTO){
-        return R.ok(expendService.listExpendApp(page, expendDTO));
+    public R selectExpendAppletPage(ExpendDTO expendDTO){
+        return R.ok(expendService.listExpendApp(expendDTO));
     }
 }

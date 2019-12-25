@@ -2,6 +2,12 @@ package com.quotorcloud.quotor.academy.controller.course;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.quotorcloud.quotor.academy.api.dto.course.CourseOrderDTO;
 import com.quotorcloud.quotor.academy.api.entity.course.CourseOrder;
 import com.quotorcloud.quotor.academy.service.course.CourseOrderService;
@@ -14,7 +20,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -41,17 +50,34 @@ public class CourseOrderController {
     private OrderUtil orderUtil;
 
     //保存订单生成二维码返回，native扫码支付
-    @PostMapping("/native/save")
-    public void saveCourseOrder(CourseOrderDTO courseOrderDTO,
+    @GetMapping("/native/save")
+    public void saveCourseOrder(String courseId, String name, String userId, String phone,
                                 HttpServletRequest request, HttpServletResponse response){
-
-        String codeUrl = courseOrderService.saveCourseOrder(courseOrderDTO, request);
+        String codeUrl = courseOrderService.saveCourseOrder(courseId,name,userId,phone, request);
 
         if(codeUrl == null) {
             throw new  NullPointerException();
         }
 
-        orderUtil.genertorQRCode(codeUrl, response);
+        try{
+            //生成二维码配置
+            Map<EncodeHintType,Object> hints =  new HashMap<>();
+            //设置纠错等级
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+            //编码类型
+            hints.put(EncodeHintType.CHARACTER_SET,"UTF-8");
+
+            BitMatrix bitMatrix = new MultiFormatWriter()
+                    .encode(codeUrl, BarcodeFormat.QR_CODE,400,400,hints);
+            OutputStream out =  response.getOutputStream();
+
+            response.setContentType("image/jpeg");
+            MatrixToImageWriter.writeToStream(bitMatrix,"png",out);
+//            MatrixToImageWriter.writeToStream(bitMatrix,out);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 

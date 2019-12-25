@@ -90,7 +90,7 @@ public class CourseController {
     @PutMapping("update")
     public R updateCourse(CourseDTO courseDTO){
         QuotorUser quotorUser = SecurityUtils.getUser();
-        return R.ok(courseService.updateCourse(quotorUser, courseDTO));
+        return R.ok(courseService.updateCourse(quotorUser, courseDTO, courseDTO.getId()));
     }
 
 

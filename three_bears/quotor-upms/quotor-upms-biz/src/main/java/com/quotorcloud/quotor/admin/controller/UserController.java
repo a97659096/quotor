@@ -24,6 +24,7 @@ import com.message.submail.sdk.config.AppConfig;
 import com.message.submail.sdk.lib.MessageSend;
 import com.message.submail.sdk.utils.ConfigLoader;
 import com.quotorcloud.quotor.admin.api.dto.UserDTO;
+import com.quotorcloud.quotor.admin.api.dto.UserInfo;
 import com.quotorcloud.quotor.admin.api.entity.SysUser;
 import com.quotorcloud.quotor.admin.api.vo.UserVO;
 import com.quotorcloud.quotor.admin.service.SysUserService;
@@ -143,6 +144,29 @@ public class UserController {
 	}
 
 	/**
+	 * 添加用户
+	 *
+	 * @param userDto 用户信息
+	 * @return success/false
+	 */
+	@SysLog("注册用户")
+	@PostMapping("register")
+	public R registerUser(@RequestBody UserDTO userDto) {
+		String codeDatabase = (String) redisUtil
+				.get(userDto.getUsername() + ":" + userDto.getPhone() + "REG");
+		if(ComUtil.isEmpty(userDto.getCode())){
+			return R.failed("验证码不能为空，请输入！");
+		}
+		if(ComUtil.isEmpty(codeDatabase)){
+			return R.failed("验证码已过期，请重新获取");
+		}
+		if(!userDto.getCode().equals(codeDatabase)){
+			return R.failed("验证码不正确，请重新输入");
+		}
+		return R.ok(userService.saveUser(userDto));
+	}
+
+	/**
 	 * 更新用户信息
 	 *
 	 * @param userDto 用户信息
@@ -157,18 +181,20 @@ public class UserController {
 
 	/**
 	 * 获取修改手机号验证码
+	 *
 	 * @return
 	 */
 	@GetMapping("update-phone-auth-code")
-	public void getAuthCode(String phone, String userId){
+	public void getAuthCode(String phone, String username, String type){
 		AppConfig config = ConfigLoader.load(ConfigLoader.ConfigType.Message);
 		MessageSend submail = new MessageSend(config);
 		//生成验证码
 		String randNum = GenerationSequenceUtil.getRandNum(6);
 		submail.addTo(phone);
-		submail.addContent("【三只熊】您正在进行" + SMSType.getSMSType("UPDATEPHONE") + "," + "您的验证码为" + randNum + "5分钟内有效");
+		submail.addContent("【三只熊】您正在进行" + SMSType.getSMSType(type) + ","
+				+ "您的验证码为" + randNum + "5分钟内有效");
 		submail.send();
-		redisUtil.set(userId + ":" +phone +"UPDATEPHONE", randNum, 300);
+		redisUtil.set(username + ":" +phone + type, randNum, Long.valueOf(300));
 	}
 
 	/**
@@ -178,19 +204,26 @@ public class UserController {
 	 * @param code
 	 * @return
 	 */
-	@PutMapping("update-phone")
-	public R updatePhone(String phone, String userId, String code){
-		String codeDatabase = (String) redisUtil.get(userId + ":" + phone + "UPDATEPHONE");
+	@GetMapping("update-phone")
+	public R updatePhone(UserDTO userDTO){
+		String username = userDTO.getUsername();
+		String code = userDTO.getCode();
+		String phone = userDTO.getPhone();
+		String codeDatabase = (String) redisUtil.get(username + ":" + phone + "UPDATEPHONE");
 		if(ComUtil.isEmpty(codeDatabase)){
 			return R.failed("验证码已过期，请重新获取");
 		}
 		if(!code.equals(codeDatabase)){
 			return R.failed("验证码不正确，请重新输入");
 		}
-		UserDTO userDTO = new UserDTO();
-		userDTO.setUserId(Integer.valueOf(userId));
-		userDTO.setPhone(phone);
-		return R.ok(userService.updateUser(userDTO));
+		SysUser user = userService.getOne(Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
+		if(!ComUtil.isEmpty(user)){
+			return R.failed("未找到用户信息，请重新输入");
+		}
+		UserDTO dto = new UserDTO();
+		dto.setUserId(user.getUserId());
+		dto.setPhone(phone);
+		return R.ok(userService.updateUser(dto));
 	}
 
 	/**
@@ -225,4 +258,5 @@ public class UserController {
 	public R listAncestorUsers(@PathVariable String username) {
 		return R.ok(userService.listAncestorUsersByUsername(username));
 	}
+
 }

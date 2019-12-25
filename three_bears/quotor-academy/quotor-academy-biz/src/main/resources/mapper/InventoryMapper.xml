@@ -165,9 +165,11 @@
         left join bear_condition_pro cp on bi.i_product_id = cp.p_id
         <where>
             i_state = 0
-            and i_shop_id = #{inven.shopId}
             <if test="inven.productName != null and inven.productName != ''">
                 and cp.p_name like concat('%', #{inven.productName}, '%')
+            </if>
+            <if test="inven.shopId != null and inven.shopId != ''">
+                and i_shop_id = #{inven.shopId}
             </if>
             <if test="inven.productNumber != null and inven.productNumber != ''">
                 and cp.p_number like concat('%', #{inven.productNumber}, '%')

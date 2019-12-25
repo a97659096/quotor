@@ -19,5 +19,6 @@ ignore:
   urls:
     - /actuator/**
     - /log/**
+    - /wechat/**
 web:
   upload-path: D:/threeBearsImg/

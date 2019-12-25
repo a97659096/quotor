@@ -10,10 +10,10 @@ public class FileConstants {
     public static Set<String> METHOD_URL_SET = new HashSet<>();
 
 //    图片地址
-    public static String FILE_ADDRESS = "http://192.168.3.21:9001";
+    public static String FILE_ADDRESS = "http://127.0.0.1:9001";
 
 //    文件夹
-    public static String FILE_FLODER = "D:/threeBearsImg";
+    public static String FILE_FLODER = "C:/pic";
 
     /**
      * 用户注册默认角色

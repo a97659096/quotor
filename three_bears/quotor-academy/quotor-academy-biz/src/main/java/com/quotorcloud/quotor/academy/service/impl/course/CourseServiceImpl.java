@@ -164,7 +164,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      */
     @Override
     @OperationLog(name = "删除课程", contentType = 3, operatorRef = 0, idRef = 1, table = "bear_course",
-            type = OperationType.DELETE, cloum = "c_name", idField = "c_id")
+            type = OperationType.DELETE, cloum = "name", idField = "c_id")
     public Boolean removeCourse(QuotorUser quotorUser, String id) {
         if(ComUtil.isEmpty(id)){
             throw new MyException(ExceptionEnum.NOT_FIND_ID);
@@ -224,7 +224,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
      */
     @Override
     @OperationLog(name = "新增课程", contentType = 3, operatorRef = 0, operatorObj = 1, table = "bear_course",
-            type = OperationType.ADD, cloum = "c_name")
+            type = OperationType.ADD, cloum = "name")
     public Boolean saveCourse(QuotorUser quotorUser, CourseDTO courseDTO) {
         Course course = new Course();
         BeanUtils.copyProperties(courseDTO, course,
@@ -285,8 +285,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 //        }
         if(!ComUtil.isEmpty(dateRange)){
             List<String> date = Splitter.on(CommonConstants.SEPARATOR).splitToList(dateRange);
-            course.setStartDate(LocalDateTime.ofEpochSecond(Long.parseLong(date.get(0)), 0, ZoneOffset.ofHours(8)));
-            course.setStartDate(LocalDateTime.ofEpochSecond(Long.parseLong(date.get(1)), 0, ZoneOffset.ofHours(8)));
+            course.setStartDate(LocalDateTime.ofEpochSecond(Long.parseLong(date.get(0))/1000, 0, ZoneOffset.ofHours(8)));
+            course.setEndDate(LocalDateTime.ofEpochSecond(Long.parseLong(date.get(1))/1000, 0, ZoneOffset.ofHours(8)));
         }
     }
 

@@ -43,4 +43,9 @@ public class CourseOrderDTO {
 
     private Integer status;
 
+    /**
+     * 最近几天
+     */
+    private Integer nearDay;
+
 }

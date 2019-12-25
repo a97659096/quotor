@@ -54,7 +54,6 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     public JSONObject listSumInventory(Inventory inventory) {
         //设置店铺信息
         setShopInfo(inventory);
-
         Page<Inventory> page = PageUtil.getPage(inventory.getPageNo(),
                 inventory.getPageSize());
         IPage<Inventory> inventories = inventoryMapper.selectSumInventoryPage(page,inventory);

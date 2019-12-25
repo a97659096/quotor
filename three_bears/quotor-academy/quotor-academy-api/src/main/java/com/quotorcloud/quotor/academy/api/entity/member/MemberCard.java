@@ -183,5 +183,9 @@ public class MemberCard implements Serializable {
     @TableField(exist = false)
     private List<String> memberIds;
 
+    private String start;
+
+    private String end;
+
 
 }

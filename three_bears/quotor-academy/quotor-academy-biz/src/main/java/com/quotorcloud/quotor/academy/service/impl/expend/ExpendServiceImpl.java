@@ -206,9 +206,11 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
 
         List<Expend> expends = expendMapper
                 .selectExpendPage(expendDTO);
-
-        BigDecimal totalExpend = expends.stream().map(Expend::getEMoney).
-                reduce(BigDecimal::add).get();
+        BigDecimal totalExpend = new BigDecimal(0);
+        if(!ComUtil.isEmpty(expends)){
+            totalExpend = expends.stream().map(Expend::getEMoney).
+                    reduce(BigDecimal::add).get();
+        }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("totalExpend", totalExpend);
         return jsonObject;
@@ -221,6 +223,7 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
      */
     @Override
     public JSONObject selectWXStatement(ExpendDTO expendDTO) {
+
         Integer dateType = expendDTO.getDateType();
         switch (dateType){
             case 1:
@@ -241,8 +244,11 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
         if(dateType.equals(1) || dateType.equals(2)){
             //分组根据日期
             Map<String, List<Expend>> map = new HashMap<>();
+
             for (Expend expend:expends){
+
                 String date = DateTimeUtil.localDatetimeToString(expend.getGmtCreate());
+
                 if(map.keySet().contains(date)){
                     map.get(date).add(expend);
                 }else {
@@ -250,7 +256,7 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
                     map.put(date, expendList);
                 }
             }
-            Set<String> dates = DateTimeUtil.getOrderByDate(map.keySet());
+            Set<String> dates =  new TreeSet<>(map.keySet());
             for (String date: dates){
                 BigDecimal money = map.get(date).stream().map(Expend::getEMoney).reduce(BigDecimal::add).get();
                 x.add(date);
@@ -271,13 +277,14 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
                 }
             }
 
-            Set<String> strings = new HashSet<>(map.keySet());
+            Set<String> strings = new TreeSet<>(map.keySet());
             for (String date:strings){
                 BigDecimal money = map.get(date).stream().map(Expend::getEMoney).reduce(BigDecimal::add).get();
                 x.add(date);
                 y.add(money);
                 totalMoney = totalMoney.add(money);
             }
+
         }
 
         List<ExpendSumVO> expendsGroupByPayWay = expendMapper.selectExpendGroupByPayWay(expendDTO);
@@ -301,7 +308,7 @@ public class ExpendServiceImpl extends ServiceImpl<ExpendMapper, Expend> impleme
      * @return
      */
     @Override
-    public JSONObject listExpendApp(Page page, ExpendDTO expendDTO) {
+    public JSONObject listExpendApp(ExpendDTO expendDTO) {
         //设置日期
         if(!ComUtil.isEmpty(expendDTO.getDateRange())){
             List<String> stringDate = DateTimeUtil.getStringDate(expendDTO.getDateRange());

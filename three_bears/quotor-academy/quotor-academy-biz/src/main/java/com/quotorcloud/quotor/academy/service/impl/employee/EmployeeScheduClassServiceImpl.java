@@ -77,7 +77,6 @@ public class EmployeeScheduClassServiceImpl extends ServiceImpl<EmployeeScheduCl
         return PageUtil.getPagePackage("classes", employeeScheduClassVOS, page);
     }
 
-
     private EmployeeScheduClassVO getEmployeeScheduClassVO(EmployeeScheduClass record) {
         EmployeeScheduClassVO employeeScheduClassVO = new EmployeeScheduClassVO();
         BeanUtils.copyProperties(record, employeeScheduClassVO, "workTimeScope");

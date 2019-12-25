@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -94,6 +96,12 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
         //处理时间戳
         DateTimeUtil.setStartAndEndDate(CourseOrderDTO.class, courseOrderDTO);
 
+        //查询最近几天
+        if(!ComUtil.isEmpty(courseOrderDTO.getNearDay())){
+            LocalDate date = LocalDate.now().minusDays(courseOrderDTO.getNearDay());
+            courseOrderDTO.setStart(DateTimeUtil.localDateToString(date));
+        }
+
         Page<CourseOrder> page = PageUtil.getPage(courseOrderDTO.getPageNo(), courseOrderDTO.getPageSize());
         IPage<CourseAppointmentVO> iPage = courseOrderMapper.selectCourseAppointPage(page, courseOrderDTO);
         return PageUtil.getPagePackage("appointments", iPage.getRecords(), page);
@@ -106,8 +114,8 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
      * @return
      */
     @Override
-    public String saveCourseOrder(CourseOrderDTO courseOrderDTO, HttpServletRequest request) {
-        CourseOrder courseOrder = getCourseOrder(courseOrderDTO, request, CommonConstants.NATIVE);
+    public String saveCourseOrder(String courseId, String name, String userId, String phone,  HttpServletRequest request) {
+        CourseOrder courseOrder = getCourseOrder(courseId,name, userId, phone, request, CommonConstants.NATIVE);
         //获取codeurl
         if(courseOrder != null){
             courseOrderMapper.insert(courseOrder);
@@ -124,7 +132,8 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
     @Override
     public Map<String, String> saveJSAPICourseOrder(CourseOrderDTO courseOrderDTO, HttpServletRequest request) {
         //获取openid
-        String openIdUrl = String.format(WeChatConfig.getOpenIdUrl(), weChatConfig.getOpenAppid(), weChatConfig.getOpenAppsecret(), courseOrderDTO.getCode());
+        String openIdUrl = String.format(WeChatConfig.getOpenIdUrl(),
+                weChatConfig.getOpenAppid(), weChatConfig.getOpenAppsecret(), courseOrderDTO.getCode());
         Map<String, Object> map = HttpUtils.doGet(openIdUrl);
 
         if(ComUtil.isEmpty(map)){
@@ -132,24 +141,24 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
         }
         String openid = (String) map.get("openid");
         //查询出用户信息
-        CourseOrder courseOrder = getCourseOrder(courseOrderDTO, request, CommonConstants.JSAPI);
+//        CourseOrder courseOrder = getCourseOrder(courseOrderDTO, request, CommonConstants.JSAPI);
 
-        if(courseOrder != null) {
-            courseOrder.setOpenId(openid);
-            //插入订单
-            courseOrderMapper.insert(courseOrder);
-            //微信统一下单
-            String prepayId = unifiedOrder(courseOrder, CommonConstants.JSAPI);
-            //返回前端，调起支付
-            SortedMap<String, String> params = new TreeMap<>();
-            params.put("appId", weChatConfig.getAppId());
-            params.put("timestamp", String.valueOf(System.currentTimeMillis()));
-            params.put("nonceStr", GenerationSequenceUtil.generateUUID(null));
-            params.put("package", "prepay_id=" + prepayId);
-            String sign = WXPayUtil.createSign(params, weChatConfig.getKey());
-            params.put("signType", sign);
-            return params;
-        }
+//        if(courseOrder != null) {
+//            courseOrder.setOpenId(openid);
+//            //插入订单
+//            courseOrderMapper.insert(courseOrder);
+//            //微信统一下单
+//            String prepayId = unifiedOrder(courseOrder, CommonConstants.JSAPI);
+//            //返回前端，调起支付
+//            SortedMap<String, String> params = new TreeMap<>();
+//            params.put("appId", weChatConfig.getAppId());
+//            params.put("timestamp", String.valueOf(System.currentTimeMillis()));
+//            params.put("nonceStr", GenerationSequenceUtil.generateUUID(null));
+//            params.put("package", "prepay_id=" + prepayId);
+//            String sign = WXPayUtil.createSign(params, weChatConfig.getKey());
+//            params.put("signType", sign);
+//            return params;
+//        }
         return null;
     }
 
@@ -222,41 +231,43 @@ public class CourseOrderServiceImpl extends ServiceImpl<CourseOrderMapper, Cours
      * @param payType 支付方式  native,jsapi
      * @return
      */
-    private CourseOrder getCourseOrder(CourseOrderDTO courseOrderDTO, HttpServletRequest request, Integer payType) {
+    private CourseOrder getCourseOrder(String courseId, String name, String userId, String phone, HttpServletRequest request, Integer payType) {
+        Course course = courseMapper.selectById(courseId);
         //查询出用户信息
-        R<UserVO> user = remoteUserService.user(courseOrderDTO.getUserId());
+        R<UserVO> user = remoteUserService.user(Integer.valueOf(userId));
         UserVO data = user.getData();
         if(ComUtil.isEmpty(data)){
             return null;
         }
         String ip = IpUtils.getIpAddr(request);
         CourseOrder courseOrder = new CourseOrder();
-        courseOrder.setUserId(courseOrderDTO.getUserId());
-        courseOrder.setName(courseOrderDTO.getName());
-        courseOrder.setPhone(courseOrderDTO.getPhone());
+        courseOrder.setUserId(Integer.valueOf(userId));
+        courseOrder.setName(name);
+        courseOrder.setPhone(phone);
         courseOrder.setHeadImg(data.getAvatar());
         courseOrder.setNickname(data.getName());
         courseOrder.setIp(ip);
-        courseOrder.setCourseId(courseOrderDTO.getCourseId());
+        courseOrder.setCourseId(courseId);
         courseOrder.setPayState(CommonConstants.NOT_PAY);
         courseOrder.setDelState(CommonConstants.STATUS_NORMAL);
         courseOrder.setOrderState(CommonConstants.WAIT_PAY);
         courseOrder.setOutTradeNo(GenerationSequenceUtil.generateUUID(null));
         //微信扫码支付
         courseOrder.setPayType(payType);
-
-        Course course = courseMapper.selectById(courseOrder.getCourseId());
         courseOrder.setCourseName(course.getName());
-        List<String> roleList = data.getRoleList().stream().map(SysRole::getRoleCode).collect(Collectors.toList());
+//        List<String> roleList = data.getRoleList().stream().map(SysRole::getRoleCode).collect(Collectors.toList());
         //学员价格
-        if(roleList.contains("student")){
-            courseOrder.setTotalFee(course.getStudentPrice());
-            //加盟商价格
-        }else if(roleList.contains("shop")){
-            courseOrder.setTotalFee(course.getJoinShopPrice());
-        }else {
-            throw new MyException(ExceptionEnum.NOT_FIND_ROLE);
-        }
+//        if(roleList.contains("student")){
+//            courseOrder.setTotalFee(Integer.valueOf(course.getStudentPrice()
+//                    .multiply(BigDecimal.valueOf(100)).toString()));
+//            //加盟商价格
+//        }else if(roleList.contains("shop")){
+//            courseOrder.setTotalFee(course.getJoinShopPrice());
+//        }else {
+//            throw new MyException(ExceptionEnum.NOT_FIND_ROLE);
+//        }
+        courseOrder.setTotalFee(Integer.valueOf(course.getStudentPrice()
+                .multiply(BigDecimal.valueOf(100)).setScale(0).toString()));
         return courseOrder;
     }
 }

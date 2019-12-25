@@ -39,7 +39,7 @@ public interface ExpendService extends IService<Expend> {
      */
     JSONObject selectWXStatement(ExpendDTO expendDTO);
 
-    JSONObject listExpendApp(Page page, ExpendDTO expendDTO);
+    JSONObject listExpendApp(ExpendDTO expendDTO);
 
 
 }

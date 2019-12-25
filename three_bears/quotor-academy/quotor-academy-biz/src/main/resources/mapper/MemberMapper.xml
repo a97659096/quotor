@@ -115,6 +115,9 @@
             <if test="member.shopId != null and member.shopId != ''">
                 and m.shop_id = #{member.shopId}
             </if>
+            <if test="member.shopName != null and member.shopName != ''">
+                and m.shop_name =#{member.shopName}
+            </if>
             <if test="member.shopFrequencyMemberIds != null and member.shopFrequencyMemberIds.size > 0">
                 and m.id in
                 <foreach collection="member.shopFrequencyMemberIds" item="item" open="(" close=")" separator=",">
@@ -127,6 +130,12 @@
                     #{item}
                 </foreach>
             </if>
+            <if test="member.start != null and member.start != ''">
+                and DATE_FORMAT(m.join_date,'%Y-%m-%d') <![CDATA[>=]]> #{member.start}
+            </if>
+            <if test="member.end != null and member.end != ''">
+                and DATE_FORMAT(m.join_date,'%Y-%m-%d') <![CDATA[<=]]> #{member.end}
+            </if>
         </where>
     </select>
 
@@ -134,7 +143,7 @@
     <select id="selectMemberById" resultType="com.quotorcloud.quotor.academy.api.vo.member.MemberVO" resultMap="BaseResultMapVO">
         select
         <include refid="Base_Column_List"></include>
-        from bear_member
+        from bear_member m
         where id = #{id}
     </select>
 

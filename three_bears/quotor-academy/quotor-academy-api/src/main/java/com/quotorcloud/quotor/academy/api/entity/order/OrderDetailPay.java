@@ -137,5 +137,10 @@ public class OrderDetailPay implements Serializable {
      */
     private String end;
 
+    /**
+     * 日期，1近一个月，2近三个月，3近一年
+     */
+    private Integer dateType;
+
 
 }

@@ -87,6 +87,9 @@ public class OrderDetailPayServiceImpl extends ServiceImpl<OrderDetailPayMapper,
         List<String> x = new ArrayList<>();
         List<BigDecimal> y = new ArrayList<>();
         for (OrderIncomeVO orderIncomeVO:orderIncomeVOS){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("color", orderIncomeVO.getColor());
+            orderIncomeVO.setItemStyle(jsonObject);
             x.add(orderIncomeVO.getPayWayName());
             y.add(orderIncomeVO.getMoney());
         }

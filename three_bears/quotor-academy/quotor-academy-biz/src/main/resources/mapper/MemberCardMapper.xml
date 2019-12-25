@@ -87,6 +87,12 @@
             <if test="card.shopName != null and card.shopName != ''">
                 and mc.mc_shop_name = #{card.shopName}
             </if>
+            <if test="card.start != null and card.start != ''">
+                and DATE_FORMAT(mcd.mcd_gmt_create,'%Y-%m-%d') <![CDATA[>=]]> #{card.start}
+            </if>
+            <if test="card.end != null and card.end != ''">
+                and DATE_FORMAT(mcd.mcd_gmt_create,'%Y-%m-%d') <![CDATA[<=]]> #{card.end}
+            </if>
         </where>
     </select>
 

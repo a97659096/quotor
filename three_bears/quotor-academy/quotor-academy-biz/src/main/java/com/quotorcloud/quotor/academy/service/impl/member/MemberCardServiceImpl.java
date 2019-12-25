@@ -59,7 +59,6 @@ public class MemberCardServiceImpl extends ServiceImpl<MemberCardMapper, MemberC
     @Override
     public JSONObject countTotalCardMargin(MemberCard memberCard) {
         List<MemberCardVO> memberCardVOS = memberCardMapper.listMemberCard(memberCard);
-
         return countCardSurplus(memberCardVOS);
     }
 

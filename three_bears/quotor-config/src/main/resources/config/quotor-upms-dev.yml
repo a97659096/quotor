@@ -20,3 +20,5 @@ ignore:
     - /actuator/**
     - /user/info/*
     - /log/**
+    - /user/register
+    - /user/update-phone-auth-code
